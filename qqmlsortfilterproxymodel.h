@@ -30,23 +30,26 @@ public:
     QQmlSortFilterProxyModel(QObject* parent = 0);
 
     QString filterRoleName() const;
-    QString filterPattern() const;
-    PatternSyntax filterPatternSyntax() const;
-    QVariant filterValue() const;
-    QQmlScriptString filterExpression() const;
-
-    QString sortRoleName() const;
-    QQmlScriptString sortExpression() const;
-
-public slots:
     void setFilterRoleName(QString filterRoleName);
+
+    QString filterPattern() const;
     void setFilterPattern(QString filterPattern);
+
+    PatternSyntax filterPatternSyntax() const;
     void setFilterPatternSyntax(PatternSyntax patternSyntax);
+
+    QVariant filterValue() const;
     void setFilterValue(QVariant filterValue);
+
+    QQmlScriptString filterExpression() const;
     void setFilterExpression(QQmlScriptString filterScriptString);
 
+    QString sortRoleName() const;
     void setSortRoleName(QString sortRoleName);
+
     void setSortOrder(Qt::SortOrder sortOrder);
+
+    QQmlScriptString sortExpression() const;
     void setSortExpression(QQmlScriptString compareScriptString);
 
 signals:
