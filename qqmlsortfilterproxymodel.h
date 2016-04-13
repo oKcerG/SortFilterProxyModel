@@ -52,6 +52,8 @@ public:
     QQmlScriptString sortExpression() const;
     void setSortExpression(QQmlScriptString compareScriptString);
 
+    Q_INVOKABLE int count() const;
+
 signals:
     void filterRoleNameChanged();
     void filterPatternSyntaxChanged();

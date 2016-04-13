@@ -2,6 +2,11 @@
 #include <QtQml>
 #include <QDebug>
 
+int QQmlSortFilterProxyModel::count() const
+{
+    return rowCount();
+}
+
 QQmlSortFilterProxyModel::QQmlSortFilterProxyModel(QObject *parent) :
     QSortFilterProxyModel(parent),
     m_filterExpression(0),
