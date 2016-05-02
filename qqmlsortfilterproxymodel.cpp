@@ -1,6 +1,5 @@
 #include "qqmlsortfilterproxymodel.h"
 #include <QtQml>
-#include <QDebug>
 
 QQmlSortFilterProxyModel::QQmlSortFilterProxyModel(QObject *parent) :
     QSortFilterProxyModel(parent),
@@ -32,7 +31,7 @@ void QQmlSortFilterProxyModel::setFilterRoleName(const QString& filterRoleName)
         return;
 
     m_filterRoleName = filterRoleName;
-    updateRoles();
+    updateFilterRole();
     emit filterRoleNameChanged();
 }
 
@@ -124,13 +123,14 @@ void QQmlSortFilterProxyModel::setSortRoleName(const QString& sortRoleName)
         return;
 
     m_sortRoleName = sortRoleName;
-    updateRoles();
+    updateSortRole();
     emit sortRoleNameChanged();
 }
 
 void QQmlSortFilterProxyModel::setSortOrder(Qt::SortOrder sortOrder)
 {
-    sort(0, sortOrder);
+    if (!m_sortRoleName.isEmpty())
+        sort(0, sortOrder);
 }
 
 const QQmlScriptString& QQmlSortFilterProxyModel::sortExpression() const
@@ -213,10 +213,29 @@ void QQmlSortFilterProxyModel::invalidateFilter()
     QSortFilterProxyModel::invalidateFilter();
 }
 
+void QQmlSortFilterProxyModel::updateFilterRole()
+{
+    QList<int> filterRoles = roleNames().keys(m_filterRoleName.toUtf8());
+    if (!filterRoles.empty())
+    {
+        setFilterRole(filterRoles.first());
+    }
+}
+
+void QQmlSortFilterProxyModel::updateSortRole()
+{
+    QList<int> sortRoles = roleNames().keys(m_sortRoleName.toUtf8());
+    if (!sortRoles.empty())
+    {
+        setSortRole(sortRoles.first());
+        sort(0, sortOrder());
+    }
+}
+
 void QQmlSortFilterProxyModel::updateRoles()
 {
-    setFilterRole(roleNames().key(m_filterRoleName.toUtf8()));
-    setSortRole(roleNames().key(m_sortRoleName.toUtf8()));
+    updateFilterRole();
+    updateSortRole();
 }
 
 QVariantMap QQmlSortFilterProxyModel::modelDataMap(const QModelIndex& modelIndex) const

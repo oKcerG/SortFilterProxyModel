@@ -73,6 +73,8 @@ protected:
 
 private slots:
     void invalidateFilter();
+    void updateFilterRole();
+    void updateSortRole();
     void updateRoles();
 
 private:
