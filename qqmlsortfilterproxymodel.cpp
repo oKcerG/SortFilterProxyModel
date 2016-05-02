@@ -21,12 +21,12 @@ int QQmlSortFilterProxyModel::count() const
     return rowCount();
 }
 
-QString QQmlSortFilterProxyModel::filterRoleName() const
+const QString& QQmlSortFilterProxyModel::filterRoleName() const
 {
     return m_filterRoleName;
 }
 
-void QQmlSortFilterProxyModel::setFilterRoleName(QString filterRoleName)
+void QQmlSortFilterProxyModel::setFilterRoleName(const QString& filterRoleName)
 {
     if (m_filterRoleName == filterRoleName)
         return;
@@ -41,7 +41,7 @@ QString QQmlSortFilterProxyModel::filterPattern() const
     return filterRegExp().pattern();
 }
 
-void QQmlSortFilterProxyModel::setFilterPattern(QString filterPattern)
+void QQmlSortFilterProxyModel::setFilterPattern(const QString& filterPattern)
 {
     QRegExp regExp = filterRegExp();
     if (regExp.pattern() == filterPattern)
@@ -69,12 +69,12 @@ void QQmlSortFilterProxyModel::setFilterPatternSyntax(QQmlSortFilterProxyModel::
     emit filterPatternSyntaxChanged();
 }
 
-QVariant QQmlSortFilterProxyModel::filterValue() const
+const QVariant& QQmlSortFilterProxyModel::filterValue() const
 {
     return m_filterValue;
 }
 
-void QQmlSortFilterProxyModel::setFilterValue(QVariant filterValue)
+void QQmlSortFilterProxyModel::setFilterValue(const QVariant& filterValue)
 {
     if (m_filterValue == filterValue)
         return;
@@ -84,12 +84,12 @@ void QQmlSortFilterProxyModel::setFilterValue(QVariant filterValue)
     emit filterValueChanged();
 }
 
-QQmlScriptString QQmlSortFilterProxyModel::filterExpression() const
+const QQmlScriptString& QQmlSortFilterProxyModel::filterExpression() const
 {
     return m_filterScriptString;
 }
 
-void QQmlSortFilterProxyModel::setFilterExpression(QQmlScriptString filterScriptString)
+void QQmlSortFilterProxyModel::setFilterExpression(const QQmlScriptString& filterScriptString)
 {
     if (m_filterScriptString == filterScriptString)
         return;
@@ -113,12 +113,12 @@ void QQmlSortFilterProxyModel::setFilterExpression(QQmlScriptString filterScript
     emit filterExpressionChanged();
 }
 
-QString QQmlSortFilterProxyModel::sortRoleName() const
+const QString& QQmlSortFilterProxyModel::sortRoleName() const
 {
     return m_sortRoleName;
 }
 
-void QQmlSortFilterProxyModel::setSortRoleName(QString sortRoleName)
+void QQmlSortFilterProxyModel::setSortRoleName(const QString& sortRoleName)
 {
     if (m_sortRoleName == sortRoleName)
         return;
@@ -133,12 +133,12 @@ void QQmlSortFilterProxyModel::setSortOrder(Qt::SortOrder sortOrder)
     sort(0, sortOrder);
 }
 
-QQmlScriptString QQmlSortFilterProxyModel::sortExpression() const
+const QQmlScriptString& QQmlSortFilterProxyModel::sortExpression() const
 {
     return m_compareScriptString;
 }
 
-void QQmlSortFilterProxyModel::setSortExpression(QQmlScriptString compareScriptString)
+void QQmlSortFilterProxyModel::setSortExpression(const QQmlScriptString& compareScriptString)
 {
     if (m_compareScriptString == compareScriptString)
         return;

@@ -32,28 +32,28 @@ public:
 
     int count() const;
 
-    QString filterRoleName() const;
-    void setFilterRoleName(QString filterRoleName);
+    const QString& filterRoleName() const;
+    void setFilterRoleName(const QString& filterRoleName);
 
     QString filterPattern() const;
-    void setFilterPattern(QString filterPattern);
+    void setFilterPattern(const QString& filterPattern);
 
     PatternSyntax filterPatternSyntax() const;
     void setFilterPatternSyntax(PatternSyntax patternSyntax);
 
-    QVariant filterValue() const;
-    void setFilterValue(QVariant filterValue);
+    const QVariant& filterValue() const;
+    void setFilterValue(const QVariant& filterValue);
 
-    QQmlScriptString filterExpression() const;
-    void setFilterExpression(QQmlScriptString filterScriptString);
+    const QQmlScriptString& filterExpression() const;
+    void setFilterExpression(const QQmlScriptString& filterScriptString);
 
-    QString sortRoleName() const;
-    void setSortRoleName(QString sortRoleName);
+    const QString& sortRoleName() const;
+    void setSortRoleName(const QString& sortRoleName);
 
     void setSortOrder(Qt::SortOrder sortOrder);
 
-    QQmlScriptString sortExpression() const;
-    void setSortExpression(QQmlScriptString compareScriptString);
+    const QQmlScriptString& sortExpression() const;
+    void setSortExpression(const QQmlScriptString& compareScriptString);
 
 signals:
     void countChanged();
