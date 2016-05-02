@@ -1,6 +1,20 @@
 #include "qqmlsortfilterproxymodel.h"
 #include <QtQml>
 #include <QDebug>
+#include "lib/qt-qml-models/QQmlObjectListModel.h"
+
+int QQmlSortFilterProxyModel::count() const
+{
+    return rowCount();
+}
+
+QObject* QQmlSortFilterProxyModel::get(int row) const
+{
+    QModelIndex m = index(row, 0);
+    QModelIndex source = mapToSource(m);
+    QQmlObjectListModelBase *model = qobject_cast<QQmlObjectListModelBase*>(sourceModel());
+    return model->get(source.row());
+}
 
 QQmlSortFilterProxyModel::QQmlSortFilterProxyModel(QObject *parent) :
     QSortFilterProxyModel(parent),
