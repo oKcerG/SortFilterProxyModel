@@ -9,7 +9,16 @@ QQmlSortFilterProxyModel::QQmlSortFilterProxyModel(QObject *parent) :
 {
     connect(this, &QAbstractProxyModel::sourceModelChanged, this, &QQmlSortFilterProxyModel::updateRoles);
     connect(this, &QAbstractItemModel::modelReset, this, &QQmlSortFilterProxyModel::updateRoles);
+    connect(this, &QAbstractItemModel::rowsInserted, this, &QQmlSortFilterProxyModel::countChanged);
+    connect(this, &QAbstractItemModel::rowsRemoved, this, &QQmlSortFilterProxyModel::countChanged);
+    connect(this, &QAbstractItemModel::modelReset, this, &QQmlSortFilterProxyModel::countChanged);
+    connect(this, &QAbstractItemModel::layoutChanged, this, &QQmlSortFilterProxyModel::countChanged);
     setDynamicSortFilter(true);
+}
+
+int QQmlSortFilterProxyModel::count() const
+{
+    return rowCount();
 }
 
 QString QQmlSortFilterProxyModel::filterRoleName() const

@@ -7,6 +7,7 @@
 class QQmlSortFilterProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
+    Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(QString filterRoleName READ filterRoleName WRITE setFilterRoleName NOTIFY filterRoleNameChanged)
     Q_PROPERTY(QString filterPattern READ filterPattern WRITE setFilterPattern NOTIFY filterPatternChanged)
     Q_PROPERTY(PatternSyntax filterPatternSyntax READ filterPatternSyntax WRITE setFilterPatternSyntax NOTIFY filterPatternSyntaxChanged)
@@ -28,6 +29,8 @@ public:
     Q_ENUMS(PatternSyntax)
 
     QQmlSortFilterProxyModel(QObject* parent = 0);
+
+    int count() const;
 
     QString filterRoleName() const;
     void setFilterRoleName(QString filterRoleName);
@@ -53,6 +56,8 @@ public:
     void setSortExpression(QQmlScriptString compareScriptString);
 
 signals:
+    void countChanged();
+
     void filterRoleNameChanged();
     void filterPatternSyntaxChanged();
     void filterPatternChanged();
