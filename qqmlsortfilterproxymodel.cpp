@@ -247,11 +247,9 @@ QVariantMap QQmlSortFilterProxyModel::modelDataMap(const QModelIndex& modelIndex
     return map;
 }
 
-struct QQmlSortFilterProxyModelRegisterHelper {
-    QQmlSortFilterProxyModelRegisterHelper() {
-        qmlRegisterType<QAbstractItemModel>();
-        qmlRegisterType<QQmlSortFilterProxyModel>("SortFilterProxyModel", 0, 1, "SortFilterProxyModel");
-    }
-};
+void registerQQmlSortFilterProxyModelTypes() {
+    qmlRegisterType<QAbstractItemModel>();
+    qmlRegisterType<QQmlSortFilterProxyModel>("SortFilterProxyModel", 0, 1, "SortFilterProxyModel");
+}
 
-static QQmlSortFilterProxyModelRegisterHelper registerHelper;
+Q_COREAPP_STARTUP_FUNCTION(registerQQmlSortFilterProxyModelTypes)
