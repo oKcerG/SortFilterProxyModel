@@ -235,8 +235,7 @@ void QQmlSortFilterProxyModel::clear_filters(QQmlListProperty<Filter> *list)
 }
 
 void registerQQmlSortFilterProxyModelTypes() {
-    qmlRegisterType<QAbstractItemModel>();
-    qmlRegisterType<QQmlSortFilterProxyModel>("SortFilterProxyModel", 0, 1, "SortFilterProxyModel");
+    qmlRegisterType<QQmlSortFilterProxyModel>("SortFilterProxyModel", 0, 2, "SortFilterProxyModel");
 }
 
 Q_COREAPP_STARTUP_FUNCTION(registerQQmlSortFilterProxyModelTypes)
