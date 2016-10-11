@@ -86,6 +86,37 @@ private:
     QVariant m_value;
 };
 
+class IndexFilter: public Filter {
+    Q_OBJECT
+    Q_PROPERTY(int minimumIndex READ minimumIndex WRITE setMinimumIndex NOTIFY minimumIndexChanged RESET resetMinimumIndex)
+    Q_PROPERTY(int maximumIndex READ maximumIndex WRITE setMaximumIndex NOTIFY maximumIndexChanged RESET resetMaximumIndex)
+
+public:
+    using Filter::Filter;
+
+    int minimumIndex() const;
+    void setMinimumIndex(int minimumIndex);
+    void resetMinimumIndex();
+
+    int maximumIndex() const;
+    void setMaximumIndex(int maximumIndex);
+    void resetMaximumIndex();
+
+protected:
+    bool filterRow(const QModelIndex &sourceIndex) const override;
+
+signals:
+    void minimumIndexChanged();
+    void maximumIndexChanged();
+
+private:
+    int m_minimumIndex;
+    bool m_minimumIndexIsSet = false;
+
+    int m_maximumIndex;
+    bool m_maximumIndexIsSet = false;
+};
+
 }
 
 #endif // FILTER_H

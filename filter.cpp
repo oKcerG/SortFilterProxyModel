@@ -99,10 +99,60 @@ bool ValueFilter::filterRow(const QModelIndex& sourceIndex) const
     return !m_value.isValid() || m_value == sourceData(sourceIndex);
 }
 
+int IndexFilter::minimumIndex() const
+{
+    return m_minimumIndex;
+}
+
+void IndexFilter::setMinimumIndex(int minimumIndex)
+{
+    if (m_minimumIndex == minimumIndex)
+        return;
+
+    m_minimumIndex = minimumIndex;
+    m_minimumIndexIsSet = true;
+    emit minimumIndexChanged();
+    emit filterChanged();
+}
+
+void IndexFilter::resetMinimumIndex()
+{
+    m_minimumIndexIsSet = false;
+    emit filterChanged();
+}
+
+int IndexFilter::maximumIndex() const
+{
+    return m_maximumIndex;
+}
+
+void IndexFilter::setMaximumIndex(int maximumIndex)
+{
+    if (m_maximumIndex == maximumIndex)
+        return;
+
+    m_maximumIndex = maximumIndex;
+    m_maximumIndexIsSet = true;
+    emit maximumIndexChanged();
+    emit filterChanged();
+}
+
+void IndexFilter::resetMaximumIndex()
+{
+    m_maximumIndexIsSet = false;
+    emit filterChanged();
+}
+
+bool IndexFilter::filterRow(const QModelIndex &sourceIndex) const
+{
+    int sourceRow = sourceIndex.row();
+    return (!m_minimumIndexIsSet || sourceRow >= m_minimumIndex) && (!m_maximumIndexIsSet || sourceRow <= m_maximumIndex);
+}
 
 void registerFilterTypes() {
     qmlRegisterUncreatableType<Filter>("SortFilterProxyModel", 0, 2, "Filter", "Filter is an abstract class");
     qmlRegisterType<ValueFilter>("SortFilterProxyModel", 0, 2, "ValueFilter");
+    qmlRegisterType<IndexFilter>("SortFilterProxyModel", 0, 2, "IndexFilter");
 }
 
 Q_COREAPP_STARTUP_FUNCTION(registerFilterTypes)
