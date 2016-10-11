@@ -203,11 +203,50 @@ bool RegexpFilter::filterRow(const QModelIndex& sourceIndex) const
     return m_regExp.indexIn(string) != -1;
 }
 
+QVariant RangeFilter::minimumValue() const
+{
+    return m_minimumValue;
+}
+
+void RangeFilter::setMinimumValue(QVariant minimumValue)
+{
+    if (m_minimumValue == minimumValue)
+        return;
+
+    m_minimumValue = minimumValue;
+    emit minimumValueChanged();
+    emit filterChanged();
+}
+
+QVariant RangeFilter::maximumValue() const
+{
+    return m_maximumValue;
+}
+
+void RangeFilter::setMaximumValue(QVariant maximumValue)
+{
+    if (m_maximumValue == maximumValue)
+        return;
+
+    m_maximumValue = maximumValue;
+    emit maximumValueChanged();
+    emit filterChanged();
+}
+
+bool RangeFilter::filterRow(const QModelIndex& sourceIndex) const
+{
+    QVariant value = sourceData(sourceIndex);
+    bool lessThanMin = m_minimumValue.isValid() && value < m_minimumValue;
+    bool moreThanMax = m_maximumValue.isValid() && value > m_maximumValue;
+    return !(lessThanMin || moreThanMax);
+}
+
 void registerFilterTypes() {
     qmlRegisterUncreatableType<Filter>("SortFilterProxyModel", 0, 2, "Filter", "Filter is an abstract class");
     qmlRegisterType<ValueFilter>("SortFilterProxyModel", 0, 2, "ValueFilter");
     qmlRegisterType<IndexFilter>("SortFilterProxyModel", 0, 2, "IndexFilter");
     qmlRegisterType<RegexpFilter>("SortFilterProxyModel", 0, 2, "RegexpFilter");
+    qmlRegisterType<RangeFilter>("SortFilterProxyModel", 0, 2, "RangeFilter");
 }
 
 Q_COREAPP_STARTUP_FUNCTION(registerFilterTypes)

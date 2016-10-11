@@ -150,6 +150,33 @@ private:
     QString m_pattern = m_regExp.pattern();
 };
 
+class RangeFilter : public RoleFilter
+{
+    Q_OBJECT
+    Q_PROPERTY(QVariant minimumValue READ minimumValue WRITE setMinimumValue NOTIFY minimumValueChanged)
+    Q_PROPERTY(QVariant maximumValue READ maximumValue WRITE setMaximumValue NOTIFY maximumValueChanged)
+
+public:
+    using RoleFilter::RoleFilter;
+
+    QVariant minimumValue() const;
+    void setMinimumValue(QVariant minimumValue);
+
+    QVariant maximumValue() const;
+    void setMaximumValue(QVariant maximumValue);
+
+protected:
+    bool filterRow(const QModelIndex& sourceIndex) const override;
+
+signals:
+    void minimumValueChanged();
+    void maximumValueChanged();
+
+private:
+    QVariant m_minimumValue;
+    QVariant m_maximumValue;
+};
+
 }
 
 #endif // FILTER_H
