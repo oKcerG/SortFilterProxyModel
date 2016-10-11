@@ -3,7 +3,6 @@
 
 #include <QSortFilterProxyModel>
 #include <QQmlParserStatus>
-#include <QQmlExpression>
 
 class QQmlSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParserStatus
 {
@@ -16,11 +15,9 @@ class QQmlSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParser
     Q_PROPERTY(QString filterPattern READ filterPattern WRITE setFilterPattern NOTIFY filterPatternChanged)
     Q_PROPERTY(PatternSyntax filterPatternSyntax READ filterPatternSyntax WRITE setFilterPatternSyntax NOTIFY filterPatternSyntaxChanged)
     Q_PROPERTY(QVariant filterValue READ filterValue WRITE setFilterValue NOTIFY filterValueChanged)
-    Q_PROPERTY(QQmlScriptString filterExpression READ filterExpression WRITE setFilterExpression NOTIFY filterExpressionChanged)
 
     Q_PROPERTY(QString sortRoleName READ sortRoleName WRITE setSortRoleName NOTIFY sortRoleNameChanged)
     Q_PROPERTY(Qt::SortOrder sortOrder READ sortOrder WRITE setSortOrder)
-    Q_PROPERTY(QQmlScriptString sortExpression READ sortExpression WRITE setSortExpression NOTIFY sortExpressionChanged)
 
 public:
     enum PatternSyntax {
@@ -48,16 +45,10 @@ public:
     const QVariant& filterValue() const;
     void setFilterValue(const QVariant& filterValue);
 
-    const QQmlScriptString& filterExpression() const;
-    void setFilterExpression(const QQmlScriptString& filterScriptString);
-
     const QString& sortRoleName() const;
     void setSortRoleName(const QString& sortRoleName);
 
     void setSortOrder(Qt::SortOrder sortOrder);
-
-    const QQmlScriptString& sortExpression() const;
-    void setSortExpression(const QQmlScriptString& compareScriptString);
 
     void classBegin() override;
     void componentComplete() override;
@@ -69,10 +60,8 @@ signals:
     void filterPatternSyntaxChanged();
     void filterPatternChanged();
     void filterValueChanged();
-    void filterExpressionChanged();
 
     void sortRoleNameChanged();
-    void sortExpressionChanged();
 
 protected:
     bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override;
@@ -89,15 +78,8 @@ private:
     QVariantMap modelDataMap(const QModelIndex& modelIndex) const;
 
     QString m_filterRoleName;
-    QString m_sortRoleName;
-
-    QQmlScriptString m_filterScriptString;
-    QQmlExpression* m_filterExpression = nullptr;
-
-    QQmlScriptString m_compareScriptString;
-    QQmlExpression* m_compareExpression = nullptr;
     QVariant m_filterValue;
-
+    QString m_sortRoleName;
     bool m_completed = false;
 };
 

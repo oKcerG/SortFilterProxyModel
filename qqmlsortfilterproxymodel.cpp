@@ -81,35 +81,6 @@ void QQmlSortFilterProxyModel::setFilterValue(const QVariant& filterValue)
     emit filterValueChanged();
 }
 
-const QQmlScriptString& QQmlSortFilterProxyModel::filterExpression() const
-{
-    return m_filterScriptString;
-}
-
-void QQmlSortFilterProxyModel::setFilterExpression(const QQmlScriptString& filterScriptString)
-{
-    if (m_filterScriptString == filterScriptString)
-        return;
-
-    m_filterScriptString = filterScriptString;
-    QQmlContext* context = new QQmlContext(qmlContext(this));
-
-    QVariantMap map;
-    Q_FOREACH (const QByteArray& roleName, roleNames().values())
-        map.insert(roleName, QVariant());
-
-    context->setContextProperty("model", map);
-    context->setContextProperty("index", -1);
-
-    delete(m_filterExpression);
-    m_filterExpression = new QQmlExpression(m_filterScriptString, context, 0, this);
-    connect(m_filterExpression, &QQmlExpression::valueChanged, this, &QQmlSortFilterProxyModel::invalidateFilter);
-    m_filterExpression->setNotifyOnValueChanged(true);
-    m_filterExpression->evaluate();
-
-    emit filterExpressionChanged();
-}
-
 const QString& QQmlSortFilterProxyModel::sortRoleName() const
 {
     return m_sortRoleName;
@@ -131,37 +102,6 @@ void QQmlSortFilterProxyModel::setSortOrder(Qt::SortOrder sortOrder)
         sort(0, sortOrder);
 }
 
-const QQmlScriptString& QQmlSortFilterProxyModel::sortExpression() const
-{
-    return m_compareScriptString;
-}
-
-void QQmlSortFilterProxyModel::setSortExpression(const QQmlScriptString& compareScriptString)
-{
-    if (m_compareScriptString == compareScriptString)
-        return;
-
-    m_compareScriptString = compareScriptString;
-    QQmlContext* context = new QQmlContext(qmlContext(this));
-
-    QVariantMap map;
-    Q_FOREACH (const QByteArray& roleName, roleNames().values())
-        map.insert(roleName, QVariant());
-
-    context->setContextProperty("modelLeft", map);
-    context->setContextProperty("indexLeft", -1);
-    context->setContextProperty("modelRight", map);
-    context->setContextProperty("indexRight", -1);
-
-    delete(m_compareExpression);
-    m_compareExpression = new QQmlExpression(m_compareScriptString, context, 0, this);
-    connect(m_compareExpression, &QQmlExpression::valueChanged, this, &QQmlSortFilterProxyModel::invalidate);
-    m_compareExpression->setNotifyOnValueChanged(true);
-    m_compareExpression->evaluate();
-
-    emit sortExpressionChanged();
-}
-
 void QQmlSortFilterProxyModel::classBegin()
 {
 
@@ -178,42 +118,12 @@ bool QQmlSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInde
     QModelIndex modelIndex = sourceModel()->index(source_row, 0, source_parent);
     bool valueAccepted = !m_filterValue.isValid() || ( m_filterValue == sourceModel()->data(modelIndex, filterRole()) );
     bool baseAcceptsRow = valueAccepted && QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
-    if (baseAcceptsRow && !m_filterScriptString.isEmpty())
-    {
-        QVariantMap map = modelDataMap(modelIndex);
 
-        QQmlContext context(qmlContext(this));
-        context.setContextProperty("model", map);
-        context.setContextProperty("index", source_row);
-        QQmlExpression expression(m_filterScriptString, &context, 0);
-        QVariant result = expression.evaluate();
-
-        if (!expression.hasError())
-            return result.toBool();
-        else
-            qWarning() << expression.error();
-    }
     return baseAcceptsRow;
 }
 
 bool QQmlSortFilterProxyModel::lessThan(const QModelIndex& source_left, const QModelIndex& source_right) const
 {
-    if (!m_compareScriptString.isEmpty())
-    {
-        QQmlContext context(qmlContext(this));
-        context.setContextProperty("modelLeft", modelDataMap(source_left));
-        context.setContextProperty("indexLeft", source_left.row());
-        context.setContextProperty("modelRight", modelDataMap(source_right));
-        context.setContextProperty("indexRight", source_right.row());
-
-        QQmlExpression expression(m_compareScriptString, &context, 0);
-        QVariant result = expression.evaluate();
-
-        if (!expression.hasError())
-            return result.toBool();
-        else
-            qWarning() << expression.error();
-    }
     return QSortFilterProxyModel::lessThan(source_left, source_right);
 }
 
