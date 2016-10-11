@@ -1,4 +1,5 @@
 #include "filter.h"
+#include <QtQml>
 
 namespace qqsfpm {
 
@@ -97,5 +98,13 @@ bool ValueFilter::filterRow(const QModelIndex& sourceIndex) const
 {
     return !m_value.isValid() || m_value == sourceData(sourceIndex);
 }
+
+
+void registerFilterTypes() {
+    qmlRegisterUncreatableType<Filter>("SortFilterProxyModel", 0, 2, "Filter", "Filter is an abstract class");
+    qmlRegisterType<ValueFilter>("SortFilterProxyModel", 0, 2, "ValueFilter");
+}
+
+Q_COREAPP_STARTUP_FUNCTION(registerFilterTypes)
 
 }
