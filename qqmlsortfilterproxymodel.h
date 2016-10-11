@@ -4,6 +4,8 @@
 #include <QSortFilterProxyModel>
 #include <QQmlParserStatus>
 
+namespace qqsfpm {
+
 class QQmlSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParserStatus
 {
     Q_OBJECT
@@ -85,5 +87,7 @@ private:
     QString m_sortRoleName;
     bool m_completed = false;
 };
+
+}
 
 #endif // QQMLSORTFILTERPROXYMODEL_H

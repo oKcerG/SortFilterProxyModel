@@ -1,6 +1,8 @@
 #include "qqmlsortfilterproxymodel.h"
 #include <QtQml>
 
+namespace qqsfpm {
+
 QQmlSortFilterProxyModel::QQmlSortFilterProxyModel(QObject *parent) :
     QSortFilterProxyModel(parent)
 {
@@ -190,3 +192,5 @@ void registerQQmlSortFilterProxyModelTypes() {
 }
 
 Q_COREAPP_STARTUP_FUNCTION(registerQQmlSortFilterProxyModelTypes)
+
+}

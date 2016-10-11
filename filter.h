@@ -4,6 +4,8 @@
 #include <QObject>
 #include "qqmlsortfilterproxymodel.h"
 
+namespace qqsfpm {
+
 class Filter : public QObject
 {
     Q_OBJECT
@@ -83,5 +85,7 @@ signals:
 private:
     QVariant m_value;
 };
+
+}
 
 #endif // FILTER_H

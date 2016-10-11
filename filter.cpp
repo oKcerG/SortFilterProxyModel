@@ -1,5 +1,7 @@
 #include "filter.h"
 
+namespace qqsfpm {
+
 Filter::Filter(QObject *parent) : QObject(parent)
 {
     connect(this, &Filter::filterChanged, this, &Filter::onFilterChanged);
@@ -94,4 +96,6 @@ void ValueFilter::setValue(const QVariant& value)
 bool ValueFilter::filterRow(const QModelIndex& sourceIndex) const
 {
     return !m_value.isValid() || m_value == sourceData(sourceIndex);
+}
+
 }
