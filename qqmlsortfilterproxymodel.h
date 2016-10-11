@@ -59,8 +59,8 @@ public:
     const QQmlScriptString& sortExpression() const;
     void setSortExpression(const QQmlScriptString& compareScriptString);
 
-    void classBegin();
-    void componentComplete();
+    void classBegin() override;
+    void componentComplete() override;
 
 signals:
     void countChanged();
@@ -75,8 +75,8 @@ signals:
     void sortExpressionChanged();
 
 protected:
-    bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const;
-    bool lessThan(const QModelIndex& source_left, const QModelIndex& source_right) const;
+    bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override;
+    bool lessThan(const QModelIndex& source_left, const QModelIndex& source_right) const override;
 
 private slots:
     void invalidateFilter();
@@ -92,13 +92,13 @@ private:
     QString m_sortRoleName;
 
     QQmlScriptString m_filterScriptString;
-    QQmlExpression* m_filterExpression;
+    QQmlExpression* m_filterExpression = nullptr;
 
     QQmlScriptString m_compareScriptString;
-    QQmlExpression* m_compareExpression;
+    QQmlExpression* m_compareExpression = nullptr;
     QVariant m_filterValue;
 
-    bool m_completed;
+    bool m_completed = false;
 };
 
 #endif // QQMLSORTFILTERPROXYMODEL_H

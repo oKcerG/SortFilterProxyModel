@@ -2,10 +2,7 @@
 #include <QtQml>
 
 QQmlSortFilterProxyModel::QQmlSortFilterProxyModel(QObject *parent) :
-    QSortFilterProxyModel(parent),
-    m_filterExpression(0),
-    m_compareExpression(0),
-    m_completed(false)
+    QSortFilterProxyModel(parent)
 {
     connect(this, &QAbstractProxyModel::sourceModelChanged, this, &QQmlSortFilterProxyModel::updateRoles);
     connect(this, &QAbstractItemModel::modelReset, this, &QQmlSortFilterProxyModel::updateRoles);
