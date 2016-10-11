@@ -3,8 +3,11 @@
 
 #include <QSortFilterProxyModel>
 #include <QQmlParserStatus>
+#include <QQmlListProperty>
 
 namespace qqsfpm {
+
+class Filter;
 
 class QQmlSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParserStatus
 {
@@ -20,6 +23,8 @@ class QQmlSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParser
 
     Q_PROPERTY(QString sortRoleName READ sortRoleName WRITE setSortRoleName NOTIFY sortRoleNameChanged)
     Q_PROPERTY(Qt::SortOrder sortOrder READ sortOrder WRITE setSortOrder)
+
+    Q_PROPERTY(QQmlListProperty<qqsfpm::Filter> filters READ filters)
 
 public:
     enum PatternSyntax {
@@ -52,6 +57,8 @@ public:
 
     void setSortOrder(Qt::SortOrder sortOrder);
 
+    QQmlListProperty<Filter> filters();
+
     void classBegin() override;
     void componentComplete() override;
 
@@ -82,9 +89,15 @@ private slots:
 private:
     QVariantMap modelDataMap(const QModelIndex& modelIndex) const;
 
+    static void append_filter(QQmlListProperty<Filter>* list, Filter* filter);
+    static int count_filter(QQmlListProperty<Filter>* list);
+    static Filter* at_filter(QQmlListProperty<Filter>* list, int index);
+    static void clear_filters(QQmlListProperty<Filter>* list);
+
     QString m_filterRoleName;
     QVariant m_filterValue;
     QString m_sortRoleName;
+    QList<Filter*> m_filters;
     bool m_completed = false;
 };
 
