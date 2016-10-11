@@ -113,6 +113,17 @@ void QQmlSortFilterProxyModel::componentComplete()
     invalidate();
 }
 
+QVariant QQmlSortFilterProxyModel::sourceData(const QModelIndex& sourceIndex, const QString& roleName) const
+{
+    int role = sourceModel()->roleNames().key(roleName.toUtf8());
+    return sourceData(sourceIndex, role);
+}
+
+QVariant QQmlSortFilterProxyModel::sourceData(const QModelIndex &sourceIndex, int role) const
+{
+    return sourceModel()->data(sourceIndex, role);
+}
+
 bool QQmlSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const
 {
     QModelIndex modelIndex = sourceModel()->index(source_row, 0, source_parent);
