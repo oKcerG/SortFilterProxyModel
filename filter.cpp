@@ -337,6 +337,73 @@ void ExpressionFilter::updateExpression()
     m_expression->evaluate();
 }
 
+QQmlListProperty<Filter> FilterContainer::filters()
+{
+    return QQmlListProperty<Filter>(this, &m_filters,
+                                    &FilterContainer::append_filter,
+                                    &FilterContainer::count_filter,
+                                    &FilterContainer::at_filter,
+                                    &FilterContainer::clear_filters);
+}
+
+void FilterContainer::append_filter(QQmlListProperty<Filter>* list, Filter* filter)
+{
+    if (!filter)
+        return;
+
+    FilterContainer* that = static_cast<FilterContainer*>(list->object);
+    that->m_filters.append(filter);
+    connect(filter, &Filter::invalidate, that, &Filter::filterChanged);
+    that->filterChanged();
+}
+
+int FilterContainer::count_filter(QQmlListProperty<Filter>* list)
+{
+    QList<Filter*>* filters = static_cast<QList<Filter*>*>(list->data);
+    return filters->count();
+}
+
+Filter* FilterContainer::at_filter(QQmlListProperty<Filter>* list, int index)
+{
+    QList<Filter*>* filters = static_cast<QList<Filter*>*>(list->data);
+    return filters->at(index);
+}
+
+void FilterContainer::clear_filters(QQmlListProperty<Filter> *list)
+{
+    FilterContainer* that = static_cast<FilterContainer*>(list->object);
+    that->m_filters.clear();
+    that->filterChanged();
+}
+
+void FilterContainer::proxyModelCompleted()
+{
+    for (Filter* filter : m_filters) {
+        filter->m_proxyModel = proxyModel();
+        filter->proxyModelCompleted();
+    }
+}
+
+bool AnyOfFilter::filterRow(const QModelIndex& sourceIndex) const
+{
+    //return true if any of the enabled filters return true
+    return std::any_of(m_filters.begin(), m_filters.end(),
+        [&sourceIndex] (Filter* filter) {
+            return filter->enabled() && filter->filterAcceptsRow(sourceIndex);
+        }
+    );
+}
+
+bool AllOfFilter::filterRow(const QModelIndex& sourceIndex) const
+{
+    //return true if all filters return false, or if there is no filter.
+    return std::all_of(m_filters.begin(), m_filters.end(),
+        [&sourceIndex] (Filter* filter) {
+            return filter->filterAcceptsRow(sourceIndex);
+        }
+    );
+}
+
 void registerFilterTypes() {
     qmlRegisterUncreatableType<Filter>("SortFilterProxyModel", 0, 2, "Filter", "Filter is an abstract class");
     qmlRegisterType<ValueFilter>("SortFilterProxyModel", 0, 2, "ValueFilter");
@@ -344,6 +411,8 @@ void registerFilterTypes() {
     qmlRegisterType<RegexpFilter>("SortFilterProxyModel", 0, 2, "RegexpFilter");
     qmlRegisterType<RangeFilter>("SortFilterProxyModel", 0, 2, "RangeFilter");
     qmlRegisterType<ExpressionFilter>("SortFilterProxyModel", 0, 2, "ExpressionFilter");
+    qmlRegisterType<AnyOfFilter>("SortFilterProxyModel", 0, 2, "AnyOf");
+    qmlRegisterType<AllOfFilter>("SortFilterProxyModel", 0, 2, "AllOf");
 }
 
 Q_COREAPP_STARTUP_FUNCTION(registerFilterTypes)

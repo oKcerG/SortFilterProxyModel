@@ -13,6 +13,7 @@ class Filter : public QObject
     Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
     Q_PROPERTY(bool inverted READ inverted WRITE setInverted NOTIFY invertedChanged)
     friend class QQmlSortFilterProxyModel;
+    friend class FilterContainer;
 
 public:
     explicit Filter(QObject *parent = 0);
@@ -203,6 +204,47 @@ private:
     QQmlScriptString m_scriptString;
     QQmlExpression* m_expression = nullptr;
     QQmlContext* m_context = nullptr;
+};
+
+class FilterContainer : public Filter {
+    Q_OBJECT
+    Q_PROPERTY(QQmlListProperty<qqsfpm::Filter> filters READ filters)
+    Q_CLASSINFO("DefaultProperty", "filters")
+
+public:
+    using Filter::Filter;
+
+    QQmlListProperty<Filter> filters();
+
+    static void append_filter(QQmlListProperty<Filter>* list, Filter* filter);
+    static int count_filter(QQmlListProperty<Filter>* list);
+    static Filter* at_filter(QQmlListProperty<Filter>* list, int index);
+    static void clear_filters(QQmlListProperty<Filter>* list);
+
+protected:
+    void proxyModelCompleted() override;
+
+    QList<Filter*> m_filters;
+};
+
+class AnyOfFilter : public FilterContainer {
+    Q_OBJECT
+
+public:
+    using FilterContainer::FilterContainer;
+
+protected:
+    bool filterRow(const QModelIndex& sourceIndex) const override;
+};
+
+class AllOfFilter : public FilterContainer {
+    Q_OBJECT
+
+public:
+    using FilterContainer::FilterContainer;
+
+protected:
+    bool filterRow(const QModelIndex& sourceIndex) const override;
 };
 
 }
