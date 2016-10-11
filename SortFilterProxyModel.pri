@@ -3,6 +3,8 @@
 INCLUDEPATH += $$PWD
 
 HEADERS += $$PWD/qqmlsortfilterproxymodel.h \
-    $$PWD/filter.h
+    $$PWD/filter.h \
+    $$PWD/sorter.h
 SOURCES += $$PWD/qqmlsortfilterproxymodel.cpp \
-    $$PWD/filter.cpp
+    $$PWD/filter.cpp \
+    $$PWD/sorter.cpp
