@@ -104,4 +104,11 @@ int RoleSorter::compare(const QModelIndex &sourceLeft, const QModelIndex& source
     return 0;
 }
 
+void registerSorterTypes() {
+    qmlRegisterUncreatableType<Sorter>("SortFilterProxyModel", 0, 2, "Sorter", "Sorter is an abstract class");
+    qmlRegisterType<RoleSorter>("SortFilterProxyModel", 0, 2, "RoleSorter");
+}
+
+Q_COREAPP_STARTUP_FUNCTION(registerSorterTypes)
+
 }
