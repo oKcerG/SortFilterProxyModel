@@ -241,12 +241,109 @@ bool RangeFilter::filterRow(const QModelIndex& sourceIndex) const
     return !(lessThanMin || moreThanMax);
 }
 
+const QQmlScriptString& ExpressionFilter::expression() const
+{
+    return m_scriptString;
+}
+
+void ExpressionFilter::setExpression(const QQmlScriptString& scriptString)
+{
+    if (m_scriptString == scriptString)
+        return;
+
+    m_scriptString = scriptString;
+    updateExpression();
+
+    emit expressionChanged();
+    emit filterChanged();
+}
+
+bool ExpressionFilter::filterRow(const QModelIndex& sourceIndex) const
+{
+    if (!m_scriptString.isEmpty()) {
+        QVariantMap modelMap;
+        QHash<int, QByteArray> roles = proxyModel()->roleNames();
+
+        QQmlContext context(qmlContext(this));
+        auto addToContext = [&] (const QString &name, const QVariant& value) {
+            context.setContextProperty(name, value);
+            modelMap.insert(name, value);
+        };
+
+        for (auto it = roles.cbegin(); it != roles.cend(); ++it)
+            addToContext(it.value(), proxyModel()->sourceData(sourceIndex, it.key()));
+        addToContext("index", sourceIndex.row());
+
+        context.setContextProperty("model", modelMap);
+
+        QQmlExpression expression(m_scriptString, &context);
+        QVariant variantResult = expression.evaluate();
+
+        if (expression.hasError()) {
+            qWarning() << expression.error();
+            return true;
+        }
+        if (variantResult.canConvert<bool>()) {
+            return variantResult.toBool();
+        } else {
+            qWarning("%s:%i:%i : Can't convert result to bool",
+                     expression.sourceFile().toUtf8().data(),
+                     expression.lineNumber(),
+                     expression.columnNumber());
+            return true;
+        }
+    }
+    return true;
+}
+
+void ExpressionFilter::proxyModelCompleted()
+{
+    updateContext();
+}
+
+void ExpressionFilter::updateContext()
+{
+    if (!proxyModel())
+        return;
+
+    delete m_context;
+    m_context = new QQmlContext(qmlContext(this), this);
+    // what about roles changes ?
+    QVariantMap modelMap;
+
+    auto addToContext = [&] (const QString &name, const QVariant& value) {
+        m_context->setContextProperty(name, value);
+        modelMap.insert(name, value);
+    };
+
+    for (const QByteArray& roleName : proxyModel()->roleNames().values())
+        addToContext(roleName, QVariant());
+
+    addToContext("index", -1);
+
+    m_context->setContextProperty("model", modelMap);
+    updateExpression();
+}
+
+void ExpressionFilter::updateExpression()
+{
+    if (!m_context)
+        return;
+
+    delete m_expression;
+    m_expression = new QQmlExpression(m_scriptString, m_context, 0, this);
+    connect(m_expression, &QQmlExpression::valueChanged, this, &Filter::filterChanged);
+    m_expression->setNotifyOnValueChanged(true);
+    m_expression->evaluate();
+}
+
 void registerFilterTypes() {
     qmlRegisterUncreatableType<Filter>("SortFilterProxyModel", 0, 2, "Filter", "Filter is an abstract class");
     qmlRegisterType<ValueFilter>("SortFilterProxyModel", 0, 2, "ValueFilter");
     qmlRegisterType<IndexFilter>("SortFilterProxyModel", 0, 2, "IndexFilter");
     qmlRegisterType<RegexpFilter>("SortFilterProxyModel", 0, 2, "RegexpFilter");
     qmlRegisterType<RangeFilter>("SortFilterProxyModel", 0, 2, "RangeFilter");
+    qmlRegisterType<ExpressionFilter>("SortFilterProxyModel", 0, 2, "ExpressionFilter");
 }
 
 Q_COREAPP_STARTUP_FUNCTION(registerFilterTypes)

@@ -2,6 +2,7 @@
 #define FILTER_H
 
 #include <QObject>
+#include <QQmlExpression>
 #include "qqmlsortfilterproxymodel.h"
 
 namespace qqsfpm {
@@ -175,6 +176,33 @@ signals:
 private:
     QVariant m_minimumValue;
     QVariant m_maximumValue;
+};
+
+class ExpressionFilter : public Filter
+{
+    Q_OBJECT
+    Q_PROPERTY(QQmlScriptString expression READ expression WRITE setExpression NOTIFY expressionChanged)
+
+public:
+    using Filter::Filter;
+
+    const QQmlScriptString& expression() const;
+    void setExpression(const QQmlScriptString& scriptString);
+
+protected:
+    bool filterRow(const QModelIndex& sourceIndex) const override;
+    void proxyModelCompleted() override;
+
+signals:
+    void expressionChanged();
+
+private:
+    void updateContext();
+    void updateExpression();
+
+    QQmlScriptString m_scriptString;
+    QQmlExpression* m_expression = nullptr;
+    QQmlContext* m_context = nullptr;
 };
 
 }
