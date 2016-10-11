@@ -4,7 +4,8 @@
 QQmlSortFilterProxyModel::QQmlSortFilterProxyModel(QObject *parent) :
     QSortFilterProxyModel(parent),
     m_filterExpression(0),
-    m_compareExpression(0)
+    m_compareExpression(0),
+    m_completed(false)
 {
     connect(this, &QAbstractProxyModel::sourceModelChanged, this, &QQmlSortFilterProxyModel::updateRoles);
     connect(this, &QAbstractItemModel::modelReset, this, &QQmlSortFilterProxyModel::updateRoles);
@@ -164,6 +165,17 @@ void QQmlSortFilterProxyModel::setSortExpression(const QQmlScriptString& compare
     emit sortExpressionChanged();
 }
 
+void QQmlSortFilterProxyModel::classBegin()
+{
+
+}
+
+void QQmlSortFilterProxyModel::componentComplete()
+{
+    m_completed = true;
+    invalidate();
+}
+
 bool QQmlSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const
 {
     QModelIndex modelIndex = sourceModel()->index(source_row, 0, source_parent);
@@ -210,7 +222,14 @@ bool QQmlSortFilterProxyModel::lessThan(const QModelIndex& source_left, const QM
 
 void QQmlSortFilterProxyModel::invalidateFilter()
 {
-    QSortFilterProxyModel::invalidateFilter();
+    if (m_completed)
+        QSortFilterProxyModel::invalidateFilter();
+}
+
+void QQmlSortFilterProxyModel::invalidate()
+{
+    if (m_completed)
+        QSortFilterProxyModel::invalidate();
 }
 
 void QQmlSortFilterProxyModel::updateFilterRole()

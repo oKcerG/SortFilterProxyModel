@@ -2,12 +2,16 @@
 #define QQMLSORTFILTERPROXYMODEL_H
 
 #include <QSortFilterProxyModel>
+#include <QQmlParserStatus>
 #include <QQmlExpression>
 
-class QQmlSortFilterProxyModel : public QSortFilterProxyModel
+class QQmlSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParserStatus
 {
     Q_OBJECT
+    Q_INTERFACES(QQmlParserStatus)
+
     Q_PROPERTY(int count READ count NOTIFY countChanged)
+
     Q_PROPERTY(QString filterRoleName READ filterRoleName WRITE setFilterRoleName NOTIFY filterRoleNameChanged)
     Q_PROPERTY(QString filterPattern READ filterPattern WRITE setFilterPattern NOTIFY filterPatternChanged)
     Q_PROPERTY(PatternSyntax filterPatternSyntax READ filterPatternSyntax WRITE setFilterPatternSyntax NOTIFY filterPatternSyntaxChanged)
@@ -55,6 +59,9 @@ public:
     const QQmlScriptString& sortExpression() const;
     void setSortExpression(const QQmlScriptString& compareScriptString);
 
+    void classBegin();
+    void componentComplete();
+
 signals:
     void countChanged();
 
@@ -73,6 +80,7 @@ protected:
 
 private slots:
     void invalidateFilter();
+    void invalidate();
     void updateFilterRole();
     void updateSortRole();
     void updateRoles();
@@ -89,7 +97,8 @@ private:
     QQmlScriptString m_compareScriptString;
     QQmlExpression* m_compareExpression;
     QVariant m_filterValue;
+
+    bool m_completed;
 };
 
 #endif // QQMLSORTFILTERPROXYMODEL_H
-
