@@ -78,4 +78,30 @@ void Sorter::onSorterChanged()
         emit invalidate();
 }
 
+const QString& RoleSorter::roleName() const
+{
+    return m_roleName;
+}
+
+void RoleSorter::setRoleName(const QString& roleName)
+{
+    if (m_roleName == roleName)
+        return;
+
+    m_roleName = roleName;
+    emit roleNameChanged();
+    emit sorterChanged();
+}
+
+int RoleSorter::compare(const QModelIndex &sourceLeft, const QModelIndex& sourceRight) const
+{
+    QVariant leftValue = proxyModel()->sourceData(sourceLeft, m_roleName);
+    QVariant rightValue = proxyModel()->sourceData(sourceRight, m_roleName);
+    if (leftValue < rightValue)
+        return -1;
+    if (leftValue > rightValue)
+        return 1;
+    return 0;
+}
+
 }

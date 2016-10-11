@@ -48,6 +48,27 @@ private:
     QQmlSortFilterProxyModel* m_proxyModel = nullptr;
 };
 
+class RoleSorter : public Sorter
+{
+    Q_OBJECT
+    Q_PROPERTY(QString roleName READ roleName WRITE setRoleName NOTIFY roleNameChanged)
+
+public:
+    using Sorter::Sorter;
+
+    const QString& roleName() const;
+    void setRoleName(const QString& roleName);
+
+signals:
+    void roleNameChanged();
+
+protected:
+    int compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const override;
+
+private:
+    QString m_roleName;
+};
+
 }
 
 #endif // SORTER_H
