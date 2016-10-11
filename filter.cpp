@@ -149,10 +149,65 @@ bool IndexFilter::filterRow(const QModelIndex &sourceIndex) const
     return (!m_minimumIndexIsSet || sourceRow >= m_minimumIndex) && (!m_maximumIndexIsSet || sourceRow <= m_maximumIndex);
 }
 
+QString RegexpFilter::pattern() const
+{
+    return m_pattern;
+}
+
+void RegexpFilter::setPattern(const QString& pattern)
+{
+    if (m_pattern == pattern)
+        return;
+
+    m_pattern = pattern;
+    m_regExp.setPattern(pattern);
+    emit filterChanged();
+    emit patternChanged();
+}
+
+QQmlSortFilterProxyModel::PatternSyntax RegexpFilter::syntax() const
+{
+    return m_syntax;
+}
+
+void RegexpFilter::setSyntax(QQmlSortFilterProxyModel::PatternSyntax syntax)
+{
+    if (m_syntax == syntax)
+        return;
+
+    m_syntax = syntax;
+    m_regExp.setPatternSyntax(static_cast<QRegExp::PatternSyntax>(syntax));
+    emit filterChanged();
+    emit syntaxChanged();
+}
+
+Qt::CaseSensitivity RegexpFilter::caseSensitivity() const
+{
+    return m_caseSensitivity;
+}
+
+void RegexpFilter::setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)
+{
+    if (m_caseSensitivity == caseSensitivity)
+        return;
+
+    m_caseSensitivity = caseSensitivity;
+    m_regExp.setCaseSensitivity(caseSensitivity);
+    emit filterChanged();
+    emit caseSensitivityChanged();
+}
+
+bool RegexpFilter::filterRow(const QModelIndex& sourceIndex) const
+{
+    QString string = sourceData(sourceIndex).toString();
+    return m_regExp.indexIn(string) != -1;
+}
+
 void registerFilterTypes() {
     qmlRegisterUncreatableType<Filter>("SortFilterProxyModel", 0, 2, "Filter", "Filter is an abstract class");
     qmlRegisterType<ValueFilter>("SortFilterProxyModel", 0, 2, "ValueFilter");
     qmlRegisterType<IndexFilter>("SortFilterProxyModel", 0, 2, "IndexFilter");
+    qmlRegisterType<RegexpFilter>("SortFilterProxyModel", 0, 2, "RegexpFilter");
 }
 
 Q_COREAPP_STARTUP_FUNCTION(registerFilterTypes)

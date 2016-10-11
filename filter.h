@@ -117,6 +117,39 @@ private:
     bool m_maximumIndexIsSet = false;
 };
 
+class RegexpFilter : public RoleFilter {
+    Q_OBJECT
+    Q_PROPERTY(QString pattern READ pattern WRITE setPattern NOTIFY patternChanged)
+    Q_PROPERTY(QQmlSortFilterProxyModel::PatternSyntax syntax READ syntax WRITE setSyntax NOTIFY syntaxChanged)
+    Q_PROPERTY(Qt::CaseSensitivity caseSensitivity READ caseSensitivity WRITE setCaseSensitivity NOTIFY caseSensitivityChanged)
+
+public:
+    using RoleFilter::RoleFilter;
+
+    QString pattern() const;
+    void setPattern(const QString& pattern);
+
+    QQmlSortFilterProxyModel::PatternSyntax syntax() const;
+    void setSyntax(QQmlSortFilterProxyModel::PatternSyntax syntax);
+
+    Qt::CaseSensitivity caseSensitivity() const;
+    void setCaseSensitivity(Qt::CaseSensitivity caseSensitivity);
+
+protected:
+    bool filterRow(const QModelIndex& sourceIndex) const override;
+
+signals:
+    void patternChanged();
+    void syntaxChanged();
+    void caseSensitivityChanged();
+
+private:
+    QRegExp m_regExp;
+    Qt::CaseSensitivity m_caseSensitivity = m_regExp.caseSensitivity();
+    QQmlSortFilterProxyModel::PatternSyntax m_syntax = static_cast<QQmlSortFilterProxyModel::PatternSyntax>(m_regExp.patternSyntax());
+    QString m_pattern = m_regExp.pattern();
+};
+
 }
 
 #endif // FILTER_H
