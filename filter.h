@@ -43,4 +43,45 @@ private:
     QQmlSortFilterProxyModel* m_proxyModel = nullptr;
 };
 
+class RoleFilter : public Filter
+{
+    Q_OBJECT
+    Q_PROPERTY(QString roleName READ roleName WRITE setRoleName NOTIFY roleNameChanged)
+
+public:
+    using Filter::Filter;
+
+    const QString& roleName() const;
+    void setRoleName(const QString& roleName);
+
+signals:
+    void roleNameChanged();
+
+protected:
+    QVariant sourceData(const QModelIndex &sourceIndex) const;
+
+private:
+    QString m_roleName;
+};
+
+class ValueFilter : public RoleFilter {
+    Q_OBJECT
+    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
+
+public:
+    using RoleFilter::RoleFilter;
+
+    const QVariant& value() const;
+    void setValue(const QVariant& value);
+
+protected:
+    bool filterRow(const QModelIndex &sourceIndex) const override;
+
+signals:
+    void valueChanged();
+
+private:
+    QVariant m_value;
+};
+
 #endif // FILTER_H

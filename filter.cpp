@@ -55,3 +55,43 @@ void Filter::onFilterChanged()
     if (m_enabled)
         invalidate();
 }
+
+const QString& RoleFilter::roleName() const
+{
+    return m_roleName;
+}
+
+void RoleFilter::setRoleName(const QString& roleName)
+{
+    if (m_roleName == roleName)
+        return;
+
+    m_roleName = roleName;
+    emit roleNameChanged();
+    emit filterChanged();
+}
+
+QVariant RoleFilter::sourceData(const QModelIndex &sourceIndex) const
+{
+    return proxyModel()->sourceData(sourceIndex, m_roleName);
+}
+
+const QVariant &ValueFilter::value() const
+{
+    return m_value;
+}
+
+void ValueFilter::setValue(const QVariant& value)
+{
+    if (m_value == value)
+        return;
+
+    m_value = value;
+    emit valueChanged();
+    emit filterChanged();
+}
+
+bool ValueFilter::filterRow(const QModelIndex& sourceIndex) const
+{
+    return !m_value.isValid() || m_value == sourceData(sourceIndex);
+}
