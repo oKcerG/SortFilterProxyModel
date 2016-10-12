@@ -2,6 +2,7 @@
 #include <QtQml>
 #include <algorithm>
 #include "filter.h"
+#include "sorter.h"
 
 namespace qqsfpm {
 
@@ -115,6 +116,15 @@ QQmlListProperty<Filter> QQmlSortFilterProxyModel::filters()
                                     &QQmlSortFilterProxyModel::clear_filters);
 }
 
+QQmlListProperty<Sorter> QQmlSortFilterProxyModel::sorters()
+{
+    return QQmlListProperty<Sorter>(this, &m_sorters,
+                                    &QQmlSortFilterProxyModel::append_sorter,
+                                    &QQmlSortFilterProxyModel::count_sorter,
+                                    &QQmlSortFilterProxyModel::at_sorter,
+                                    &QQmlSortFilterProxyModel::clear_sorters);
+}
+
 void QQmlSortFilterProxyModel::classBegin()
 {
 
@@ -126,6 +136,7 @@ void QQmlSortFilterProxyModel::componentComplete()
     for (const auto& filter : m_filters)
         filter->proxyModelCompleted();
     invalidate();
+    sort(0);
 }
 
 QVariant QQmlSortFilterProxyModel::sourceData(const QModelIndex& sourceIndex, const QString& roleName) const
@@ -156,7 +167,22 @@ bool QQmlSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInde
 
 bool QQmlSortFilterProxyModel::lessThan(const QModelIndex& source_left, const QModelIndex& source_right) const
 {
-    return QSortFilterProxyModel::lessThan(source_left, source_right);
+    if (m_completed) {
+        if (!m_sortRoleName.isEmpty()) {
+            if (QSortFilterProxyModel::lessThan(source_left, source_right))
+                return true;
+            if (QSortFilterProxyModel::lessThan(source_right, source_left))
+                return false;
+        }
+        for(auto sorter : m_sorters) {
+            if (sorter->enabled()) {
+                int comparison = sorter->compareRows(source_left, source_right);
+                if (comparison != 0)
+                    return comparison < 0;
+            }
+        }
+    }
+    return source_left.row() < source_right.row();
 }
 
 void QQmlSortFilterProxyModel::invalidateFilter()
@@ -186,7 +212,7 @@ void QQmlSortFilterProxyModel::updateSortRole()
     if (!sortRoles.empty())
     {
         setSortRole(sortRoles.first());
-        sort(0, sortOrder());
+        invalidate();
     }
 }
 
@@ -234,6 +260,37 @@ void QQmlSortFilterProxyModel::clear_filters(QQmlListProperty<Filter> *list)
     QQmlSortFilterProxyModel* that = static_cast<QQmlSortFilterProxyModel*>(list->object);
     that->m_filters.clear();
     that->invalidateFilter();
+}
+
+void QQmlSortFilterProxyModel::append_sorter(QQmlListProperty<Sorter>* list, Sorter* sorter)
+{
+    if (!sorter)
+        return;
+
+    auto that = static_cast<QQmlSortFilterProxyModel*>(list->object);
+    that->m_sorters.append(sorter);
+    connect(sorter, &Sorter::invalidate, that, &QQmlSortFilterProxyModel::invalidate);
+    sorter->m_proxyModel = that;
+    that->invalidate();
+}
+
+int QQmlSortFilterProxyModel::count_sorter(QQmlListProperty<Sorter>* list)
+{
+    auto sorters = static_cast<QList<Sorter*>*>(list->data);
+    return sorters->count();
+}
+
+Sorter *QQmlSortFilterProxyModel::at_sorter(QQmlListProperty<Sorter>* list, int index)
+{
+    auto filters = static_cast<QList<Sorter*>*>(list->data);
+    return filters->at(index);
+}
+
+void QQmlSortFilterProxyModel::clear_sorters(QQmlListProperty<Sorter>* list)
+{
+    auto that = static_cast<QQmlSortFilterProxyModel*>(list->object);
+    that->m_filters.clear();
+    that->invalidate();
 }
 
 void registerQQmlSortFilterProxyModelTypes() {

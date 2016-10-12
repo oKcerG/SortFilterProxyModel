@@ -8,6 +8,7 @@
 namespace qqsfpm {
 
 class Filter;
+class Sorter;
 
 class QQmlSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParserStatus
 {
@@ -25,6 +26,7 @@ class QQmlSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParser
     Q_PROPERTY(Qt::SortOrder sortOrder READ sortOrder WRITE setSortOrder)
 
     Q_PROPERTY(QQmlListProperty<qqsfpm::Filter> filters READ filters)
+    Q_PROPERTY(QQmlListProperty<qqsfpm::Sorter> sorters READ sorters)
 
 public:
     enum PatternSyntax {
@@ -58,6 +60,7 @@ public:
     void setSortOrder(Qt::SortOrder sortOrder);
 
     QQmlListProperty<Filter> filters();
+    QQmlListProperty<Sorter> sorters();
 
     void classBegin() override;
     void componentComplete() override;
@@ -94,10 +97,16 @@ private:
     static Filter* at_filter(QQmlListProperty<Filter>* list, int index);
     static void clear_filters(QQmlListProperty<Filter>* list);
 
+    static void append_sorter(QQmlListProperty<Sorter>* list, Sorter* sorter);
+    static int count_sorter(QQmlListProperty<Sorter>* list);
+    static Sorter* at_sorter(QQmlListProperty<Sorter>* list, int index);
+    static void clear_sorters(QQmlListProperty<Sorter>* list);
+
     QString m_filterRoleName;
     QVariant m_filterValue;
     QString m_sortRoleName;
     QList<Filter*> m_filters;
+    QList<Sorter*> m_sorters;
     bool m_completed = false;
 };
 
