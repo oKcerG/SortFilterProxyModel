@@ -104,9 +104,116 @@ int RoleSorter::compare(const QModelIndex &sourceLeft, const QModelIndex& source
     return 0;
 }
 
+const QQmlScriptString& ExpressionSorter::expression() const
+{
+    return m_scriptString;
+}
+
+void ExpressionSorter::setExpression(const QQmlScriptString& scriptString)
+{
+    if (m_scriptString == scriptString)
+        return;
+
+    m_scriptString = scriptString;
+    updateExpression();
+
+    emit expressionChanged();
+    emit sorterChanged();
+}
+
+bool evaluateBoolExpression(QQmlExpression& expression)
+{
+    QVariant variantResult = expression.evaluate();
+    if (expression.hasError()) {
+        qWarning() << expression.error();
+        return false;
+    }
+    if (variantResult.canConvert<bool>()) {
+        return variantResult.toBool();
+    } else {
+        qWarning("%s:%i:%i : Can't convert result to bool",
+                 expression.sourceFile().toUtf8().data(),
+                 expression.lineNumber(),
+                 expression.columnNumber());
+        return false;
+    }
+}
+
+int ExpressionSorter::compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const
+{
+    if (!m_scriptString.isEmpty()) {
+        QVariantMap modelLeftMap, modelRightMap;
+        QHash<int, QByteArray> roles = proxyModel()->roleNames();
+
+        QQmlContext context(qmlContext(this));
+
+        for (auto it = roles.cbegin(); it != roles.cend(); ++it) {
+            modelLeftMap.insert(it.value(), proxyModel()->sourceData(sourceLeft, it.key()));
+            modelRightMap.insert(it.value(), proxyModel()->sourceData(sourceRight, it.key()));
+        }
+        modelLeftMap.insert("index", sourceLeft.row());
+        modelRightMap.insert("index", sourceRight.row());
+
+        QQmlExpression expression(m_scriptString, &context);
+
+        context.setContextProperty("modelLeft", modelLeftMap);
+        context.setContextProperty("modelRight", modelRightMap);
+        if (evaluateBoolExpression(expression))
+                return -1;
+
+        context.setContextProperty("modelLeft", modelRightMap);
+        context.setContextProperty("modelRight", modelLeftMap);
+        if (evaluateBoolExpression(expression))
+                return 1;
+    }
+    return 0;
+}
+
+void ExpressionSorter::proxyModelCompleted()
+{
+    updateContext();
+}
+
+void ExpressionSorter::updateContext()
+{
+    if (!proxyModel())
+        return;
+
+    delete m_context;
+    m_context = new QQmlContext(qmlContext(this), this);
+
+    QVariantMap modelLeftMap, modelRightMap;
+    // what about roles changes ?
+
+    for (const QByteArray& roleName : proxyModel()->roleNames().values()) {
+        modelLeftMap.insert(roleName, QVariant());
+        modelRightMap.insert(roleName, QVariant());
+    }
+    modelLeftMap.insert("index", -1);
+    modelRightMap.insert("index", -1);
+
+    m_context->setContextProperty("modelLeft", modelLeftMap);
+    m_context->setContextProperty("modelRight", modelRightMap);
+
+    updateExpression();
+}
+
+void ExpressionSorter::updateExpression()
+{
+    if (!m_context)
+        return;
+
+    delete m_expression;
+    m_expression = new QQmlExpression(m_scriptString, m_context, 0, this);
+    connect(m_expression, &QQmlExpression::valueChanged, this, &Sorter::sorterChanged);
+    m_expression->setNotifyOnValueChanged(true);
+    m_expression->evaluate();
+}
+
 void registerSorterTypes() {
     qmlRegisterUncreatableType<Sorter>("SortFilterProxyModel", 0, 2, "Sorter", "Sorter is an abstract class");
     qmlRegisterType<RoleSorter>("SortFilterProxyModel", 0, 2, "RoleSorter");
+    qmlRegisterType<ExpressionSorter>("SortFilterProxyModel", 0, 2, "ExpressionSorter");
 }
 
 Q_COREAPP_STARTUP_FUNCTION(registerSorterTypes)

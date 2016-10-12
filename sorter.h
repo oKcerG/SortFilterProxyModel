@@ -2,6 +2,7 @@
 #define SORTER_H
 
 #include <QObject>
+#include <QQmlExpression>
 #include "qqmlsortfilterproxymodel.h"
 
 namespace qqsfpm {
@@ -67,6 +68,33 @@ protected:
 
 private:
     QString m_roleName;
+};
+
+class ExpressionSorter : public Sorter
+{
+    Q_OBJECT
+    Q_PROPERTY(QQmlScriptString expression READ expression WRITE setExpression NOTIFY expressionChanged)
+
+public:
+    using Sorter::Sorter;
+
+    const QQmlScriptString& expression() const;
+    void setExpression(const QQmlScriptString& scriptString);
+
+signals:
+    void expressionChanged();
+
+protected:
+    int compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const override;
+    void proxyModelCompleted() override;
+
+private:
+    void updateContext();
+    void updateExpression();
+
+    QQmlScriptString m_scriptString;
+    QQmlExpression* m_expression = nullptr;
+    QQmlContext* m_context = nullptr;
 };
 
 }
