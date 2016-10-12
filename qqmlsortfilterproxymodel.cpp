@@ -129,8 +129,7 @@ void QQmlSortFilterProxyModel::setSortRoleName(const QString& sortRoleName)
 
 void QQmlSortFilterProxyModel::setSortOrder(Qt::SortOrder sortOrder)
 {
-    if (!m_sortRoleName.isEmpty())
-        sort(0, sortOrder);
+    sort(0, sortOrder);
 }
 
 const QQmlScriptString& QQmlSortFilterProxyModel::sortExpression() const
