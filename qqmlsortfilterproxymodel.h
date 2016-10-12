@@ -23,7 +23,7 @@ class QQmlSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParser
     Q_PROPERTY(QVariant filterValue READ filterValue WRITE setFilterValue NOTIFY filterValueChanged)
 
     Q_PROPERTY(QString sortRoleName READ sortRoleName WRITE setSortRoleName NOTIFY sortRoleNameChanged)
-    Q_PROPERTY(Qt::SortOrder sortOrder READ sortOrder WRITE setSortOrder)
+    Q_PROPERTY(bool ascendingSortOrder READ ascendingSortOrder WRITE setAscendingSortOrder NOTIFY ascendingSortOrderChanged)
 
     Q_PROPERTY(QQmlListProperty<qqsfpm::Filter> filters READ filters)
     Q_PROPERTY(QQmlListProperty<qqsfpm::Sorter> sorters READ sorters)
@@ -57,7 +57,8 @@ public:
     const QString& sortRoleName() const;
     void setSortRoleName(const QString& sortRoleName);
 
-    void setSortOrder(Qt::SortOrder sortOrder);
+    bool ascendingSortOrder() const;
+    void setAscendingSortOrder(bool ascendingSortOrder);
 
     QQmlListProperty<Filter> filters();
     QQmlListProperty<Sorter> sorters();
@@ -77,6 +78,7 @@ signals:
     void filterValueChanged();
 
     void sortRoleNameChanged();
+    void ascendingSortOrderChanged();
 
 protected:
     bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override;
@@ -105,6 +107,7 @@ private:
     QString m_filterRoleName;
     QVariant m_filterValue;
     QString m_sortRoleName;
+    bool m_ascendingSortOrder = true;
     QList<Filter*> m_filters;
     QList<Sorter*> m_sorters;
     bool m_completed = false;

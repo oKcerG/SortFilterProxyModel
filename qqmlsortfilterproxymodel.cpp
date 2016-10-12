@@ -101,10 +101,19 @@ void QQmlSortFilterProxyModel::setSortRoleName(const QString& sortRoleName)
     emit sortRoleNameChanged();
 }
 
-void QQmlSortFilterProxyModel::setSortOrder(Qt::SortOrder sortOrder)
+bool QQmlSortFilterProxyModel::ascendingSortOrder() const
 {
-    if (!m_sortRoleName.isEmpty())
-        sort(0, sortOrder);
+    return m_ascendingSortOrder;
+}
+
+void QQmlSortFilterProxyModel::setAscendingSortOrder(bool ascendingSortOrder)
+{
+    if (m_ascendingSortOrder == ascendingSortOrder)
+        return;
+
+    m_ascendingSortOrder = ascendingSortOrder;
+    emit ascendingSortOrderChanged();
+    invalidate();
 }
 
 QQmlListProperty<Filter> QQmlSortFilterProxyModel::filters()
@@ -170,9 +179,9 @@ bool QQmlSortFilterProxyModel::lessThan(const QModelIndex& source_left, const QM
     if (m_completed) {
         if (!m_sortRoleName.isEmpty()) {
             if (QSortFilterProxyModel::lessThan(source_left, source_right))
-                return true;
+                return m_ascendingSortOrder;
             if (QSortFilterProxyModel::lessThan(source_right, source_left))
-                return false;
+                return !m_ascendingSortOrder;
         }
         for(auto sorter : m_sorters) {
             if (sorter->enabled()) {
