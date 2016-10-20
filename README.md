@@ -158,55 +158,13 @@ By default, the filter is case sensitive.
 </li>
 
 <li>
-__`filterExpression`__ : _expression_  
-An expression to implement custom filtering, it must evaluate to a boolean.  
-It has the same syntax has a [Property Binding](http://doc.qt.io/qt-5/qtqml-syntax-propertybinding.html)
-except it will be evaluated for each of the source model's rows.  
-Rows that have their expression evaluating to true will be available in this model.  
-Data for each row is exposed like for a delegate of a QML View.
-The expression has access to the index of the row as the `index` property, and data for each role are accessible under the `model` property.
-###### Examples:
-Show only even rows:  
-`filterExpression: index % 2 === 0`
-
-Show all tasks when the corresponding checkbox is checked, otherwise show only unfinished tasks :  
-```qml
-filterExpression: {
-    if (showDoneTasksCheckBox.checked)
-        return true;
-    else
-        return !model.done;
-}
-```
-This expression is reevaluated for a row every time its model data changes.
-When an external property (not `index` or in `model`, like `showDoneTasksCheckBox.checked` here) the expression depends on changes,
-the expression is reevaluated for every row of the source model.
-To capture the properties the expression depends on, the expression is first executed with invalid data and each property access is detected by the QML engine.  
-This means that if a property is not accessed because of a conditional, it won't be captured and the expression won't be reevaluted when this property changes. For example with the following expression :
-```qml
-model.releaseYear > minYearSpinbox.value && model.releaseYear < maxYearSpinbox.value
-```
-The expression will be correctly reevaluated when the minimum year changes but not when the maximum year changes.  
-
-A workaround to this problem is to put the properties the expressions depends on in `var` at the beggining of the expression : 
-```qml
-filterExpression: {
-    var minimumYear = minYearSpinbox.value;
-    var maximumYear = maxYearSpinbox.value;
-    return model.releaseYear > minimumYear && model.releaseYear < maximumYear;
-}
-```
-Note that it is superfluous here for `minimumYear` since it is accessed no matter what.
-</li>
-
-<li>
 __`sortRoleName`__ : _string_  
 The role name of the source model's data used for the sorting.
 </li>
 
 <li>
-__`sortOrder`__ : _enumeration_  
-The order the source model's data is sorted in. Can be `Qt.AscendingOrder` or `Qt.DescendingOder`.  
+__`ascendingSortOrder`__ : _bool_  
+This property holds whether the sort is done in ascending order.  
 By default, sorting is in ascending order.
 </li>
 
@@ -220,13 +178,6 @@ By default, sorting is case sensitive.
 __`isSortLocaleAware`__ : _bool_  
 This property holds the local aware setting used for comparing strings when sorting.  
 By default, sorting is not local aware.
-</li>
-
-<li>
-__`sortExpression`__ : _expression_  
-An expression to implement custom sortering, it must evaluates to a boolean. To read more in depth info about expressions, see `filterExpression`.  
-Model data is accessible for both row with the `indexLeft`, `modelLeft`, `indexRight` and `modelRight` properties.  
-The expression should return `true` if the value of the left item is less than the value of the right item, otherwise returns false.
 </li>
 
 Contributing
