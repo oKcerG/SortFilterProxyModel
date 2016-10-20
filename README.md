@@ -17,10 +17,12 @@ Install
 
 Sample Usage
 ------------
+
+- You can do simple filtering and sorting with SortFilterProxyModel's own properties (`filter*` and `sort*`):
 ```qml
 import QtQuick 2.2
 import QtQuick.Controls 1.2
-import SortFilterProxyModel 0.1
+import SortFilterProxyModel 0.2
 
 ApplicationWindow {
     visible: true
@@ -32,6 +34,7 @@ ApplicationWindow {
         ListElement {
             firstName: "Erwan"
             lastName: "Castex"
+            favorite: true
         }
         // ...
     }
@@ -43,21 +46,56 @@ ApplicationWindow {
     }
 
     SortFilterProxyModel {
-        id: filteredPersonModel
+        id: personProxyModel
         sourceModel: personModel
         filterRoleName: "lastName"
         filterPattern: textField.text
         filterCaseSensitivity: Qt.CaseInsensitive
+        sortRoleName: "FirstName"
     }
 
     ListView {
         anchors { top: textField.bottom; bottom: parent.bottom; left: parent.left; right: parent.right }
-        model: filteredPersonModel
+        model: personProxyModel
         delegate: Text { text: firstName + " " + lastName}
     }
 }
 ```
 Here the `ListView` will only show elements that contains the content of the `TextField` in their `lastName` role.
+
+- But you can also achieve more complex filtering or sorting with the `filters` and `sorters` list properties :
+```qml
+    SortFilterProxyModel {
+        id: personProxyModel
+        sourceModel: personModel
+        filters: [
+            ValueFilter {
+                enabled: onlyShowFavoritesCheckbox.checked
+                roleName: "favorite"
+                value: true
+            },
+            AnyOf {
+                RegExpFilter {
+                    roleName: "lastName"
+                    pattern: textField.text
+                    caseSensitivity: Qt.CaseInsensitive
+                }
+                RegExpFilter {
+                    roleName: "firstName"
+                    pattern: textField.text
+                    caseSensitivity: Qt.CaseInsensitive
+                }
+            }
+        ]
+        sorters: [
+            RoleSorter { roleName: "favorite"; ascendingOrder: false },
+            RoleSorter { roleName: "firstName" },
+            RoleSorter { roleName: "lastName" }
+        ]
+    }
+```
+This will show in the corresponding `ListView` only the elements where the `firstName` or the `lastName` match the text entered in the `textField`, and if the `onlyShowFavoritesCheckbox` is checked it will aditionnally filter the elements where `favorite` is `true`.
+The favorited elements will be shown first and all the elements are sorted by `firstName` and then `lastName`.
 
 License
 -------
