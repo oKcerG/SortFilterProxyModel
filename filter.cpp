@@ -218,6 +218,21 @@ void RangeFilter::setMinimumValue(QVariant minimumValue)
     emit filterChanged();
 }
 
+bool RangeFilter::minimumInclusive() const
+{
+    return m_minimumInclusive;
+}
+
+void RangeFilter::setMinimumInclusive(bool minimumInclusive)
+{
+    if (m_minimumInclusive == minimumInclusive)
+        return;
+
+    m_minimumInclusive = minimumInclusive;
+    emit minimumInclusiveChanged();
+    emit filterChanged();
+}
+
 QVariant RangeFilter::maximumValue() const
 {
     return m_maximumValue;
@@ -233,11 +248,28 @@ void RangeFilter::setMaximumValue(QVariant maximumValue)
     emit filterChanged();
 }
 
+bool RangeFilter::maximumInclusive() const
+{
+    return m_maximumInclusive;
+}
+
+void RangeFilter::setMaximumInclusive(bool maximumInclusive)
+{
+    if (m_maximumInclusive == maximumInclusive)
+        return;
+
+    m_maximumInclusive = maximumInclusive;
+    emit maximumInclusiveChanged();
+    emit filterChanged();
+}
+
 bool RangeFilter::filterRow(const QModelIndex& sourceIndex) const
 {
     QVariant value = sourceData(sourceIndex);
-    bool lessThanMin = m_minimumValue.isValid() && value < m_minimumValue;
-    bool moreThanMax = m_maximumValue.isValid() && value > m_maximumValue;
+    bool lessThanMin = m_minimumValue.isValid() &&
+            m_minimumInclusive ? value < m_minimumValue : value <= m_minimumValue;
+    bool moreThanMax = m_maximumValue.isValid() &&
+            m_maximumInclusive ? value > m_maximumValue : value >= m_maximumValue;
     return !(lessThanMin || moreThanMax);
 }
 
