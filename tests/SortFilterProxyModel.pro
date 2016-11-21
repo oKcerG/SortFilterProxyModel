@@ -8,4 +8,5 @@ include(../SortFilterProxyModel.pri)
 SOURCES += tst_sortfilterproxymodel.cpp
 
 OTHER_FILES += \
-    tst_rangefilter.qml
+    tst_rangefilter.qml \
+    tst_indexfilter.qml
