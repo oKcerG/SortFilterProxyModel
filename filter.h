@@ -112,10 +112,10 @@ signals:
     void maximumIndexChanged();
 
 private:
-    int m_minimumIndex;
+    int m_minimumIndex = 0;
     bool m_minimumIndexIsSet = false;
 
-    int m_maximumIndex;
+    int m_maximumIndex = 0;
     bool m_maximumIndexIsSet = false;
 };
 
