@@ -38,7 +38,7 @@ Item {
             data.testRole = rangeFilter.roleName;
         }
 
-        function test_minMaxInclusive_data() {
+        function test_minMax_data() {
             return [{
                 // Test that rangeFilter defaults to inclusive min and max
                 modelData: [5,3,1,2,4],
@@ -98,10 +98,10 @@ Item {
             }];
         }
 
-        function test_minMaxInclusive(data) {
+        function test_minMax(data) {
             initModel(data);
 
-            verify(testModel.count == data.expectedModelCount,
+            verify(testModel.count === data.expectedModelCount,
                    "Expected count " + data.expectedModelCount + ", actual count: " + testModel.count);
             for (var i = 0; i < testModel.count; i++)
             {
