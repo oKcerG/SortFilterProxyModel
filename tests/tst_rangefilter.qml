@@ -7,17 +7,15 @@ Item {
     id: topLevelItem
     SortFilterProxyModel {
         id: testModel
-
-        filters : RangeFilter {
-            id: rangeFilter
-        }
-
     }
 
     TestCase {
         name:"RangeFilterTests"
 
         function initModel(data) {
+            data.filter = Qt.createQmlObject("import SortFilterProxyModel 0.2; RangeFilter { id: filter }", testModel, "filter");
+            testModel.filters = data.filter;
+
             if (testModel.sourceModel === null) {
                 testModel.sourceModel = Qt.createQmlObject("import QtQml.Models 2.2; ListModel {}", topLevelItem, "listmodel");
             } else {
@@ -28,14 +26,14 @@ Item {
                 testModel.sourceModel.set(i, { value: data.modelData[i] });
             }
 
-            rangeFilter.minimumValue = data.minValue;
-            rangeFilter.maximumValue = data.maxValue;
+            data.filter.minimumValue = data.minValue;
+            data.filter.maximumValue = data.maxValue;
             if (data.minInclusive !== undefined)
-                rangeFilter.minimumInclusive = data.minInclusive;
+                data.filter.minimumInclusive = data.minInclusive;
             if (data.maxInclusive !== undefined)
-                rangeFilter.maximumInclusive = data.maxInclusive;
-            rangeFilter.roleName = "value";
-            data.testRole = rangeFilter.roleName;
+                data.filter.maximumInclusive = data.maxInclusive;
+            data.filter.roleName = "value";
+            data.testRole = data.filter.roleName;
         }
 
         function test_minMax_data() {
