@@ -28,12 +28,12 @@ Item {
                 testModel.sourceModel.set(i, { value: data.modelData[i] });
             }
 
-            rangeFilter.minimumValue = data.rangeMinValue;
-            rangeFilter.maximumValue = data.rangeMaxValue;
-            if (data.rangeMinInclusive !== undefined)
-                rangeFilter.minimumInclusive = data.rangeMinInclusive;
-            if (data.rangeMaxInclusive !== undefined)
-                rangeFilter.maximumInclusive = data.rangeMaxInclusive;
+            rangeFilter.minimumValue = data.minValue;
+            rangeFilter.maximumValue = data.maxValue;
+            if (data.minInclusive !== undefined)
+                rangeFilter.minimumInclusive = data.minInclusive;
+            if (data.maxInclusive !== undefined)
+                rangeFilter.maximumInclusive = data.maxInclusive;
             rangeFilter.roleName = "value";
             data.testRole = rangeFilter.roleName;
         }
@@ -42,58 +42,58 @@ Item {
             return [{
                 // Test that rangeFilter defaults to inclusive min and max
                 modelData: [5,3,1,2,4],
-                rangeMinValue: 2,
-                rangeMaxValue: 4,
+                minValue: 2,
+                maxValue: 4,
                 expectedModelCount: 3,
                 expectedValues: [3, 2, 4]
             },
             {
                 // Test explicit inclusive min and max
                 modelData: [5,3,1,2,4],
-                rangeMinValue: 2,
-                rangeMaxValue: 4,
-                rangeMinInclusive: true,
-                rangeMaxInclusive: true,
+                minValue: 2,
+                maxValue: 4,
+                minInclusive: true,
+                maxInclusive: true,
                 expectedModelCount: 3,
                 expectedValues: [3, 2, 4]
             },
             {
                 // Test inclusive min, exclusive max
                 modelData: [5,2,3,1,4],
-                rangeMinValue: 2,
-                rangeMaxValue: 4,
-                rangeMinInclusive: true,
-                rangeMaxInclusive: false,
+                minValue: 2,
+                maxValue: 4,
+                minInclusive: true,
+                maxInclusive: false,
                 expectedModelCount: 2,
                 expectedValues: [2, 3]
             },
             {
                 // Test exclusive min, inclusive max
                 modelData: [5,2,3,1,4],
-                rangeMinValue: 2,
-                rangeMaxValue: 4,
-                rangeMinInclusive: false,
-                rangeMaxInclusive: true,
+                minValue: 2,
+                maxValue: 4,
+                minInclusive: false,
+                maxInclusive: true,
                 expectedModelCount: 2,
                 expectedValues: [3, 4]
             },
             {
                 // Test exclusive min and max
                 modelData: [5,2,3,1,4],
-                rangeMinValue: 2,
-                rangeMaxValue: 4,
-                rangeMinInclusive: false,
-                rangeMaxInclusive: false,
+                minValue: 2,
+                maxValue: 4,
+                minInclusive: false,
+                maxInclusive: false,
                 expectedModelCount: 1,
                 expectedValues: [3]
             },
             {
                 // Test inverted range (expect no hits)
                 modelData: [5,2,3,1,4],
-                rangeMinValue: 4,
-                rangeMaxValue: 2,
-                rangeMinInclusive: true,
-                rangeMaxInclusive: true,
+                minValue: 4,
+                maxValue: 2,
+                minInclusive: true,
+                maxInclusive: true,
                 expectedModelCount: 0,
             }];
         }
