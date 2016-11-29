@@ -5,107 +5,82 @@ import QtTest 1.1
 
 Item {
     id: topLevelItem
-    SortFilterProxyModel {
-        id: testModel
+
+    ListModel {
+        id: dataModel0
+        ListElement { value: 5 }
+        ListElement { value: 3 }
+        ListElement { value: 1 }
+        ListElement { value: 2 }
+        ListElement { value: 4 }
     }
+    ListModel {
+        id: dataModel1
+        ListElement { value: 5 }
+        ListElement { value: 2 }
+        ListElement { value: 3 }
+        ListElement { value: 1 }
+        ListElement { value: 4 }
+    }
+
+    SortFilterProxyModel { id: testModel0; sourceModel: dataModel0;
+        // Test that rangeFilter defaults to inclusive min and max
+        property string tag: "model 0"  // If this is not defined, QtTest barfs using these models as the _data array.
+        filters: RangeFilter { roleName: "value"; minimumValue: 2; maximumValue: 4 }
+        property int expectedModelCount: 3
+        property var expectedValues: [3, 2, 4]
+    }
+    SortFilterProxyModel { id: testModel1; sourceModel: dataModel0;
+        // Test explicit inclusive min and max
+        property string tag: "model 1"
+        filters: RangeFilter { roleName: "value"; minimumValue: 2; maximumValue: 4; minimumInclusive: true; maximumInclusive: true }
+        property int expectedModelCount: 3
+        property var expectedValues: [3, 2, 4]
+    }
+    SortFilterProxyModel { id: testModel2; sourceModel: dataModel1
+        // Test inclusive min, exclusive max
+        property string tag: "model 2"
+        filters: RangeFilter { roleName: "value"; minimumValue: 2; maximumValue: 4; minimumInclusive: true; maximumInclusive: false }
+        property int expectedModelCount: 2
+        property var expectedValues: [2, 3]
+    }
+    SortFilterProxyModel { id: testModel3; sourceModel: dataModel1
+        // Test exclusive min, inclusive max
+        property string tag: "model 3"
+        filters: RangeFilter { roleName: "value"; minimumValue: 2; maximumValue: 4; minimumInclusive: false; maximumInclusive: true }
+        property int expectedModelCount: 2
+        property var expectedValues: [3, 4]
+    }
+    SortFilterProxyModel { id: testModel4; sourceModel: dataModel1
+        // Test exclusive min and max
+        property string tag: "model 4"
+        filters: RangeFilter { roleName: "value"; minimumValue: 2; maximumValue: 4; minimumInclusive: false; maximumInclusive: false }
+        property int expectedModelCount: 1
+        property var expectedValues: [3]
+    }
+    SortFilterProxyModel { id: testModel5; sourceModel: dataModel1
+        // Test inverted range (expect no hits)
+        property string tag: "model 5"
+        filters: RangeFilter { roleName: "value"; minimumValue: 4; maximumValue: 2 }
+        property int expectedModelCount: 0
+    }
+
 
     TestCase {
         name:"RangeFilterTests"
 
-        function initModel(data) {
-            data.filter = Qt.createQmlObject("import SortFilterProxyModel 0.2; RangeFilter { id: filter }", testModel, "filter");
-            testModel.filters = data.filter;
-
-            if (testModel.sourceModel === null) {
-                testModel.sourceModel = Qt.createQmlObject("import QtQml.Models 2.2; ListModel {}", topLevelItem, "listmodel");
-            } else {
-                testModel.sourceModel.clear();
-            }
-            for (var i = 0; data.modelData !== undefined && i < data.modelData.length; i++)
-            {
-                testModel.sourceModel.set(i, { value: data.modelData[i] });
-            }
-
-            data.filter.minimumValue = data.minValue;
-            data.filter.maximumValue = data.maxValue;
-            if (data.minInclusive !== undefined)
-                data.filter.minimumInclusive = data.minInclusive;
-            if (data.maxInclusive !== undefined)
-                data.filter.maximumInclusive = data.maxInclusive;
-            data.filter.roleName = "value";
-            data.testRole = data.filter.roleName;
-        }
-
         function test_minMax_data() {
-            return [{
-                // Test that rangeFilter defaults to inclusive min and max
-                modelData: [5,3,1,2,4],
-                minValue: 2,
-                maxValue: 4,
-                expectedModelCount: 3,
-                expectedValues: [3, 2, 4]
-            },
-            {
-                // Test explicit inclusive min and max
-                modelData: [5,3,1,2,4],
-                minValue: 2,
-                maxValue: 4,
-                minInclusive: true,
-                maxInclusive: true,
-                expectedModelCount: 3,
-                expectedValues: [3, 2, 4]
-            },
-            {
-                // Test inclusive min, exclusive max
-                modelData: [5,2,3,1,4],
-                minValue: 2,
-                maxValue: 4,
-                minInclusive: true,
-                maxInclusive: false,
-                expectedModelCount: 2,
-                expectedValues: [2, 3]
-            },
-            {
-                // Test exclusive min, inclusive max
-                modelData: [5,2,3,1,4],
-                minValue: 2,
-                maxValue: 4,
-                minInclusive: false,
-                maxInclusive: true,
-                expectedModelCount: 2,
-                expectedValues: [3, 4]
-            },
-            {
-                // Test exclusive min and max
-                modelData: [5,2,3,1,4],
-                minValue: 2,
-                maxValue: 4,
-                minInclusive: false,
-                maxInclusive: false,
-                expectedModelCount: 1,
-                expectedValues: [3]
-            },
-            {
-                // Test inverted range (expect no hits)
-                modelData: [5,2,3,1,4],
-                minValue: 4,
-                maxValue: 2,
-                minInclusive: true,
-                maxInclusive: true,
-                expectedModelCount: 0,
-            }];
+            return Array.prototype.slice.call(topLevelItem.resources, 2);
         }
 
-        function test_minMax(data) {
-            initModel(data);
-
-            verify(testModel.count === data.expectedModelCount,
-                   "Expected count " + data.expectedModelCount + ", actual count: " + testModel.count);
-            for (var i = 0; i < testModel.count; i++)
+        function test_minMax(model) {
+            verify(model.count === model.expectedModelCount,
+                   "Expected count " + model.expectedModelCount + ", actual count: " + model.count);
+            for (var i = 0; i < model.count; i++)
             {
-                var modelValue = testModel.data(testModel.index(i, 0), data.testRole);
-                verify(modelValue === data.expectedValues[i],
-                       "Expected testModel value " + modelValue + ", actual: " + data.expectedValues[i]);
+                var modelValue = model.data(model.index(i, 0), "value");
+                verify(modelValue === model.expectedValues[i],
+                       "Expected testModel value " + modelValue + ", actual: " + model.expectedValues[i]);
             }
         }
     }

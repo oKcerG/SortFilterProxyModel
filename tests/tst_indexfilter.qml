@@ -5,89 +5,65 @@ import QtTest 1.1
 
 Item {
     id: topLevelItem
-    SortFilterProxyModel {
-        id: testModel
+
+    ListModel {
+        id: dataModel
+        ListElement { value: 5 }
+        ListElement { value: 3 }
+        ListElement { value: 1 }
+        ListElement { value: 2 }
+        ListElement { value: 4 }
     }
+
+    SortFilterProxyModel { id: testModel0; sourceModel: dataModel;
+        property string tag: "model 0"  // If this is not defined, QtTest barfs using these models as the _data array.
+        filters: IndexFilter { minimumIndex: 1; maximumIndex: 3 }
+        // Test basic IndexFilter usage
+        property int expectedModelCount: 3
+        property var expectedValues: [3, 1, 2];
+    }
+    SortFilterProxyModel { id: testModel1; sourceModel: dataModel;
+        property string tag: "model 1"
+        filters: IndexFilter { minimumIndex: 3; maximumIndex: 1 }
+        // Test inverted range (expect no hits)
+        property int expectedModelCount: 0
+    }
+    SortFilterProxyModel { id: testModel2; sourceModel: dataModel;
+        property string tag: "model 2"
+        filters: IndexFilter { minimumIndex: 0; maximumIndex: 0; inverted: true }
+        property int expectedModelCount: 4
+        property var expectedValues: [3,1,2,4];
+    }
+    SortFilterProxyModel { id: testModel3; sourceModel: dataModel;
+        // Test issue #15 - min max of 0 containing the value at index 0.
+        property string tag: "model 3"
+        filters: IndexFilter { minimumIndex: 0; maximumIndex: 0 }
+        property int expectedModelCount: 1
+        property var expectedValues: [5];
+    }
+    SortFilterProxyModel { id: testModel4; sourceModel: dataModel;
+        property string tag: "model 4"
+        filters: IndexFilter { minimumIndex: 1; maximumIndex: 3; inverted: true }
+        property int expectedModelCount: 2
+        property var expectedValues: [5,4]
+    }
+
 
     TestCase {
         name:"IndexFilterTests"
 
-        function initModel(data) {
-            data.filter = Qt.createQmlObject("import SortFilterProxyModel 0.2; IndexFilter { id: filter }", testModel, "filter");
-            testModel.filters = data.filter;
-
-            if (testModel.sourceModel === null) {
-                testModel.sourceModel = Qt.createQmlObject("import QtQml.Models 2.2; ListModel {}", topLevelItem, "listmodel");
-            } else {
-                testModel.sourceModel.clear();
-            }
-            for (var i = 0; data.modelData !== undefined && i < data.modelData.length; i++)
-            {
-                testModel.sourceModel.set(i, { value: data.modelData[i] });
-            }
-
-            data.filter.minimumIndex = data.min;
-            data.filter.maximumIndex = data.max;
-            if (data.inverted)
-                data.filter.inverted = true;
-
-            data.testRole = "value";
-        }
-
         function test_minMax_data() {
-            return [
-            {
-                // Test basic IndexFilter usage
-                modelData: [5,3,1,2,4],
-                min: 1,
-                max: 3,
-                expectedModelCount: 3,
-                expectedValues: [3, 1, 2]
-            },
-            {
-                // Test inverted range (expect no hits)
-                modelData: [5,2,3,1,4],
-                min: 3,
-                max: 1,
-                expectedModelCount: 0,
-            },
-            {
-                modelData: [5,3,1,2,4],
-                min: 0,
-                max: 0,
-                inverted: true,
-                expectedModelCount: 4,
-                expectedValues: [3,1,2,4]
-            },
-            {
-                // Test issue #15 - min max of 0 containing the value at index 0.
-                modelData: [5,3,1,2,4],
-                min: 0,
-                max: 0,
-                expectedModelCount: 1,
-                expectedValues: [5]
-            },
-            {
-                modelData: [5,2,3,1,4],
-                min: 1,
-                max: 3,
-                inverted: true,
-                expectedModelCount: 2,
-                expectedValues: [5,4]
-            },
-            ];
+            return Array.prototype.slice.call(topLevelItem.resources, 1);
         }
 
-        function test_minMax(data) {
-            initModel(data);
-
-            verify(testModel.count === data.expectedModelCount,
-                   "Expected count " + data.expectedModelCount + ", actual count: " + testModel.count);
-            for (var i = 0; i < testModel.count; i++)
+        function test_minMax(model) {
+            verify(model.count === model.expectedModelCount,
+                   "Expected count " + model.expectedModelCount + ", actual count: " + model.count);
+            for (var i = 0; i < model.count; i++)
             {
-                var modelValue = testModel.data(testModel.index(i, 0), data.testRole);
-                verify(modelValue === data.expectedValues[i],
-                       "Expected testModel value " + modelValue + ", actual: " + data.expectedValues[i]);
+                var modelValue = model.data(model.index(i, 0));
+                verify(modelValue === model.expectedValues[i],
+                       "Expected testModel value " + modelValue + ", actual: " + model.expectedValues[i]);
             }
         }
     }
