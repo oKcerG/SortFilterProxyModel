@@ -6,33 +6,33 @@ import QtTest 1.1
 Item {
     property list<IndexFilter> filters: [
         IndexFilter {
-            minimumIndex: 1; maximumIndex: 3
             property string tag: "basicUsage"
             property int expectedModelCount: 3
             property var expectedValues: [3, 1, 2];
+            minimumIndex: 1; maximumIndex: 3
         },
         IndexFilter {
-            minimumIndex: 3; maximumIndex: 1
             property string tag: "outOfBounds"
             property int expectedModelCount: 0
+            minimumIndex: 3; maximumIndex: 1
         },
         IndexFilter {
-            minimumIndex: 0; maximumIndex: 0; inverted: true
             property string tag: "0to0Inverted"
             property int expectedModelCount: 4
             property var expectedValues: [3,1,2,4]
+            minimumIndex: 0; maximumIndex: 0; inverted: true
         },
         IndexFilter {
-            minimumIndex: 0; maximumIndex: 0
             property string tag: "0to0" // bug / issue #15
             property int expectedModelCount: 1
             property var expectedValues: [5]
+            minimumIndex: 0; maximumIndex: 0
         },
         IndexFilter {
-            minimumIndex: 1; maximumIndex: 3; inverted: true
             property string tag: "basicUsageInverted"
             property int expectedModelCount: 2
             property var expectedValues: [5,4]
+            minimumIndex: 1; maximumIndex: 3; inverted: true
        }
     ]
 

@@ -23,44 +23,45 @@ Item {
 
     property list<RangeFilter> filters: [
         RangeFilter {
-            roleName: "value"; minimumValue: 2; maximumValue: 4
             property string tag: "inclusive"
             property int expectedModelCount: 3
             property var expectedValues: [3, 2, 4]
             property QtObject dataModel: dataModels[0]
+            roleName: "value"; minimumValue: 2; maximumValue: 4
         },
         RangeFilter {
-            roleName: "value"; minimumValue: 2; maximumValue: 4; minimumInclusive: true; maximumInclusive: true
             property string tag: "explicitInclusive"
             property int expectedModelCount: 3
             property var expectedValues: [3, 2, 4]
             property QtObject dataModel: dataModels[0]
+            roleName: "value"; minimumValue: 2; maximumValue: 4; minimumInclusive: true; maximumInclusive: true
         },
         RangeFilter {
-            roleName: "value"; minimumValue: 2; maximumValue: 4; minimumInclusive: true; maximumInclusive: false
             property string tag: "inclusiveMinExclusiveMax"
             property int expectedModelCount: 2
             property var expectedValues: [2, 3]
             property QtObject dataModel: dataModels[1]
+            roleName: "value"; minimumValue: 2; maximumValue: 4; minimumInclusive: true; maximumInclusive: false
         },
         RangeFilter {
-            roleName: "value"; minimumValue: 2; maximumValue: 4; minimumInclusive: false; maximumInclusive: true
             property string tag: "exclusiveMinInclusiveMax"
             property int expectedModelCount: 2
             property var expectedValues: [3, 4]
             property QtObject dataModel: dataModels[1]
+            roleName: "value"; minimumValue: 2; maximumValue: 4; minimumInclusive: false; maximumInclusive: true
         },
         RangeFilter {
-            roleName: "value"; minimumValue: 2; maximumValue: 4; minimumInclusive: false; maximumInclusive: false
             property string tag: "exclusive"
             property int expectedModelCount: 1
             property var expectedValues: [3]
             property QtObject dataModel: dataModels[1]
+            roleName: "value"; minimumValue: 2; maximumValue: 4; minimumInclusive: false; maximumInclusive: false
         },
-        RangeFilter { roleName: "value"; minimumValue: 4; maximumValue: 2
+        RangeFilter {
             property string tag: "outOfBoundsRange"
             property int expectedModelCount: 0
             property QtObject dataModel: dataModels[1]
+            roleName: "value"; minimumValue: 4; maximumValue: 2
         }
     ]
 
