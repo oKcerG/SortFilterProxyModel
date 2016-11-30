@@ -6,8 +6,7 @@ import QtTest 1.1
 Item {
     id: topLevelItem
 
-    ListModel {
-        id: dataModel
+    property ListModel dataModel: ListModel {
         ListElement { value: 5 }
         ListElement { value: 3 }
         ListElement { value: 1 }
@@ -53,7 +52,7 @@ Item {
         name:"IndexFilterTests"
 
         function test_minMax_data() {
-            return Array.prototype.slice.call(topLevelItem.resources, 1);
+            return topLevelItem.resources;
         }
 
         function test_minMax(model) {

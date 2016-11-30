@@ -6,59 +6,59 @@ import QtTest 1.1
 Item {
     id: topLevelItem
 
+    property list<ListModel> dataModels: [
     ListModel {
-        id: dataModel0
         ListElement { value: 5 }
         ListElement { value: 3 }
         ListElement { value: 1 }
         ListElement { value: 2 }
         ListElement { value: 4 }
-    }
+    },
     ListModel {
-        id: dataModel1
         ListElement { value: 5 }
         ListElement { value: 2 }
         ListElement { value: 3 }
         ListElement { value: 1 }
         ListElement { value: 4 }
     }
+    ]
 
-    SortFilterProxyModel { id: testModel0; sourceModel: dataModel0;
+    SortFilterProxyModel { id: testModel0; sourceModel: dataModels[0];
         // Test that rangeFilter defaults to inclusive min and max
         property string tag: "model 0"  // If this is not defined, QtTest barfs using these models as the _data array.
         filters: RangeFilter { roleName: "value"; minimumValue: 2; maximumValue: 4 }
         property int expectedModelCount: 3
         property var expectedValues: [3, 2, 4]
     }
-    SortFilterProxyModel { id: testModel1; sourceModel: dataModel0;
+    SortFilterProxyModel { id: testModel1; sourceModel: dataModels[0];
         // Test explicit inclusive min and max
         property string tag: "model 1"
         filters: RangeFilter { roleName: "value"; minimumValue: 2; maximumValue: 4; minimumInclusive: true; maximumInclusive: true }
         property int expectedModelCount: 3
         property var expectedValues: [3, 2, 4]
     }
-    SortFilterProxyModel { id: testModel2; sourceModel: dataModel1
+    SortFilterProxyModel { id: testModel2; sourceModel: dataModels[1]
         // Test inclusive min, exclusive max
         property string tag: "model 2"
         filters: RangeFilter { roleName: "value"; minimumValue: 2; maximumValue: 4; minimumInclusive: true; maximumInclusive: false }
         property int expectedModelCount: 2
         property var expectedValues: [2, 3]
     }
-    SortFilterProxyModel { id: testModel3; sourceModel: dataModel1
+    SortFilterProxyModel { id: testModel3; sourceModel: dataModels[1]
         // Test exclusive min, inclusive max
         property string tag: "model 3"
         filters: RangeFilter { roleName: "value"; minimumValue: 2; maximumValue: 4; minimumInclusive: false; maximumInclusive: true }
         property int expectedModelCount: 2
         property var expectedValues: [3, 4]
     }
-    SortFilterProxyModel { id: testModel4; sourceModel: dataModel1
+    SortFilterProxyModel { id: testModel4; sourceModel: dataModels[1]
         // Test exclusive min and max
         property string tag: "model 4"
         filters: RangeFilter { roleName: "value"; minimumValue: 2; maximumValue: 4; minimumInclusive: false; maximumInclusive: false }
         property int expectedModelCount: 1
         property var expectedValues: [3]
     }
-    SortFilterProxyModel { id: testModel5; sourceModel: dataModel1
+    SortFilterProxyModel { id: testModel5; sourceModel: dataModels[1]
         // Test inverted range (expect no hits)
         property string tag: "model 5"
         filters: RangeFilter { roleName: "value"; minimumValue: 4; maximumValue: 2 }
@@ -70,7 +70,7 @@ Item {
         name:"RangeFilterTests"
 
         function test_minMax_data() {
-            return Array.prototype.slice.call(topLevelItem.resources, 2);
+            return topLevelItem.resources;
         }
 
         function test_minMax(model) {
