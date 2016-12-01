@@ -36,16 +36,19 @@ Item {
        }
     ]
 
+    ListModel {
+        id: dataModel
+        ListElement { value: 5 }
+        ListElement { value: 3 }
+        ListElement { value: 1 }
+        ListElement { value: 2 }
+        ListElement { value: 4 }
+    }
+
     SortFilterProxyModel {
         id: testModel
-        property ListModel myModel: ListModel {
-            ListElement { value: 5 }
-            ListElement { value: 3 }
-            ListElement { value: 1 }
-            ListElement { value: 2 }
-            ListElement { value: 4 }
-        }
-        sourceModel: myModel // Crashes/fails with error if I define ListModel directly here.
+        // FIXME: Crashes/fails with error if I define ListModel directly within sourceModel
+        sourceModel: dataModel
     }
 
     TestCase {
@@ -56,7 +59,7 @@ Item {
         }
 
         function test_minMax(filter) {
-            testModel.filters = filter
+            testModel.filters = filter;
 
             verify(testModel.count === filter.expectedModelCount,
                    "Expected count " + filter.expectedModelCount + ", actual count: " + testModel.count);
