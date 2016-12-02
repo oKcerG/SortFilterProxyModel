@@ -106,7 +106,7 @@ int IndexFilter::minimumIndex() const
 
 void IndexFilter::setMinimumIndex(int minimumIndex)
 {
-    if (m_minimumIndex == minimumIndex)
+    if ((m_minimumIndex == minimumIndex) && m_minimumIndexIsSet)
         return;
 
     m_minimumIndex = minimumIndex;
@@ -128,7 +128,7 @@ int IndexFilter::maximumIndex() const
 
 void IndexFilter::setMaximumIndex(int maximumIndex)
 {
-    if (m_maximumIndex == maximumIndex)
+    if ((m_maximumIndex == maximumIndex) && m_maximumIndexIsSet)
         return;
 
     m_maximumIndex = maximumIndex;
