@@ -20,7 +20,7 @@ void Filter::setEnabled(bool enabled)
 
     m_enabled = enabled;
     Q_EMIT enabledChanged();
-    Q_EMIT filterChanged();
+    Q_EMIT invalidate();
 }
 
 bool Filter::inverted() const
