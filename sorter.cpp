@@ -21,8 +21,8 @@ void Sorter::setEnabled(bool enabled)
         return;
 
     m_enabled = enabled;
-    emit enabledChanged();
-    emit sorterChanged();
+    Q_EMIT enabledChanged();
+    Q_EMIT sorterChanged();
 }
 
 bool Sorter::ascendingOrder() const
@@ -36,8 +36,8 @@ void Sorter::setAscendingOrder(bool ascendingOrder)
         return;
 
     m_ascendingOrder = ascendingOrder;
-    emit ascendingOrderChanged();
-    emit sorterChanged();
+    Q_EMIT ascendingOrderChanged();
+    Q_EMIT sorterChanged();
 }
 
 int Sorter::compareRows(const QModelIndex &source_left, const QModelIndex &source_right) const
@@ -75,7 +75,7 @@ void Sorter::proxyModelCompleted()
 void Sorter::onSorterChanged()
 {
     if (m_enabled)
-        emit invalidate();
+        Q_EMIT invalidate();
 }
 
 const QString& RoleSorter::roleName() const
@@ -89,8 +89,8 @@ void RoleSorter::setRoleName(const QString& roleName)
         return;
 
     m_roleName = roleName;
-    emit roleNameChanged();
-    emit sorterChanged();
+    Q_EMIT roleNameChanged();
+    Q_EMIT sorterChanged();
 }
 
 int RoleSorter::compare(const QModelIndex &sourceLeft, const QModelIndex& sourceRight) const
@@ -117,8 +117,8 @@ void ExpressionSorter::setExpression(const QQmlScriptString& scriptString)
     m_scriptString = scriptString;
     updateExpression();
 
-    emit expressionChanged();
-    emit sorterChanged();
+    Q_EMIT expressionChanged();
+    Q_EMIT sorterChanged();
 }
 
 bool evaluateBoolExpression(QQmlExpression& expression)

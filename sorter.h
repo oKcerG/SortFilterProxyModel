@@ -26,7 +26,7 @@ public:
 
     int compareRows(const QModelIndex& source_left, const QModelIndex& source_right) const;
 
-signals:
+Q_SIGNALS:
     void enabledChanged();
     void ascendingOrderChanged();
 
@@ -40,7 +40,7 @@ protected:
     virtual bool lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const;
     virtual void proxyModelCompleted();
 
-private slots:
+private Q_SLOTS:
     void onSorterChanged();
 
 private:
@@ -60,7 +60,7 @@ public:
     const QString& roleName() const;
     void setRoleName(const QString& roleName);
 
-signals:
+Q_SIGNALS:
     void roleNameChanged();
 
 protected:
@@ -81,7 +81,7 @@ public:
     const QQmlScriptString& expression() const;
     void setExpression(const QQmlScriptString& scriptString);
 
-signals:
+Q_SIGNALS:
     void expressionChanged();
 
 protected:

@@ -35,7 +35,7 @@ void QQmlSortFilterProxyModel::setFilterRoleName(const QString& filterRoleName)
 
     m_filterRoleName = filterRoleName;
     updateFilterRole();
-    emit filterRoleNameChanged();
+    Q_EMIT filterRoleNameChanged();
 }
 
 QString QQmlSortFilterProxyModel::filterPattern() const
@@ -51,7 +51,7 @@ void QQmlSortFilterProxyModel::setFilterPattern(const QString& filterPattern)
 
     regExp.setPattern(filterPattern);
     QSortFilterProxyModel::setFilterRegExp(regExp);
-    emit filterPatternChanged();
+    Q_EMIT filterPatternChanged();
 }
 
 QQmlSortFilterProxyModel::PatternSyntax QQmlSortFilterProxyModel::filterPatternSyntax() const
@@ -68,7 +68,7 @@ void QQmlSortFilterProxyModel::setFilterPatternSyntax(QQmlSortFilterProxyModel::
 
     regExp.setPatternSyntax(patternSyntaxTmp);
     QSortFilterProxyModel::setFilterRegExp(regExp);
-    emit filterPatternSyntaxChanged();
+    Q_EMIT filterPatternSyntaxChanged();
 }
 
 const QVariant& QQmlSortFilterProxyModel::filterValue() const
@@ -83,7 +83,7 @@ void QQmlSortFilterProxyModel::setFilterValue(const QVariant& filterValue)
 
     m_filterValue = filterValue;
     invalidateFilter();
-    emit filterValueChanged();
+    Q_EMIT filterValueChanged();
 }
 
 const QString& QQmlSortFilterProxyModel::sortRoleName() const
@@ -98,7 +98,7 @@ void QQmlSortFilterProxyModel::setSortRoleName(const QString& sortRoleName)
 
     m_sortRoleName = sortRoleName;
     updateSortRole();
-    emit sortRoleNameChanged();
+    Q_EMIT sortRoleNameChanged();
 }
 
 bool QQmlSortFilterProxyModel::ascendingSortOrder() const
@@ -112,7 +112,7 @@ void QQmlSortFilterProxyModel::setAscendingSortOrder(bool ascendingSortOrder)
         return;
 
     m_ascendingSortOrder = ascendingSortOrder;
-    emit ascendingSortOrderChanged();
+    Q_EMIT ascendingSortOrderChanged();
     invalidate();
 }
 

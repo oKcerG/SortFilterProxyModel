@@ -27,7 +27,7 @@ public:
 
     bool filterAcceptsRow(const QModelIndex &sourceIndex) const;
 
-signals:
+Q_SIGNALS:
     void enabledChanged();
     void invertedChanged();
     void filterChanged();
@@ -38,7 +38,7 @@ protected:
     virtual bool filterRow(const QModelIndex &sourceIndex) const = 0;
     virtual void proxyModelCompleted();
 
-private slots:
+private Q_SLOTS:
     void onFilterChanged();
 
 private:
@@ -58,7 +58,7 @@ public:
     const QString& roleName() const;
     void setRoleName(const QString& roleName);
 
-signals:
+Q_SIGNALS:
     void roleNameChanged();
 
 protected:
@@ -81,7 +81,7 @@ public:
 protected:
     bool filterRow(const QModelIndex &sourceIndex) const override;
 
-signals:
+Q_SIGNALS:
     void valueChanged();
 
 private:
@@ -107,7 +107,7 @@ public:
 protected:
     bool filterRow(const QModelIndex &sourceIndex) const override;
 
-signals:
+Q_SIGNALS:
     void minimumIndexChanged();
     void maximumIndexChanged();
 
@@ -140,7 +140,7 @@ public:
 protected:
     bool filterRow(const QModelIndex& sourceIndex) const override;
 
-signals:
+Q_SIGNALS:
     void patternChanged();
     void syntaxChanged();
     void caseSensitivityChanged();
@@ -176,7 +176,7 @@ public:
 protected:
     bool filterRow(const QModelIndex& sourceIndex) const override;
 
-signals:
+Q_SIGNALS:
     void minimumValueChanged();
     void minimumInclusiveChanged();
     void maximumValueChanged();
@@ -204,7 +204,7 @@ protected:
     bool filterRow(const QModelIndex& sourceIndex) const override;
     void proxyModelCompleted() override;
 
-signals:
+Q_SIGNALS:
     void expressionChanged();
 
 private:

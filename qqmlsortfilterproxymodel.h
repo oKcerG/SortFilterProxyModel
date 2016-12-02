@@ -69,7 +69,7 @@ public:
     QVariant sourceData(const QModelIndex& sourceIndex, const QString& roleName) const;
     QVariant sourceData(const QModelIndex& sourceIndex, int role) const;
 
-signals:
+Q_SIGNALS:
     void countChanged();
 
     void filterRoleNameChanged();
@@ -84,7 +84,7 @@ protected:
     bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override;
     bool lessThan(const QModelIndex& source_left, const QModelIndex& source_right) const override;
 
-private slots:
+private Q_SLOTS:
     void invalidateFilter();
     void invalidate();
     void updateFilterRole();

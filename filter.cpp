@@ -19,8 +19,8 @@ void Filter::setEnabled(bool enabled)
         return;
 
     m_enabled = enabled;
-    emit enabledChanged();
-    emit filterChanged();
+    Q_EMIT enabledChanged();
+    Q_EMIT filterChanged();
 }
 
 bool Filter::inverted() const
@@ -34,8 +34,8 @@ void Filter::setInverted(bool inverted)
         return;
 
     m_inverted = inverted;
-    emit invertedChanged();
-    emit filterChanged();
+    Q_EMIT invertedChanged();
+    Q_EMIT filterChanged();
 }
 
 bool Filter::filterAcceptsRow(const QModelIndex &sourceIndex) const
@@ -70,8 +70,8 @@ void RoleFilter::setRoleName(const QString& roleName)
         return;
 
     m_roleName = roleName;
-    emit roleNameChanged();
-    emit filterChanged();
+    Q_EMIT roleNameChanged();
+    Q_EMIT filterChanged();
 }
 
 QVariant RoleFilter::sourceData(const QModelIndex &sourceIndex) const
@@ -90,8 +90,8 @@ void ValueFilter::setValue(const QVariant& value)
         return;
 
     m_value = value;
-    emit valueChanged();
-    emit filterChanged();
+    Q_EMIT valueChanged();
+    Q_EMIT filterChanged();
 }
 
 bool ValueFilter::filterRow(const QModelIndex& sourceIndex) const
@@ -111,14 +111,14 @@ void IndexFilter::setMinimumIndex(int minimumIndex)
 
     m_minimumIndex = minimumIndex;
     m_minimumIndexIsSet = true;
-    emit minimumIndexChanged();
-    emit filterChanged();
+    Q_EMIT minimumIndexChanged();
+    Q_EMIT filterChanged();
 }
 
 void IndexFilter::resetMinimumIndex()
 {
     m_minimumIndexIsSet = false;
-    emit filterChanged();
+    Q_EMIT filterChanged();
 }
 
 int IndexFilter::maximumIndex() const
@@ -133,14 +133,14 @@ void IndexFilter::setMaximumIndex(int maximumIndex)
 
     m_maximumIndex = maximumIndex;
     m_maximumIndexIsSet = true;
-    emit maximumIndexChanged();
-    emit filterChanged();
+    Q_EMIT maximumIndexChanged();
+    Q_EMIT filterChanged();
 }
 
 void IndexFilter::resetMaximumIndex()
 {
     m_maximumIndexIsSet = false;
-    emit filterChanged();
+    Q_EMIT filterChanged();
 }
 
 bool IndexFilter::filterRow(const QModelIndex &sourceIndex) const
@@ -161,8 +161,8 @@ void RegexpFilter::setPattern(const QString& pattern)
 
     m_pattern = pattern;
     m_regExp.setPattern(pattern);
-    emit filterChanged();
-    emit patternChanged();
+    Q_EMIT filterChanged();
+    Q_EMIT patternChanged();
 }
 
 QQmlSortFilterProxyModel::PatternSyntax RegexpFilter::syntax() const
@@ -177,8 +177,8 @@ void RegexpFilter::setSyntax(QQmlSortFilterProxyModel::PatternSyntax syntax)
 
     m_syntax = syntax;
     m_regExp.setPatternSyntax(static_cast<QRegExp::PatternSyntax>(syntax));
-    emit filterChanged();
-    emit syntaxChanged();
+    Q_EMIT filterChanged();
+    Q_EMIT syntaxChanged();
 }
 
 Qt::CaseSensitivity RegexpFilter::caseSensitivity() const
@@ -193,8 +193,8 @@ void RegexpFilter::setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)
 
     m_caseSensitivity = caseSensitivity;
     m_regExp.setCaseSensitivity(caseSensitivity);
-    emit filterChanged();
-    emit caseSensitivityChanged();
+    Q_EMIT filterChanged();
+    Q_EMIT caseSensitivityChanged();
 }
 
 bool RegexpFilter::filterRow(const QModelIndex& sourceIndex) const
@@ -214,8 +214,8 @@ void RangeFilter::setMinimumValue(QVariant minimumValue)
         return;
 
     m_minimumValue = minimumValue;
-    emit minimumValueChanged();
-    emit filterChanged();
+    Q_EMIT minimumValueChanged();
+    Q_EMIT filterChanged();
 }
 
 bool RangeFilter::minimumInclusive() const
@@ -229,8 +229,8 @@ void RangeFilter::setMinimumInclusive(bool minimumInclusive)
         return;
 
     m_minimumInclusive = minimumInclusive;
-    emit minimumInclusiveChanged();
-    emit filterChanged();
+    Q_EMIT minimumInclusiveChanged();
+    Q_EMIT filterChanged();
 }
 
 QVariant RangeFilter::maximumValue() const
@@ -244,8 +244,8 @@ void RangeFilter::setMaximumValue(QVariant maximumValue)
         return;
 
     m_maximumValue = maximumValue;
-    emit maximumValueChanged();
-    emit filterChanged();
+    Q_EMIT maximumValueChanged();
+    Q_EMIT filterChanged();
 }
 
 bool RangeFilter::maximumInclusive() const
@@ -259,8 +259,8 @@ void RangeFilter::setMaximumInclusive(bool maximumInclusive)
         return;
 
     m_maximumInclusive = maximumInclusive;
-    emit maximumInclusiveChanged();
-    emit filterChanged();
+    Q_EMIT maximumInclusiveChanged();
+    Q_EMIT filterChanged();
 }
 
 bool RangeFilter::filterRow(const QModelIndex& sourceIndex) const
@@ -286,8 +286,8 @@ void ExpressionFilter::setExpression(const QQmlScriptString& scriptString)
     m_scriptString = scriptString;
     updateExpression();
 
-    emit expressionChanged();
-    emit filterChanged();
+    Q_EMIT expressionChanged();
+    Q_EMIT filterChanged();
 }
 
 bool ExpressionFilter::filterRow(const QModelIndex& sourceIndex) const
