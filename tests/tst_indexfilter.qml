@@ -33,7 +33,38 @@ Item {
             property int expectedModelCount: 2
             property var expectedValues: [5,4]
             minimumIndex: 1; maximumIndex: 3; inverted: true
-       }
+        },
+        IndexFilter {
+            property string tag: "last"
+            property int expectedModelCount: 1
+            property var expectedValues: [4]
+            minimumIndex: -1
+        },
+        IndexFilter {
+            property string tag: "fromEnd"
+            property int expectedModelCount: 2
+            property var expectedValues: [2, 4]
+            minimumIndex: -2
+        },
+        IndexFilter {
+            property string tag: "fromEndRange"
+            property int expectedModelCount: 2
+            property var expectedValues: [1, 2]
+            minimumIndex: -3
+            maximumIndex: -2
+        },
+        IndexFilter {
+            property string tag: "mixedSignRange"
+            property int expectedModelCount: 3
+            property var expectedValues: [3, 1, 2]
+            minimumIndex: 1
+            maximumIndex: -2
+        },
+        IndexFilter {
+            property string tag: "noFilter"
+            property int expectedModelCount: 5
+            property var expectedValues: [5, 3, 1, 2, 4]
+        }
     ]
 
     ListModel {

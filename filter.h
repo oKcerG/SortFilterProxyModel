@@ -90,33 +90,28 @@ private:
 
 class IndexFilter: public Filter {
     Q_OBJECT
-    Q_PROPERTY(int minimumIndex READ minimumIndex WRITE setMinimumIndex NOTIFY minimumIndexChanged RESET resetMinimumIndex)
-    Q_PROPERTY(int maximumIndex READ maximumIndex WRITE setMaximumIndex NOTIFY maximumIndexChanged RESET resetMaximumIndex)
+    Q_PROPERTY(QVariant minimumIndex READ minimumIndex WRITE setMinimumIndex NOTIFY minimumIndexChanged)
+    Q_PROPERTY(QVariant maximumIndex READ maximumIndex WRITE setMaximumIndex NOTIFY maximumIndexChanged)
 
 public:
     using Filter::Filter;
 
-    int minimumIndex() const;
-    void setMinimumIndex(int minimumIndex);
-    void resetMinimumIndex();
+    const QVariant& minimumIndex() const;
+    void setMinimumIndex(const QVariant& minimumIndex);
 
-    int maximumIndex() const;
-    void setMaximumIndex(int maximumIndex);
-    void resetMaximumIndex();
+    const QVariant& maximumIndex() const;
+    void setMaximumIndex(const QVariant& maximumIndex);
 
 protected:
-    bool filterRow(const QModelIndex &sourceIndex) const override;
+    bool filterRow(const QModelIndex& sourceIndex) const override;
 
 Q_SIGNALS:
     void minimumIndexChanged();
     void maximumIndexChanged();
 
 private:
-    int m_minimumIndex = 0;
-    bool m_minimumIndexIsSet = false;
-
-    int m_maximumIndex = 0;
-    bool m_maximumIndexIsSet = false;
+    QVariant m_minimumIndex;
+    QVariant m_maximumIndex;
 };
 
 class RegexpFilter : public RoleFilter {

@@ -99,54 +99,52 @@ bool ValueFilter::filterRow(const QModelIndex& sourceIndex) const
     return !m_value.isValid() || m_value == sourceData(sourceIndex);
 }
 
-int IndexFilter::minimumIndex() const
+const QVariant& IndexFilter::minimumIndex() const
 {
     return m_minimumIndex;
 }
 
-void IndexFilter::setMinimumIndex(int minimumIndex)
+void IndexFilter::setMinimumIndex(const QVariant& minimumIndex)
 {
-    if ((m_minimumIndex == minimumIndex) && m_minimumIndexIsSet)
+    if (m_minimumIndex == minimumIndex)
         return;
 
     m_minimumIndex = minimumIndex;
-    m_minimumIndexIsSet = true;
     Q_EMIT minimumIndexChanged();
     Q_EMIT filterChanged();
 }
 
-void IndexFilter::resetMinimumIndex()
-{
-    m_minimumIndexIsSet = false;
-    Q_EMIT filterChanged();
-}
-
-int IndexFilter::maximumIndex() const
+const QVariant& IndexFilter::maximumIndex() const
 {
     return m_maximumIndex;
 }
 
-void IndexFilter::setMaximumIndex(int maximumIndex)
+void IndexFilter::setMaximumIndex(const QVariant& maximumIndex)
 {
-    if ((m_maximumIndex == maximumIndex) && m_maximumIndexIsSet)
+    if (m_maximumIndex == maximumIndex)
         return;
 
     m_maximumIndex = maximumIndex;
-    m_maximumIndexIsSet = true;
     Q_EMIT maximumIndexChanged();
     Q_EMIT filterChanged();
 }
 
-void IndexFilter::resetMaximumIndex()
+bool IndexFilter::filterRow(const QModelIndex& sourceIndex) const
 {
-    m_maximumIndexIsSet = false;
-    Q_EMIT filterChanged();
-}
-
-bool IndexFilter::filterRow(const QModelIndex &sourceIndex) const
-{
+    int sourceRowCount = proxyModel()->sourceModel()->rowCount();
     int sourceRow = sourceIndex.row();
-    return (!m_minimumIndexIsSet || sourceRow >= m_minimumIndex) && (!m_maximumIndexIsSet || sourceRow <= m_maximumIndex);
+
+    bool minimumIsValid;
+    int minimum = m_minimumIndex.toInt(&minimumIsValid);
+    int actualMinimum = (sourceRowCount + minimum) % sourceRowCount;
+    bool lowerThanMinimumIndex = minimumIsValid && sourceRow < actualMinimum;
+
+    bool maximumIsValid;
+    int maximum = m_maximumIndex.toInt(&maximumIsValid);
+    int actualMaximum = (sourceRowCount + maximum) % sourceRowCount;
+    bool greaterThanMaximumIndex = maximumIsValid && sourceRow >actualMaximum;
+
+    return !lowerThanMinimumIndex && !greaterThanMaximumIndex;
 }
 
 QString RegexpFilter::pattern() const
