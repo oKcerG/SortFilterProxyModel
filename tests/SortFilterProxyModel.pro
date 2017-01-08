@@ -10,3 +10,6 @@ SOURCES += tst_sortfilterproxymodel.cpp
 OTHER_FILES += \
     tst_rangefilter.qml \
     tst_indexfilter.qml
+
+DISTFILES += \
+    tst_sourceroles.qml
