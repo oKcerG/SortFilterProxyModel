@@ -147,12 +147,12 @@ bool IndexFilter::filterRow(const QModelIndex& sourceIndex) const
     return !lowerThanMinimumIndex && !greaterThanMaximumIndex;
 }
 
-QString RegexpFilter::pattern() const
+QString RegExpFilter::pattern() const
 {
     return m_pattern;
 }
 
-void RegexpFilter::setPattern(const QString& pattern)
+void RegExpFilter::setPattern(const QString& pattern)
 {
     if (m_pattern == pattern)
         return;
@@ -163,12 +163,12 @@ void RegexpFilter::setPattern(const QString& pattern)
     Q_EMIT patternChanged();
 }
 
-QQmlSortFilterProxyModel::PatternSyntax RegexpFilter::syntax() const
+QQmlSortFilterProxyModel::PatternSyntax RegExpFilter::syntax() const
 {
     return m_syntax;
 }
 
-void RegexpFilter::setSyntax(QQmlSortFilterProxyModel::PatternSyntax syntax)
+void RegExpFilter::setSyntax(QQmlSortFilterProxyModel::PatternSyntax syntax)
 {
     if (m_syntax == syntax)
         return;
@@ -179,12 +179,12 @@ void RegexpFilter::setSyntax(QQmlSortFilterProxyModel::PatternSyntax syntax)
     Q_EMIT syntaxChanged();
 }
 
-Qt::CaseSensitivity RegexpFilter::caseSensitivity() const
+Qt::CaseSensitivity RegExpFilter::caseSensitivity() const
 {
     return m_caseSensitivity;
 }
 
-void RegexpFilter::setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)
+void RegExpFilter::setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)
 {
     if (m_caseSensitivity == caseSensitivity)
         return;
@@ -195,7 +195,7 @@ void RegexpFilter::setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)
     Q_EMIT caseSensitivityChanged();
 }
 
-bool RegexpFilter::filterRow(const QModelIndex& sourceIndex) const
+bool RegExpFilter::filterRow(const QModelIndex& sourceIndex) const
 {
     QString string = sourceData(sourceIndex).toString();
     return m_regExp.indexIn(string) != -1;
@@ -438,7 +438,7 @@ void registerFilterTypes() {
     qmlRegisterUncreatableType<Filter>("SortFilterProxyModel", 0, 2, "Filter", "Filter is an abstract class");
     qmlRegisterType<ValueFilter>("SortFilterProxyModel", 0, 2, "ValueFilter");
     qmlRegisterType<IndexFilter>("SortFilterProxyModel", 0, 2, "IndexFilter");
-    qmlRegisterType<RegexpFilter>("SortFilterProxyModel", 0, 2, "RegexpFilter");
+    qmlRegisterType<RegExpFilter>("SortFilterProxyModel", 0, 2, "RegExpFilter");
     qmlRegisterType<RangeFilter>("SortFilterProxyModel", 0, 2, "RangeFilter");
     qmlRegisterType<ExpressionFilter>("SortFilterProxyModel", 0, 2, "ExpressionFilter");
     qmlRegisterType<AnyOfFilter>("SortFilterProxyModel", 0, 2, "AnyOf");

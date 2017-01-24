@@ -114,7 +114,7 @@ private:
     QVariant m_maximumIndex;
 };
 
-class RegexpFilter : public RoleFilter {
+class RegExpFilter : public RoleFilter {
     Q_OBJECT
     Q_PROPERTY(QString pattern READ pattern WRITE setPattern NOTIFY patternChanged)
     Q_PROPERTY(QQmlSortFilterProxyModel::PatternSyntax syntax READ syntax WRITE setSyntax NOTIFY syntaxChanged)
