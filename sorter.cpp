@@ -22,7 +22,7 @@ void Sorter::setEnabled(bool enabled)
 
     m_enabled = enabled;
     Q_EMIT enabledChanged();
-    Q_EMIT sorterChanged();
+    Q_EMIT invalidate();
 }
 
 bool Sorter::ascendingOrder() const
