@@ -302,16 +302,16 @@ int QQmlSortFilterProxyModel::count_sorter(QQmlListProperty<Sorter>* list)
     return sorters->count();
 }
 
-Sorter *QQmlSortFilterProxyModel::at_sorter(QQmlListProperty<Sorter>* list, int index)
+Sorter* QQmlSortFilterProxyModel::at_sorter(QQmlListProperty<Sorter>* list, int index)
 {
-    auto filters = static_cast<QList<Sorter*>*>(list->data);
-    return filters->at(index);
+    auto sorters = static_cast<QList<Sorter*>*>(list->data);
+    return sorters->at(index);
 }
 
 void QQmlSortFilterProxyModel::clear_sorters(QQmlListProperty<Sorter>* list)
 {
     auto that = static_cast<QQmlSortFilterProxyModel*>(list->object);
-    that->m_filters.clear();
+    that->m_sorters.clear();
     that->invalidate();
 }
 
