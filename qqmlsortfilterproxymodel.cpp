@@ -159,6 +159,26 @@ QVariant QQmlSortFilterProxyModel::sourceData(const QModelIndex &sourceIndex, in
     return sourceModel()->data(sourceIndex, role);
 }
 
+int QQmlSortFilterProxyModel::roleForName(const QString& roleName) const
+{
+    return roleNames().key(roleName.toUtf8(), -1);
+}
+
+QVariantMap QQmlSortFilterProxyModel::get(int row) const
+{
+    QVariantMap map;
+    QModelIndex modelIndex = index(row, 0);
+    QHash<int, QByteArray> roles = roleNames();
+    for (QHash<int, QByteArray>::const_iterator it = roles.begin(); it != roles.end(); ++it)
+        map.insert(it.value(), data(modelIndex, it.key()));
+    return map;
+}
+
+QVariant QQmlSortFilterProxyModel::get(int row, const QString& roleName) const
+{
+    return data(index(row, 0), roleForName(roleName));
+}
+
 bool QQmlSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const
 {
     if (!m_completed)

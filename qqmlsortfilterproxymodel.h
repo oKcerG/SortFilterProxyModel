@@ -69,6 +69,11 @@ public:
     QVariant sourceData(const QModelIndex& sourceIndex, const QString& roleName) const;
     QVariant sourceData(const QModelIndex& sourceIndex, int role) const;
 
+    Q_INVOKABLE int roleForName(const QString& roleName) const;
+
+    Q_INVOKABLE QVariantMap get(int row) const;
+    Q_INVOKABLE QVariant get(int row, const QString& roleName) const;
+
 Q_SIGNALS:
     void countChanged();
 
