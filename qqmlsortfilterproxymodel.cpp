@@ -2,7 +2,9 @@
 #include <QtQml>
 #include <algorithm>
 #include "filter.h"
+#include "private/filter_p.h"
 #include "sorter.h"
+#include "private/sorter_p.h"
 
 namespace qqsfpm {
 
@@ -142,8 +144,10 @@ void QQmlSortFilterProxyModel::classBegin()
 void QQmlSortFilterProxyModel::componentComplete()
 {
     m_completed = true;
-    for (const auto& filter : m_filters)
-        filter->proxyModelCompleted();
+    for (const auto& filter : m_filters) {
+        FilterContainerPrivate *filterPrivate = reinterpret_cast<FilterContainerPrivate *>(filter->d_ptr.data());
+        filterPrivate->proxyModelCompleted();
+    }
     invalidate();
     sort(0);
 }
@@ -281,7 +285,9 @@ void QQmlSortFilterProxyModel::append_filter(QQmlListProperty<Filter>* list, Fil
     QQmlSortFilterProxyModel* that = static_cast<QQmlSortFilterProxyModel*>(list->object);
     that->m_filters.append(filter);
     connect(filter, &Filter::invalidate, that, &QQmlSortFilterProxyModel::invalidateFilter);
-    filter->m_proxyModel = that;
+
+    FilterContainerPrivate *filterPrivate = reinterpret_cast<FilterContainerPrivate *>(filter->d_ptr.data());
+    filterPrivate->m_proxyModel = that;
     that->invalidateFilter();
 }
 
@@ -312,7 +318,9 @@ void QQmlSortFilterProxyModel::append_sorter(QQmlListProperty<Sorter>* list, Sor
     auto that = static_cast<QQmlSortFilterProxyModel*>(list->object);
     that->m_sorters.append(sorter);
     connect(sorter, &Sorter::invalidate, that, &QQmlSortFilterProxyModel::invalidate);
-    sorter->m_proxyModel = that;
+
+    SorterPrivate *sorterPrivate = reinterpret_cast<SorterPrivate *>(sorter->d_ptr.data());
+    sorterPrivate->m_proxyModel = that;
     that->invalidate();
 }
 

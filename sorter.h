@@ -1,22 +1,26 @@
-#ifndef SORTER_H
-#define SORTER_H
+#pragma once
 
 #include <QObject>
 #include <QQmlExpression>
 #include "qqmlsortfilterproxymodel.h"
 
-namespace qqsfpm {
+namespace qqsfpm
+{
 
-class Sorter : public QObject
+class SorterPrivate;
+class Sorter: public QObject
 {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(Sorter)
+    Q_DISABLE_COPY(Sorter)
+    Sorter() Q_DECL_EQ_DELETE;
+
     Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
     Q_PROPERTY(bool ascendingOrder READ ascendingOrder WRITE setAscendingOrder NOTIFY ascendingOrderChanged)
     friend class QQmlSortFilterProxyModel;
 
 public:
-    Sorter(QObject* parent = nullptr);
-    virtual ~Sorter() = 0;
+    virtual ~Sorter() Q_DECL_EQ_DEFAULT;
 
     bool enabled() const;
     void setEnabled(bool enabled);
@@ -24,7 +28,10 @@ public:
     bool ascendingOrder() const;
     void setAscendingOrder(bool ascendingOrder);
 
-    int compareRows(const QModelIndex& source_left, const QModelIndex& source_right) const;
+    QQmlSortFilterProxyModel *proxyModel() const;
+    void setProxyModel(QQmlSortFilterProxyModel *model, bool proxyModelCompleted);
+
+    int compareRows(const QModelIndex &source_left, const QModelIndex &source_right) const;
 
 Q_SIGNALS:
     void enabledChanged();
@@ -34,69 +41,64 @@ Q_SIGNALS:
     void invalidate();
 
 protected:
-    QQmlSortFilterProxyModel* proxyModel() const;
-
-    virtual int compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const;
-    virtual bool lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const;
-    virtual void proxyModelCompleted();
-
-private Q_SLOTS:
-    void onSorterChanged();
-
-private:
-    bool m_enabled = true;
-    bool m_ascendingOrder = true;
-    QQmlSortFilterProxyModel* m_proxyModel = nullptr;
+    Sorter(SorterPrivate &dd, QObject *parent = Q_NULLPTR);
+    const QScopedPointer<SorterPrivate> d_ptr;
 };
 
-class RoleSorter : public Sorter
+class RoleSorterPrivate;
+class RoleSorter: public Sorter
 {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(RoleSorter)
+    Q_DISABLE_COPY(RoleSorter)
+
     Q_PROPERTY(QString roleName READ roleName WRITE setRoleName NOTIFY roleNameChanged)
 
 public:
-    using Sorter::Sorter;
+    explicit RoleSorter(QObject *parent = Q_NULLPTR);
+    ~RoleSorter() Q_DECL_EQ_DEFAULT;
 
-    const QString& roleName() const;
-    void setRoleName(const QString& roleName);
+    const QString &roleName() const;
+    void setRoleName(const QString &roleName);
 
 Q_SIGNALS:
     void roleNameChanged();
-
-protected:
-    int compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const override;
-
-private:
-    QString m_roleName;
 };
 
-class ExpressionSorter : public Sorter
+class ExpressionSorterPrivate;
+class ExpressionSorter: public Sorter
 {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(ExpressionSorter)
+    Q_DISABLE_COPY(ExpressionSorter)
+
     Q_PROPERTY(QQmlScriptString expression READ expression WRITE setExpression NOTIFY expressionChanged)
 
 public:
-    using Sorter::Sorter;
+    explicit ExpressionSorter(QObject *parent = Q_NULLPTR);
+    ~ExpressionSorter() Q_DECL_EQ_DEFAULT;
 
-    const QQmlScriptString& expression() const;
-    void setExpression(const QQmlScriptString& scriptString);
+    const QQmlScriptString &expression() const;
+    void setExpression(const QQmlScriptString &scriptString);
 
 Q_SIGNALS:
     void expressionChanged();
+};
 
-protected:
-    int compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const override;
-    void proxyModelCompleted() override;
+class IndexSorterPrivate;
+class IndexSorter: public Sorter
+{
+public:
+    explicit IndexSorter(QObject *parent = Q_NULLPTR);
+    ~IndexSorter() Q_DECL_EQ_DEFAULT;
+};
 
-private:
-    void updateContext();
-    void updateExpression();
-
-    QQmlScriptString m_scriptString;
-    QQmlExpression* m_expression = nullptr;
-    QQmlContext* m_context = nullptr;
+class ReverseIndexSorterPrivate;
+class ReverseIndexSorter: public Sorter
+{
+public:
+    explicit ReverseIndexSorter(QObject *parent = Q_NULLPTR);
+    ~ReverseIndexSorter() Q_DECL_EQ_DEFAULT;
 };
 
 }
-
-#endif // SORTER_H

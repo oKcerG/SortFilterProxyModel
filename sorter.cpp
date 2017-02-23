@@ -1,57 +1,11 @@
 #include "sorter.h"
+#include "private/sorter_p.h"
 #include <QtQml>
 
-namespace qqsfpm {
-
-Sorter::Sorter(QObject *parent) : QObject(parent)
+namespace qqsfpm
 {
-    connect(this, &Sorter::sorterChanged, this, &Sorter::onSorterChanged);
-}
 
-Sorter::~Sorter() = default;
-
-bool Sorter::enabled() const
-{
-    return m_enabled;
-}
-
-void Sorter::setEnabled(bool enabled)
-{
-    if (m_enabled == enabled)
-        return;
-
-    m_enabled = enabled;
-    Q_EMIT enabledChanged();
-    Q_EMIT invalidate();
-}
-
-bool Sorter::ascendingOrder() const
-{
-    return m_ascendingOrder;
-}
-
-void Sorter::setAscendingOrder(bool ascendingOrder)
-{
-    if (m_ascendingOrder == ascendingOrder)
-        return;
-
-    m_ascendingOrder = ascendingOrder;
-    Q_EMIT ascendingOrderChanged();
-    Q_EMIT sorterChanged();
-}
-
-int Sorter::compareRows(const QModelIndex &source_left, const QModelIndex &source_right) const
-{
-    int comparison = compare(source_left, source_right);
-    return m_ascendingOrder ? comparison : -comparison;
-}
-
-QQmlSortFilterProxyModel* Sorter::proxyModel() const
-{
-    return m_proxyModel;
-}
-
-int Sorter::compare(const QModelIndex &sourceLeft, const QModelIndex &sourceRight) const
+int SorterPrivate::compare(const QModelIndex &sourceLeft, const QModelIndex &sourceRight) const
 {
     if (lessThan(sourceLeft, sourceRight))
         return -1;
@@ -60,43 +14,95 @@ int Sorter::compare(const QModelIndex &sourceLeft, const QModelIndex &sourceRigh
     return 0;
 }
 
-bool Sorter::lessThan(const QModelIndex &sourceLeft, const QModelIndex &sourceRight) const
+bool SorterPrivate::lessThan(const QModelIndex &sourceLeft, const QModelIndex &sourceRight) const
 {
     Q_UNUSED(sourceLeft)
     Q_UNUSED(sourceRight)
     return false;
 }
 
-void Sorter::proxyModelCompleted()
+void SorterPrivate::proxyModelCompleted()
 {
 
 }
 
-void Sorter::onSorterChanged()
+Sorter::Sorter(SorterPrivate &dd, QObject *parent)
+    : QObject(parent)
+    , d_ptr(&dd)
 {
-    if (m_enabled)
-        Q_EMIT invalidate();
+    Q_D(Sorter);
+    d->q_ptr = this;
+    connect(this, &Sorter::sorterChanged, this, [&]
+    {
+        if (d->m_enabled)
+            invalidate();
+    });
 }
 
-const QString& RoleSorter::roleName() const
+bool Sorter::enabled() const
 {
-    return m_roleName;
+    Q_D(const Sorter);
+    return d->m_enabled;
 }
 
-void RoleSorter::setRoleName(const QString& roleName)
+void Sorter::setEnabled(bool enabled)
 {
-    if (m_roleName == roleName)
+    Q_D(Sorter);
+    if (d->m_enabled == enabled)
         return;
 
-    m_roleName = roleName;
-    Q_EMIT roleNameChanged();
+    d->m_enabled = enabled;
+    Q_EMIT enabledChanged();
+    Q_EMIT invalidate();
+}
+
+bool Sorter::ascendingOrder() const
+{
+    Q_D(const Sorter);
+    return d->m_ascendingOrder;
+}
+
+void Sorter::setAscendingOrder(bool ascendingOrder)
+{
+    Q_D(Sorter);
+    if (d->m_ascendingOrder == ascendingOrder)
+        return;
+
+    d->m_ascendingOrder = ascendingOrder;
+    Q_EMIT ascendingOrderChanged();
     Q_EMIT sorterChanged();
 }
 
-int RoleSorter::compare(const QModelIndex &sourceLeft, const QModelIndex& sourceRight) const
+int Sorter::compareRows(const QModelIndex &source_left, const QModelIndex &source_right) const
 {
-    QVariant leftValue = proxyModel()->sourceData(sourceLeft, m_roleName);
-    QVariant rightValue = proxyModel()->sourceData(sourceRight, m_roleName);
+    Q_D(const Sorter);
+    int comparison = d->compare(source_left, source_right);
+    return d->m_ascendingOrder ? comparison : -comparison;
+}
+
+QQmlSortFilterProxyModel *Sorter::proxyModel() const
+{
+    Q_D(const Sorter);
+    return d->m_proxyModel;
+}
+
+void Sorter::setProxyModel(QQmlSortFilterProxyModel *model, bool proxyModelCompleted)
+{
+    Q_D(Sorter);
+    d->m_proxyModel = model;
+
+    if (!proxyModelCompleted)
+        return;
+
+    d->proxyModelCompleted();
+}
+
+/*************************************************************/
+
+int RoleSorterPrivate::compare(const QModelIndex &sourceLeft, const QModelIndex &sourceRight) const
+{
+    QVariant leftValue = m_proxyModel->sourceData(sourceLeft, m_roleName);
+    QVariant rightValue = m_proxyModel->sourceData(sourceRight, m_roleName);
     if (leftValue < rightValue)
         return -1;
     if (leftValue > rightValue)
@@ -104,52 +110,44 @@ int RoleSorter::compare(const QModelIndex &sourceLeft, const QModelIndex& source
     return 0;
 }
 
-const QQmlScriptString& ExpressionSorter::expression() const
+RoleSorter::RoleSorter(QObject *parent)
+    : Sorter(*new RoleSorterPrivate(), parent)
 {
-    return m_scriptString;
+
 }
 
-void ExpressionSorter::setExpression(const QQmlScriptString& scriptString)
+const QString &RoleSorter::roleName() const
 {
-    if (m_scriptString == scriptString)
+    Q_D(const RoleSorter);
+    return d->m_roleName;
+}
+
+void RoleSorter::setRoleName(const QString &roleName)
+{
+    Q_D(RoleSorter);
+    if (d->m_roleName == roleName)
         return;
 
-    m_scriptString = scriptString;
-    updateExpression();
-
-    Q_EMIT expressionChanged();
+    d->m_roleName = roleName;
+    Q_EMIT roleNameChanged();
     Q_EMIT sorterChanged();
 }
 
-bool evaluateBoolExpression(QQmlExpression& expression)
-{
-    QVariant variantResult = expression.evaluate();
-    if (expression.hasError()) {
-        qWarning() << expression.error();
-        return false;
-    }
-    if (variantResult.canConvert<bool>()) {
-        return variantResult.toBool();
-    } else {
-        qWarning("%s:%i:%i : Can't convert result to bool",
-                 expression.sourceFile().toUtf8().data(),
-                 expression.lineNumber(),
-                 expression.columnNumber());
-        return false;
-    }
-}
+/*************************************************************/
 
-int ExpressionSorter::compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const
+int ExpressionSorterPrivate::compare(const QModelIndex &sourceLeft, const QModelIndex &sourceRight) const
 {
+    Q_Q(const ExpressionSorter);
+
     if (!m_scriptString.isEmpty()) {
         QVariantMap modelLeftMap, modelRightMap;
-        QHash<int, QByteArray> roles = proxyModel()->roleNames();
+        QHash<int, QByteArray> roles = m_proxyModel->roleNames();
 
-        QQmlContext context(qmlContext(this));
+        QQmlContext context(qmlContext(q));
 
         for (auto it = roles.cbegin(); it != roles.cend(); ++it) {
-            modelLeftMap.insert(it.value(), proxyModel()->sourceData(sourceLeft, it.key()));
-            modelRightMap.insert(it.value(), proxyModel()->sourceData(sourceRight, it.key()));
+            modelLeftMap.insert(it.value(), m_proxyModel->sourceData(sourceLeft, it.key()));
+            modelRightMap.insert(it.value(), m_proxyModel->sourceData(sourceRight, it.key()));
         }
         modelLeftMap.insert("index", sourceLeft.row());
         modelRightMap.insert("index", sourceRight.row());
@@ -159,33 +157,53 @@ int ExpressionSorter::compare(const QModelIndex& sourceLeft, const QModelIndex& 
         context.setContextProperty("modelLeft", modelLeftMap);
         context.setContextProperty("modelRight", modelRightMap);
         if (evaluateBoolExpression(expression))
-                return -1;
+            return -1;
 
         context.setContextProperty("modelLeft", modelRightMap);
         context.setContextProperty("modelRight", modelLeftMap);
         if (evaluateBoolExpression(expression))
-                return 1;
+            return 1;
     }
     return 0;
 }
 
-void ExpressionSorter::proxyModelCompleted()
+void ExpressionSorterPrivate::proxyModelCompleted()
 {
     updateContext();
 }
 
-void ExpressionSorter::updateContext()
+bool ExpressionSorterPrivate::evaluateBoolExpression(QQmlExpression &expression) const
 {
-    if (!proxyModel())
+    QVariant variantResult = expression.evaluate();
+    if (expression.hasError()) {
+        qWarning() << expression.error();
+        return false;
+    }
+    if (variantResult.canConvert<bool>()) {
+        return variantResult.toBool();
+    }
+    else {
+        qWarning("%s:%i:%i : Can't convert result to bool",
+                 expression.sourceFile().toUtf8().data(),
+                 expression.lineNumber(),
+                 expression.columnNumber());
+        return false;
+    }
+}
+
+void ExpressionSorterPrivate::updateContext()
+{
+    Q_Q(ExpressionSorter);
+    if (!m_proxyModel)
         return;
 
     delete m_context;
-    m_context = new QQmlContext(qmlContext(this), this);
+    m_context = new QQmlContext(qmlContext(q), q);
 
     QVariantMap modelLeftMap, modelRightMap;
     // what about roles changes ?
 
-    for (const QByteArray& roleName : proxyModel()->roleNames().values()) {
+    for (const QByteArray &roleName : m_proxyModel->roleNames().values()) {
         modelLeftMap.insert(roleName, QVariant());
         modelRightMap.insert(roleName, QVariant());
     }
@@ -198,22 +216,79 @@ void ExpressionSorter::updateContext()
     updateExpression();
 }
 
-void ExpressionSorter::updateExpression()
+void ExpressionSorterPrivate::updateExpression()
 {
+    Q_Q(ExpressionSorter);
     if (!m_context)
         return;
 
     delete m_expression;
-    m_expression = new QQmlExpression(m_scriptString, m_context, 0, this);
-    connect(m_expression, &QQmlExpression::valueChanged, this, &Sorter::sorterChanged);
+    m_expression = new QQmlExpression(m_scriptString, m_context, 0, q);
+    QObject::connect(m_expression, &QQmlExpression::valueChanged, q, &Sorter::sorterChanged);
     m_expression->setNotifyOnValueChanged(true);
     m_expression->evaluate();
 }
 
-void registerSorterTypes() {
+ExpressionSorter::ExpressionSorter(QObject *parent)
+    : Sorter(*new ExpressionSorterPrivate(), parent)
+{
+
+}
+
+const QQmlScriptString &ExpressionSorter::expression() const
+{
+    Q_D(const ExpressionSorter);
+    return d->m_scriptString;
+}
+
+void ExpressionSorter::setExpression(const QQmlScriptString &scriptString)
+{
+    Q_D(ExpressionSorter);
+    if (d->m_scriptString == scriptString)
+        return;
+
+    d->m_scriptString = scriptString;
+    d->updateExpression();
+
+    Q_EMIT expressionChanged();
+    Q_EMIT sorterChanged();
+}
+
+/*************************************************************/
+
+int IndexSorterPrivate::compare(const QModelIndex &sourceLeft, const QModelIndex &sourceRight) const
+{
+    return sourceLeft.row() - sourceRight.row();
+}
+
+IndexSorter::IndexSorter(QObject *parent)
+    : Sorter(*new IndexSorterPrivate(), parent)
+{
+
+}
+
+/*************************************************************/
+
+int ReverseIndexSorterPrivate::compare(const QModelIndex &sourceLeft, const QModelIndex &sourceRight) const
+{
+    return sourceRight.row() - sourceLeft.row();
+}
+
+ReverseIndexSorter::ReverseIndexSorter(QObject *parent)
+    : Sorter(*new ReverseIndexSorterPrivate(), parent)
+{
+
+}
+
+/*************************************************************/
+
+void registerSorterTypes()
+{
     qmlRegisterUncreatableType<Sorter>("SortFilterProxyModel", 0, 2, "Sorter", "Sorter is an abstract class");
     qmlRegisterType<RoleSorter>("SortFilterProxyModel", 0, 2, "RoleSorter");
     qmlRegisterType<ExpressionSorter>("SortFilterProxyModel", 0, 2, "ExpressionSorter");
+    qmlRegisterType<IndexSorter>("SortFilterProxyModel", 0, 2, "IndexSorter");
+    qmlRegisterType<ReverseIndexSorter>("SortFilterProxyModel", 0, 2, "ReverseIndexSorter");
 }
 
 Q_COREAPP_STARTUP_FUNCTION(registerSorterTypes)
