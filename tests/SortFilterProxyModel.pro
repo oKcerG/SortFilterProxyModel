@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = tst_sortfilterproxymodel
 QT += qml quick
-CONFIG += c++11 warn_on qmltestcase qml_debug
+CONFIG += c++11 warn_on qmltestcase qml_debug no_keywords
 
 include(../SortFilterProxyModel.pri)
 
