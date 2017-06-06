@@ -17,4 +17,5 @@ OTHER_FILES += \
     tst_indexfilter.qml \
     tst_sourceroles.qml \
     tst_sorters.qml \
-    tst_helpers.qml
+    tst_helpers.qml \
+    tst_builtins.qml

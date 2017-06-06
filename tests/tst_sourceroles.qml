@@ -42,6 +42,7 @@ Item {
 
         function test_emptyFirst() {
             emptyFirstModel.append({test: "test"});
+            compare(emptyFirstProxyModel.get(0), {test: "test"});
             compare(emptyFirstInstantiator.object.test, "test");
         }
     }
