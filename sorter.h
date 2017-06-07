@@ -30,7 +30,6 @@ Q_SIGNALS:
     void enabledChanged();
     void ascendingOrderChanged();
 
-    void sorterChanged();
     void invalidate();
 
 protected:
@@ -39,9 +38,7 @@ protected:
     virtual int compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const;
     virtual bool lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const;
     virtual void proxyModelCompleted();
-
-private Q_SLOTS:
-    void onSorterChanged();
+    void sorterChanged();
 
 private:
     bool m_enabled = true;

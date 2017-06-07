@@ -5,7 +5,6 @@ namespace qqsfpm {
 
 Filter::Filter(QObject *parent) : QObject(parent)
 {
-    connect(this, &Filter::filterChanged, this, &Filter::onFilterChanged);
 }
 
 bool Filter::enabled() const
@@ -35,7 +34,7 @@ void Filter::setInverted(bool inverted)
 
     m_inverted = inverted;
     Q_EMIT invertedChanged();
-    Q_EMIT filterChanged();
+    filterChanged();
 }
 
 bool Filter::filterAcceptsRow(const QModelIndex &sourceIndex) const
@@ -53,7 +52,7 @@ void Filter::proxyModelCompleted()
 
 }
 
-void Filter::onFilterChanged()
+void Filter::filterChanged()
 {
     if (m_enabled)
         invalidate();
@@ -71,7 +70,7 @@ void RoleFilter::setRoleName(const QString& roleName)
 
     m_roleName = roleName;
     Q_EMIT roleNameChanged();
-    Q_EMIT filterChanged();
+    filterChanged();
 }
 
 QVariant RoleFilter::sourceData(const QModelIndex &sourceIndex) const
@@ -91,7 +90,7 @@ void ValueFilter::setValue(const QVariant& value)
 
     m_value = value;
     Q_EMIT valueChanged();
-    Q_EMIT filterChanged();
+    filterChanged();
 }
 
 bool ValueFilter::filterRow(const QModelIndex& sourceIndex) const
@@ -111,7 +110,7 @@ void IndexFilter::setMinimumIndex(const QVariant& minimumIndex)
 
     m_minimumIndex = minimumIndex;
     Q_EMIT minimumIndexChanged();
-    Q_EMIT filterChanged();
+    filterChanged();
 }
 
 const QVariant& IndexFilter::maximumIndex() const
@@ -126,7 +125,7 @@ void IndexFilter::setMaximumIndex(const QVariant& maximumIndex)
 
     m_maximumIndex = maximumIndex;
     Q_EMIT maximumIndexChanged();
-    Q_EMIT filterChanged();
+    filterChanged();
 }
 
 bool IndexFilter::filterRow(const QModelIndex& sourceIndex) const
@@ -159,8 +158,8 @@ void RegExpFilter::setPattern(const QString& pattern)
 
     m_pattern = pattern;
     m_regExp.setPattern(pattern);
-    Q_EMIT filterChanged();
     Q_EMIT patternChanged();
+    filterChanged();
 }
 
 QQmlSortFilterProxyModel::PatternSyntax RegExpFilter::syntax() const
@@ -175,8 +174,8 @@ void RegExpFilter::setSyntax(QQmlSortFilterProxyModel::PatternSyntax syntax)
 
     m_syntax = syntax;
     m_regExp.setPatternSyntax(static_cast<QRegExp::PatternSyntax>(syntax));
-    Q_EMIT filterChanged();
     Q_EMIT syntaxChanged();
+    filterChanged();
 }
 
 Qt::CaseSensitivity RegExpFilter::caseSensitivity() const
@@ -191,8 +190,8 @@ void RegExpFilter::setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)
 
     m_caseSensitivity = caseSensitivity;
     m_regExp.setCaseSensitivity(caseSensitivity);
-    Q_EMIT filterChanged();
     Q_EMIT caseSensitivityChanged();
+    filterChanged();
 }
 
 bool RegExpFilter::filterRow(const QModelIndex& sourceIndex) const
@@ -213,7 +212,7 @@ void RangeFilter::setMinimumValue(QVariant minimumValue)
 
     m_minimumValue = minimumValue;
     Q_EMIT minimumValueChanged();
-    Q_EMIT filterChanged();
+    filterChanged();
 }
 
 bool RangeFilter::minimumInclusive() const
@@ -228,7 +227,7 @@ void RangeFilter::setMinimumInclusive(bool minimumInclusive)
 
     m_minimumInclusive = minimumInclusive;
     Q_EMIT minimumInclusiveChanged();
-    Q_EMIT filterChanged();
+    filterChanged();
 }
 
 QVariant RangeFilter::maximumValue() const
@@ -243,7 +242,7 @@ void RangeFilter::setMaximumValue(QVariant maximumValue)
 
     m_maximumValue = maximumValue;
     Q_EMIT maximumValueChanged();
-    Q_EMIT filterChanged();
+    filterChanged();
 }
 
 bool RangeFilter::maximumInclusive() const
@@ -258,7 +257,7 @@ void RangeFilter::setMaximumInclusive(bool maximumInclusive)
 
     m_maximumInclusive = maximumInclusive;
     Q_EMIT maximumInclusiveChanged();
-    Q_EMIT filterChanged();
+    filterChanged();
 }
 
 bool RangeFilter::filterRow(const QModelIndex& sourceIndex) const
@@ -285,7 +284,7 @@ void ExpressionFilter::setExpression(const QQmlScriptString& scriptString)
     updateExpression();
 
     Q_EMIT expressionChanged();
-    Q_EMIT filterChanged();
+    filterChanged();
 }
 
 bool ExpressionFilter::filterRow(const QModelIndex& sourceIndex) const
@@ -362,7 +361,7 @@ void ExpressionFilter::updateExpression()
 
     delete m_expression;
     m_expression = new QQmlExpression(m_scriptString, m_context, 0, this);
-    connect(m_expression, &QQmlExpression::valueChanged, this, &Filter::filterChanged);
+    connect(m_expression, &QQmlExpression::valueChanged, this, &ExpressionFilter::filterChanged);
     m_expression->setNotifyOnValueChanged(true);
     m_expression->evaluate();
 }
@@ -383,7 +382,7 @@ void FilterContainer::append_filter(QQmlListProperty<Filter>* list, Filter* filt
 
     FilterContainer* that = static_cast<FilterContainer*>(list->object);
     that->m_filters.append(filter);
-    connect(filter, &Filter::invalidate, that, &Filter::filterChanged);
+    connect(filter, &Filter::invalidate, that, &FilterContainer::filterChanged);
     that->filterChanged();
 }
 

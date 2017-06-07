@@ -5,7 +5,6 @@ namespace qqsfpm {
 
 Sorter::Sorter(QObject *parent) : QObject(parent)
 {
-    connect(this, &Sorter::sorterChanged, this, &Sorter::onSorterChanged);
 }
 
 Sorter::~Sorter() = default;
@@ -37,7 +36,7 @@ void Sorter::setAscendingOrder(bool ascendingOrder)
 
     m_ascendingOrder = ascendingOrder;
     Q_EMIT ascendingOrderChanged();
-    Q_EMIT sorterChanged();
+    sorterChanged();
 }
 
 int Sorter::compareRows(const QModelIndex &source_left, const QModelIndex &source_right) const
@@ -72,7 +71,7 @@ void Sorter::proxyModelCompleted()
 
 }
 
-void Sorter::onSorterChanged()
+void Sorter::sorterChanged()
 {
     if (m_enabled)
         Q_EMIT invalidate();
@@ -90,7 +89,7 @@ void RoleSorter::setRoleName(const QString& roleName)
 
     m_roleName = roleName;
     Q_EMIT roleNameChanged();
-    Q_EMIT sorterChanged();
+    sorterChanged();
 }
 
 int RoleSorter::compare(const QModelIndex &sourceLeft, const QModelIndex& sourceRight) const
@@ -118,7 +117,7 @@ void ExpressionSorter::setExpression(const QQmlScriptString& scriptString)
     updateExpression();
 
     Q_EMIT expressionChanged();
-    Q_EMIT sorterChanged();
+    sorterChanged();
 }
 
 bool evaluateBoolExpression(QQmlExpression& expression)
@@ -205,7 +204,7 @@ void ExpressionSorter::updateExpression()
 
     delete m_expression;
     m_expression = new QQmlExpression(m_scriptString, m_context, 0, this);
-    connect(m_expression, &QQmlExpression::valueChanged, this, &Sorter::sorterChanged);
+    connect(m_expression, &QQmlExpression::valueChanged, this, &ExpressionSorter::sorterChanged);
     m_expression->setNotifyOnValueChanged(true);
     m_expression->evaluate();
 }

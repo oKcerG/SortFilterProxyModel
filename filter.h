@@ -30,16 +30,13 @@ public:
 Q_SIGNALS:
     void enabledChanged();
     void invertedChanged();
-    void filterChanged();
     void invalidate();
 
 protected:
     QQmlSortFilterProxyModel* proxyModel() const;
     virtual bool filterRow(const QModelIndex &sourceIndex) const = 0;
     virtual void proxyModelCompleted();
-
-private Q_SLOTS:
-    void onFilterChanged();
+    void filterChanged();
 
 private:
     bool m_enabled = true;
