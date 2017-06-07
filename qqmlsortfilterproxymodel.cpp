@@ -147,7 +147,6 @@ void QQmlSortFilterProxyModel::componentComplete()
     invalidate();
     sort(0);
 }
-
 QVariant QQmlSortFilterProxyModel::sourceData(const QModelIndex& sourceIndex, const QString& roleName) const
 {
     int role = sourceModel()->roleNames().key(roleName.toUtf8());
@@ -244,8 +243,11 @@ bool QQmlSortFilterProxyModel::lessThan(const QModelIndex& source_left, const QM
 void QQmlSortFilterProxyModel::resetInternalData()
 {
     QSortFilterProxyModel::resetInternalData();
-    if (roleNames().isEmpty()) // workaround for when a model has no roles and roles are added when the model is populated (ListModel)
+    if (sourceModel() && QSortFilterProxyModel::roleNames().isEmpty()) { // workaround for when a model has no roles and roles are added when the model is populated (ListModel)
+        // QTBUG-57971
+        connect(sourceModel(), &QAbstractItemModel::rowsInserted, this, &QQmlSortFilterProxyModel::initRoles);
         connect(this, &QAbstractItemModel::rowsAboutToBeInserted, this, &QQmlSortFilterProxyModel::initRoles);
+    }
 }
 
 void QQmlSortFilterProxyModel::invalidateFilter()
@@ -287,8 +289,10 @@ void QQmlSortFilterProxyModel::updateRoles()
 
 void QQmlSortFilterProxyModel::initRoles()
 {
+    disconnect(sourceModel(), &QAbstractItemModel::rowsInserted, this, &QQmlSortFilterProxyModel::initRoles);
     disconnect(this, &QAbstractItemModel::rowsAboutToBeInserted, this , &QQmlSortFilterProxyModel::initRoles);
     resetInternalData();
+    updateRoles();
 }
 
 QVariantMap QQmlSortFilterProxyModel::modelDataMap(const QModelIndex& modelIndex) const
