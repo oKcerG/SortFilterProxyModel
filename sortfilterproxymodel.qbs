@@ -1,56 +1,62 @@
-import qbs 1.0;
+import qbs 1.0
 
 Product
 {
-    name: "sortfilterproxymodel";
+    name: "sortfilterproxymodel"
     type: "dynamiclibrary"
-    targetName: "sortfilterproxymodel";
-    destinationDirectory: project.deployDirectory;
+    targetName: "sortfilterproxymodel"
 
-    readonly property stringList qtModules : ["core", "qml", "gui"];
+    destinationDirectory: project.deployDirectory
+
+    readonly property stringList qtModules:
+    [
+        "core",
+        "qml",
+        "gui"
+    ]
 
     cpp.defines:
     {
-        var defines = [];
+        var defines = []
         
-        defines.push('QT_NO_KEYWORDS');
-        defines.push('QRMVISUALCONFIG_LIBRARY_BUILD');
+        defines.push('QT_NO_KEYWORDS')
+        defines.push('SORT_FILTER_PROXY_MODEL_LIBRARY_BUILD')
 
         if (qbs.buildVariant === "release")
         {
-            defines.push('QT_NO_DEBUG_OUTPUT=1');
+            defines.push('QT_NO_DEBUG_OUTPUT=1')
         }
         
-        return defines;
+        return defines
     }
 
-    cpp.includePaths: ["."];
+    cpp.includePaths: [ "." ]
     
-    Depends { name: "cpp"; }
-    Depends { name: "Qt"; submodules: product.qtModules; }
-
+    Depends { name: "cpp" }
+    Depends { name: "Qt"; submodules: product.qtModules }
 
     Export
     {
         cpp.defines:
         {
-            var defines = [];
+            var defines = []
             
-            defines.push('QT_NO_KEYWORDS');
+            defines.push('QT_NO_KEYWORDS')
             
-            return defines;
+            return defines
         }
 
-        cpp.includePaths: ".";
+        cpp.includePaths: [ "." ]
 
-        Depends { name: "cpp"; }
-        Depends { name: "Qt"; submodules: product.qtModules; }
+        Depends { name: "cpp" }
+        Depends { name: "Qt"; submodules: product.qtModules }
     }
 
     Group
     {
-        name: "C++ Sources";
-        files: [
+        name: "C++ Sources"
+        files:
+        [
             "filter.cpp",
             "qqmlsortfilterproxymodel.cpp",
             "sorter.cpp"
@@ -59,14 +65,12 @@ Product
 
     Group
     {
-        name: "C++ Headers";
-        files: [
+        name: "C++ Headers"
+        files:
+        [
             "filter.h",
             "qqmlsortfilterproxymodel.h",
             "sorter.h"
         ]
     }    
 }
-
-
-
