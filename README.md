@@ -8,12 +8,12 @@ Install
 ##### With [qpm](https://qpm.io) :
 1. `qpm install fr.grecko.sortfilterproxymodel`
 2. add `include(vendor/vendor.pri)` in your .pro if it is not already done
-3. `import SortFilterProxyModel 0.1` to use this library in your QML files
+3. `import SortFilterProxyModel 0.2` to use this library in your QML files
 
 ##### Without qpm :
 1. clone or download this repository
 2. add `include  (<path/to/SortFilterProxyModel>/SortFilterProxyModel.pri)` in your `.pro`
-3. `import SortFilterProxyModel 0.1` to use this library in your QML files
+3. `import SortFilterProxyModel 0.2` to use this library in your QML files
 
 Sample Usage
 ------------
