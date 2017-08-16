@@ -370,6 +370,6 @@ void registerQQmlSortFilterProxyModelTypes() {
     qmlRegisterType<QQmlSortFilterProxyModel>("SortFilterProxyModel", 0, 2, "SortFilterProxyModel");
 }
 
-Q_COREAPP_STARTUP_FUNCTION(registerQQmlSortFilterProxyModelTypes)
+//Q_COREAPP_STARTUP_FUNCTION(registerQQmlSortFilterProxyModelTypes)
 
 }

@@ -1,12 +1,14 @@
 import qbs 1.0
+import qbs.File
+import qbs.FileInfo
 
 Product
 {
-    name: "sortfilterproxymodel"
-    type: "dynamiclibrary"
+    name: "SortFilterProxyModel"
+    type: ["dynamiclibrary", "copied qbs resources"]
     targetName: "sortfilterproxymodel"
 
-    destinationDirectory: project.deployDirectory
+    destinationDirectory: project.deployDirectory + "/" + name
 
     readonly property stringList qtModules:
     [
@@ -59,6 +61,7 @@ Product
         [
             "filter.cpp",
             "qqmlsortfilterproxymodel.cpp",
+            "qqmlsortfilterproxymodel_plugin.cpp",
             "sorter.cpp"
         ]
     }
@@ -70,7 +73,47 @@ Product
         [
             "filter.h",
             "qqmlsortfilterproxymodel.h",
+            "qqmlsortfilterproxymodelexport.h",
+            "qqmlsortfilterproxymodel_plugin.h",
             "sorter.h"
         ]
-    }    
+    }
+
+    Group
+    {
+        name: "Other files"
+        files:
+        [
+            "qmldir"
+        ]
+        fileTags: "qbs resources"
+    }
+
+    //FIXME: Replace this to actually install files in the right location
+    Rule
+    {
+        inputs: ["qbs resources"]
+
+        Artifact
+        {
+            filePath: FileInfo.joinPaths(product.destinationDirectory,
+                                         "qmldir")
+            fileTags: ["copied qbs resources"]
+        }
+
+        prepare:
+        {
+            var cmd = new JavaScriptCommand()
+
+            cmd.description = "Copying " + input.fileName + " to " + output.filePath
+            cmd.highlight = "codegen"
+            cmd.sourceCode = function()
+            {
+                File.copy(input.filePath,
+                          output.filePath)
+            }
+
+            return cmd;
+        }
+    }
 }

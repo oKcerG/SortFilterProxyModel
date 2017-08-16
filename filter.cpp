@@ -444,6 +444,6 @@ void registerFilterTypes() {
     qmlRegisterType<AllOfFilter>("SortFilterProxyModel", 0, 2, "AllOf");
 }
 
-Q_COREAPP_STARTUP_FUNCTION(registerFilterTypes)
+//Q_COREAPP_STARTUP_FUNCTION(registerFilterTypes)
 
 }
