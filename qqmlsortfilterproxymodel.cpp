@@ -366,10 +366,4 @@ void QQmlSortFilterProxyModel::clear_sorters(QQmlListProperty<Sorter>* list)
     that->invalidate();
 }
 
-void registerQQmlSortFilterProxyModelTypes() {
-    qmlRegisterType<QQmlSortFilterProxyModel>("SortFilterProxyModel", 0, 2, "SortFilterProxyModel");
-}
-
-//Q_COREAPP_STARTUP_FUNCTION(registerQQmlSortFilterProxyModelTypes)
-
 }

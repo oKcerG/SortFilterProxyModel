@@ -9,7 +9,9 @@
 using namespace qqsfpm;
 
 void QQmlsortfilterproxymodelPlugin::registerTypes(const char *uri)
-{   
+{
+    Q_UNUSED(uri)
+
     //Filter
     qmlRegisterUncreatableType<Filter>("SortFilterProxyModel", 0, 2, "Filter", "Filter is an abstract class");
     qmlRegisterType<ValueFilter>("SortFilterProxyModel", 0, 2, "ValueFilter");

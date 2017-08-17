@@ -92,13 +92,19 @@ Product
     //FIXME: Replace this to actually install files in the right location
     Rule
     {
-        inputs: ["qbs resources"]
+        inputs:
+        [
+            "qbs resources"
+        ]
 
         Artifact
         {
             filePath: FileInfo.joinPaths(product.destinationDirectory,
                                          "qmldir")
-            fileTags: ["copied qbs resources"]
+            fileTags:
+            [
+                "copied qbs resources"
+            ]
         }
 
         prepare:
@@ -113,7 +119,7 @@ Product
                           output.filePath)
             }
 
-            return cmd;
+            return cmd
         }
     }
 }
