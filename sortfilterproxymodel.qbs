@@ -33,6 +33,7 @@ Product
     }
 
     cpp.includePaths: [ "." ]
+    cpp.cxxLanguageVersion: "c++11"
     
     Depends { name: "cpp" }
     Depends { name: "Qt"; submodules: product.qtModules }
@@ -49,7 +50,6 @@ Product
         }
 
         cpp.includePaths: [ "." ]
-        cpp.cxxLanguageVersion: "c++11"
 
         Depends { name: "cpp" }
         Depends { name: "Qt"; submodules: product.qtModules }
