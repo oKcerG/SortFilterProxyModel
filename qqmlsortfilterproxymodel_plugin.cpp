@@ -8,7 +8,7 @@
 
 using namespace qqsfpm;
 
-void QQmlsortfilterproxymodelPlugin::registerTypes(const char *uri)
+void QQmlSortFilterProxyModelPlugin::registerTypes(const char *uri)
 {
     Q_UNUSED(uri)
 
