@@ -433,17 +433,4 @@ bool AllOfFilter::filterRow(const QModelIndex& sourceIndex) const
     );
 }
 
-void registerFilterTypes() {
-    qmlRegisterUncreatableType<Filter>("SortFilterProxyModel", 0, 2, "Filter", "Filter is an abstract class");
-    qmlRegisterType<ValueFilter>("SortFilterProxyModel", 0, 2, "ValueFilter");
-    qmlRegisterType<IndexFilter>("SortFilterProxyModel", 0, 2, "IndexFilter");
-    qmlRegisterType<RegExpFilter>("SortFilterProxyModel", 0, 2, "RegExpFilter");
-    qmlRegisterType<RangeFilter>("SortFilterProxyModel", 0, 2, "RangeFilter");
-    qmlRegisterType<ExpressionFilter>("SortFilterProxyModel", 0, 2, "ExpressionFilter");
-    qmlRegisterType<AnyOfFilter>("SortFilterProxyModel", 0, 2, "AnyOf");
-    qmlRegisterType<AllOfFilter>("SortFilterProxyModel", 0, 2, "AllOf");
-}
-
-Q_COREAPP_STARTUP_FUNCTION(registerFilterTypes)
-
 }

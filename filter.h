@@ -4,10 +4,11 @@
 #include <QObject>
 #include <QQmlExpression>
 #include "qqmlsortfilterproxymodel.h"
+#include "qqmlsortfilterproxymodelexport.h"
 
 namespace qqsfpm {
 
-class Filter : public QObject
+class QQMLSORTFILTERPROXYMODEL_EXPORT Filter : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)

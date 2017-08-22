@@ -209,12 +209,4 @@ void ExpressionSorter::updateExpression()
     m_expression->evaluate();
 }
 
-void registerSorterTypes() {
-    qmlRegisterUncreatableType<Sorter>("SortFilterProxyModel", 0, 2, "Sorter", "Sorter is an abstract class");
-    qmlRegisterType<RoleSorter>("SortFilterProxyModel", 0, 2, "RoleSorter");
-    qmlRegisterType<ExpressionSorter>("SortFilterProxyModel", 0, 2, "ExpressionSorter");
-}
-
-Q_COREAPP_STARTUP_FUNCTION(registerSorterTypes)
-
 }
