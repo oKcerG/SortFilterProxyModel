@@ -4,13 +4,14 @@
 #include <QSortFilterProxyModel>
 #include <QQmlParserStatus>
 #include <QQmlListProperty>
+#include "qqmlsortfilterproxymodelexport.h"
 
 namespace qqsfpm {
 
 class Filter;
 class Sorter;
 
-class QQmlSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParserStatus
+class QQMLSORTFILTERPROXYMODEL_EXPORT QQmlSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParserStatus
 {
     Q_OBJECT
     Q_INTERFACES(QQmlParserStatus)
