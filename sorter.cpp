@@ -103,6 +103,60 @@ int RoleSorter::compare(const QModelIndex &sourceLeft, const QModelIndex& source
     return 0;
 }
 
+Qt::CaseSensitivity NaturalSorter::caseSensitivity() const
+{
+    return m_collator.caseSensitivity();
+}
+
+void NaturalSorter::setCaseSensitivity(Qt::CaseSensitivity value)
+{
+    if (caseSensitivity() == value)
+        return;
+
+    m_collator.setCaseSensitivity(value);
+    Q_EMIT caseSensitivityChanged();
+    sorterChanged();
+}
+
+bool NaturalSorter::numericMode() const
+{
+    return m_collator.numericMode();
+}
+
+void NaturalSorter::setNumericMode(bool value)
+{
+    if (numericMode() == value)
+        return;
+
+    m_collator.setNumericMode(value);
+    Q_EMIT numericModeChanged();
+    sorterChanged();
+}
+
+bool NaturalSorter::ignorePunctuation() const
+{
+    return m_collator.ignorePunctuation();
+}
+
+void NaturalSorter::setIgnorePunctuation(bool value)
+{
+    if (ignorePunctuation() == value)
+        return;
+
+    m_collator.setIgnorePunctuation(value);
+    Q_EMIT ignorePunctuationChanged();
+    sorterChanged();
+}
+
+
+int NaturalSorter::compare(const QModelIndex &sourceLeft, const QModelIndex &sourceRight) const
+{
+    QString leftValue = proxyModel()->sourceData(sourceLeft, roleName()).toString();
+    QString rightValue = proxyModel()->sourceData(sourceRight, roleName()).toString();
+    return m_collator.compare(leftValue, rightValue);
+}
+
+
 const QQmlScriptString& ExpressionSorter::expression() const
 {
     return m_scriptString;

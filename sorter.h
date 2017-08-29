@@ -2,6 +2,7 @@
 #define SORTER_H
 
 #include <QObject>
+#include <QCollator>
 #include <QQmlExpression>
 #include "qqmlsortfilterproxymodel.h"
 #include "qqmlsortfilterproxymodelexport.h"
@@ -66,6 +67,35 @@ protected:
 
 private:
     QString m_roleName;
+};
+
+class NaturalSorter: public RoleSorter
+{
+    Q_OBJECT
+    Q_PROPERTY(Qt::CaseSensitivity caseSensitivity READ caseSensitivity WRITE setCaseSensitivity NOTIFY caseSensitivityChanged)
+    Q_PROPERTY(bool numericMode READ numericMode WRITE setNumericMode NOTIFY numericModeChanged)
+    Q_PROPERTY(bool ignorePunctuation READ ignorePunctuation WRITE setIgnorePunctuation NOTIFY ignorePunctuationChanged)
+
+public:
+    Qt::CaseSensitivity caseSensitivity() const;
+    void setCaseSensitivity(Qt::CaseSensitivity value);
+
+    bool numericMode() const;
+    void setNumericMode(bool value);
+
+    bool ignorePunctuation() const;
+    void setIgnorePunctuation(bool value);
+
+Q_SIGNALS:
+    void caseSensitivityChanged();
+    void numericModeChanged();
+    void ignorePunctuationChanged();
+
+protected:
+    int compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const override;
+
+private:
+    QCollator m_collator;
 };
 
 class ExpressionSorter : public Sorter

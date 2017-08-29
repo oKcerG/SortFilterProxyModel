@@ -28,6 +28,7 @@ void QQmlSortFilterProxyModelPlugin::registerTypes(const char *uri)
     //Sorter
     qmlRegisterUncreatableType<Sorter>("SortFilterProxyModel", 0, 2, "Sorter", "Sorter is an abstract class");
     qmlRegisterType<RoleSorter>("SortFilterProxyModel", 0, 2, "RoleSorter");
+    qmlRegisterType<NaturalSorter>("SortFilterProxyModel", 0, 2, "NaturalSorter");
     qmlRegisterType<ExpressionSorter>("SortFilterProxyModel", 0, 2, "ExpressionSorter");
 }
 
