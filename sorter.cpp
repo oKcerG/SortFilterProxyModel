@@ -26,23 +26,33 @@ void Sorter::setEnabled(bool enabled)
 
 bool Sorter::ascendingOrder() const
 {
-    return m_ascendingOrder;
+    return sortOrder() == Qt::AscendingOrder;
 }
 
 void Sorter::setAscendingOrder(bool ascendingOrder)
 {
-    if (m_ascendingOrder == ascendingOrder)
+    setSortOrder(ascendingOrder ? Qt::AscendingOrder : Qt::DescendingOrder);
+}
+
+Qt::SortOrder Sorter::sortOrder() const
+{
+    return m_sortOrder;
+}
+
+void Sorter::setSortOrder(Qt::SortOrder sortOrder)
+{
+    if (m_sortOrder == sortOrder)
         return;
 
-    m_ascendingOrder = ascendingOrder;
-    Q_EMIT ascendingOrderChanged();
+    m_sortOrder = sortOrder;
+    Q_EMIT sortOrderChanged();
     sorterChanged();
 }
 
 int Sorter::compareRows(const QModelIndex &source_left, const QModelIndex &source_right) const
 {
     int comparison = compare(source_left, source_right);
-    return m_ascendingOrder ? comparison : -comparison;
+    return (m_sortOrder == Qt::AscendingOrder) ? comparison : -comparison;
 }
 
 QQmlSortFilterProxyModel* Sorter::proxyModel() const

@@ -11,7 +11,8 @@ class Sorter : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
-    Q_PROPERTY(bool ascendingOrder READ ascendingOrder WRITE setAscendingOrder NOTIFY ascendingOrderChanged)
+    Q_PROPERTY(bool ascendingOrder READ ascendingOrder WRITE setAscendingOrder NOTIFY sortOrderChanged)
+    Q_PROPERTY(Qt::SortOrder sortOrder READ sortOrder WRITE setSortOrder NOTIFY sortOrderChanged)
     friend class QQmlSortFilterProxyModel;
 
 public:
@@ -24,11 +25,14 @@ public:
     bool ascendingOrder() const;
     void setAscendingOrder(bool ascendingOrder);
 
+    Qt::SortOrder sortOrder() const;
+    void setSortOrder(Qt::SortOrder sortOrder);
+
     int compareRows(const QModelIndex& source_left, const QModelIndex& source_right) const;
 
 Q_SIGNALS:
     void enabledChanged();
-    void ascendingOrderChanged();
+    void sortOrderChanged();
 
     void invalidate();
 
@@ -42,7 +46,7 @@ protected:
 
 private:
     bool m_enabled = true;
-    bool m_ascendingOrder = true;
+    Qt::SortOrder m_sortOrder = Qt::AscendingOrder;
     QQmlSortFilterProxyModel* m_proxyModel = nullptr;
 };
 
