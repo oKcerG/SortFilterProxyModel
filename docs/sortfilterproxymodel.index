@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE QDOCINDEX>
+<INDEX url="" title="lol" version="" project="SortFilterProxyModel">
+    <namespace threadsafety="unspecified" name="" status="active" access="public" module="sortfilterproxymodel">
+        <qmlclass threadsafety="unspecified" name="AllOf" qml-module-name="AllOf" qml-base-type="::Filter" href="qml-allof.html" status="active" access="public" title="AllOf" fulltitle="AllOf" subtitle="" brief="Filter container accepting rows accepted by all its child filters"/>
+        <qmlclass threadsafety="unspecified" name="AnyOf" qml-module-name="AnyOf" qml-base-type="::Filter" href="qml-anyof.html" status="active" access="public" title="AnyOf" fulltitle="AnyOf" subtitle="" brief="Filter container accepting rows accepted by at least one of its child filters"/>
+        <qmlclass threadsafety="unspecified" name="ExpressionFilter" qml-module-name="ExpressionFilter" qml-base-type="::Filter" href="qml-expressionfilter.html" status="active" access="public" title="ExpressionFilter" fulltitle="ExpressionFilter" subtitle="" brief="Filters row with a custom filtering">
+            <qmlproperty threadsafety="unspecified" name="expression" fullname="ExpressionFilter::expression" href="qml-expressionfilter.html#expression-prop" status="active" access="public" type="expression" attached="false" writable="true"/>
+        </qmlclass>
+        <qmlclass threadsafety="unspecified" name="Filter" qml-module-name="Filter" href="qml-filter.html" status="active" access="public" title="Filter" fulltitle="Filter" subtitle="" brief="Base type for the SortFilterProxyModel filters">
+            <qmlproperty threadsafety="unspecified" name="enabled" fullname="Filter::enabled" href="qml-filter.html#enabled-prop" status="active" access="public" type="bool" attached="false" writable="true"/>
+            <qmlproperty threadsafety="unspecified" name="inverted" fullname="Filter::inverted" href="qml-filter.html#inverted-prop" status="active" access="public" type="bool" attached="false" writable="true"/>
+        </qmlclass>
+        <qmlclass threadsafety="unspecified" name="IndexFilter" qml-module-name="IndexFilter" qml-base-type="::Filter" href="qml-indexfilter.html" status="active" access="public" title="IndexFilter" fulltitle="IndexFilter" subtitle="" brief="Filters rows based on their source index">
+            <qmlproperty threadsafety="unspecified" name="maximumIndex" fullname="IndexFilter::maximumIndex" href="qml-indexfilter.html#maximumIndex-prop" status="active" access="public" type="int" attached="false" writable="true"/>
+            <qmlproperty threadsafety="unspecified" name="minimumIndex" fullname="IndexFilter::minimumIndex" href="qml-indexfilter.html#minimumIndex-prop" status="active" access="public" type="int" attached="false" writable="true"/>
+        </qmlclass>
+        <qmlclass threadsafety="unspecified" name="RangeFilter" qml-module-name="RangeFilter" qml-base-type="::RoleFilter" href="qml-rangefilter.html" status="active" access="public" title="RangeFilter" fulltitle="RangeFilter" subtitle="" brief="Filters rows between boundary values">
+            <qmlproperty threadsafety="unspecified" name="maximumInclusive" fullname="RangeFilter::maximumInclusive" href="qml-rangefilter.html#maximumInclusive-prop" status="active" access="public" type="int" attached="false" writable="true"/>
+            <qmlproperty threadsafety="unspecified" name="maximumValue" fullname="RangeFilter::maximumValue" href="qml-rangefilter.html#maximumValue-prop" status="active" access="public" type="int" attached="false" writable="true"/>
+            <qmlproperty threadsafety="unspecified" name="minimumInclusive" fullname="RangeFilter::minimumInclusive" href="qml-rangefilter.html#minimumInclusive-prop" status="active" access="public" type="int" attached="false" writable="true"/>
+            <qmlproperty threadsafety="unspecified" name="minimumValue" fullname="RangeFilter::minimumValue" href="qml-rangefilter.html#minimumValue-prop" status="active" access="public" type="int" attached="false" writable="true"/>
+        </qmlclass>
+        <qmlclass threadsafety="unspecified" name="RegExpFilter" qml-module-name="RegExpFilter" qml-base-type="::RoleFilter" href="qml-regexpfilter.html" status="active" access="public" title="RegExpFilter" fulltitle="RegExpFilter" subtitle="" brief="Filters rows matching a regular expression">
+            <qmlproperty threadsafety="unspecified" name="caseSensitivity" fullname="RegExpFilter::caseSensitivity" href="qml-regexpfilter.html#caseSensitivity-prop" status="active" access="public" type="Qt::CaseSensitivity" attached="false" writable="true"/>
+            <qmlproperty threadsafety="unspecified" name="pattern" fullname="RegExpFilter::pattern" href="qml-regexpfilter.html#pattern-prop" status="active" access="public" type="bool" attached="false" writable="true"/>
+            <qmlproperty threadsafety="unspecified" name="syntax" fullname="RegExpFilter::syntax" href="qml-regexpfilter.html#syntax-prop" status="active" access="public" type="enum" attached="false" writable="true"/>
+        </qmlclass>
+        <qmlclass threadsafety="unspecified" name="RoleFilter" qml-module-name="RoleFilter" qml-base-type="::Filter" href="qml-rolefilter.html" status="active" access="public" abstract="true" title="RoleFilter" fulltitle="RoleFilter" subtitle="" brief="Base type for filters based on a source model role">
+            <qmlproperty threadsafety="unspecified" name="roleName" fullname="RoleFilter::roleName" status="active" access="public" type="string" attached="false" writable="true"/>
+        </qmlclass>
+        <qmlclass threadsafety="unspecified" name="ValueFilter" qml-module-name="ValueFilter" qml-base-type="::RoleFilter" href="qml-valuefilter.html" status="active" access="public" title="ValueFilter" fulltitle="ValueFilter" subtitle="" brief="Filters rows matching exactly a value">
+            <qmlproperty threadsafety="unspecified" name="value" fullname="ValueFilter::value" href="qml-valuefilter.html#value-prop" status="active" access="public" type="variant" attached="false" writable="true"/>
+        </qmlclass>
+        <page name="index.html" href="index.html" status="active" subtype="page" title="SortFilterProxyModel QML Module" fulltitle="SortFilterProxyModel QML Module" subtitle="" module="SortFilterProxyModel"/>
+        <qmlclass threadsafety="unspecified" name="SortFilterProxyModel" qml-module-name="SortFilterProxyModel" href="qml-sortfilterproxymodel.html" status="active" access="public" title="SortFilterProxyModel" fulltitle="SortFilterProxyModel" subtitle="" brief="Filters and sorts data coming from a source QAbstractItemModel">
+            <qmlproperty threadsafety="unspecified" name="count" fullname="SortFilterProxyModel::count" href="qml-sortfilterproxymodel.html#count-prop" status="active" access="public" type="int" attached="false" writable="true"/>
+            <qmlproperty threadsafety="unspecified" name="filters" fullname="SortFilterProxyModel::filters" href="qml-sortfilterproxymodel.html#filters-prop" status="active" access="public" type="list&lt;Filter&gt;" attached="false" writable="true"/>
+            <qmlproperty threadsafety="unspecified" name="sortRoleName" fullname="SortFilterProxyModel::sortRoleName" href="qml-sortfilterproxymodel.html#sortRoleName-prop" status="active" access="public" type="string" attached="false" writable="true"/>
+            <qmlproperty threadsafety="unspecified" name="sorters" fullname="SortFilterProxyModel::sorters" href="qml-sortfilterproxymodel.html#sorters-prop" status="active" access="public" type="list&lt;Sorter&gt;" attached="false" writable="true"/>
+            <qmlproperty threadsafety="unspecified" name="sourceModel" fullname="SortFilterProxyModel::sourceModel" href="qml-sortfilterproxymodel.html#sourceModel-prop" status="active" access="public" type="QAbstractItemModel*" attached="false" writable="true"/>
+            <qmlmethod threadsafety="unspecified" name="get" fullname="SortFilterProxyModel::get" href="qml-sortfilterproxymodel.html#get-method" status="active" access="public"/>
+            <qmlmethod threadsafety="unspecified" name="get" fullname="SortFilterProxyModel::get" href="qml-sortfilterproxymodel.html#get-method" status="active" access="public"/>
+            <qmlmethod threadsafety="unspecified" name="mapFromSource" fullname="SortFilterProxyModel::mapFromSource" href="qml-sortfilterproxymodel.html#mapFromSource-method" status="active" access="public"/>
+            <qmlmethod threadsafety="unspecified" name="mapFromSource" fullname="SortFilterProxyModel::mapFromSource" href="qml-sortfilterproxymodel.html#mapFromSource-method" status="active" access="public"/>
+            <qmlmethod threadsafety="unspecified" name="mapToSource" fullname="SortFilterProxyModel::mapToSource" href="qml-sortfilterproxymodel.html#mapToSource-method" status="active" access="public"/>
+            <qmlmethod threadsafety="unspecified" name="mapToSource" fullname="SortFilterProxyModel::mapToSource" href="qml-sortfilterproxymodel.html#mapToSource-method" status="active" access="public"/>
+            <qmlmethod threadsafety="unspecified" name="roleForName" fullname="SortFilterProxyModel::roleForName" href="qml-sortfilterproxymodel.html#roleForName-method" status="active" access="public"/>
+        </qmlclass>
+        <qmlclass threadsafety="unspecified" name="ExpressionSorter" qml-module-name="ExpressionSorter" qml-base-type="::Sorter" href="qml-expressionsorter.html" status="active" access="public" title="ExpressionSorter" fulltitle="ExpressionSorter" subtitle="" brief="Sorts row with a custom sorting">
+            <qmlproperty threadsafety="unspecified" name="expression" fullname="ExpressionSorter::expression" href="qml-expressionsorter.html#expression-prop" status="active" access="public" type="expression" attached="false" writable="true"/>
+        </qmlclass>
+        <qmlclass threadsafety="unspecified" name="RoleSorter" qml-module-name="RoleSorter" qml-base-type="::Sorter" href="qml-rolesorter.html" status="active" access="public" title="RoleSorter" fulltitle="RoleSorter" subtitle="" brief="Sorts rows based on a source model role">
+            <qmlproperty threadsafety="unspecified" name="roleName" fullname="RoleSorter::roleName" href="qml-rolesorter.html#roleName-prop" status="active" access="public" type="string" attached="false" writable="true"/>
+        </qmlclass>
+        <qmlclass threadsafety="unspecified" name="Sorter" qml-module-name="Sorter" href="qml-sorter.html" status="active" access="public" title="Sorter" fulltitle="Sorter" subtitle="" brief="Base type for the SortFilterProxyModel sorters">
+            <qmlproperty threadsafety="unspecified" name="enabled" fullname="Sorter::enabled" href="qml-sorter.html#enabled-prop" status="active" access="public" type="bool" attached="false" writable="true"/>
+            <qmlproperty threadsafety="unspecified" name="sortOrder" fullname="Sorter::sortOrder" href="qml-sorter.html#sortOrder-prop" status="active" access="public" type="Qt::SortOrder" attached="false" writable="true"/>
+        </qmlclass>
+        <qmlclass threadsafety="unspecified" name="tst_builtins" qml-module-name="tst_builtins" href="qml-tst-builtins.html" status="internal" access="private" location="tst_builtins.qml" filepath="D:/coding/SortFilterProxyModel/tests/tst_builtins.qml" lineno="6" title="tst_builtins" fulltitle="tst_builtins" subtitle=""/>
+        <qmlclass threadsafety="unspecified" name="tst_helpers" qml-module-name="tst_helpers" href="qml-tst-helpers.html" status="internal" access="private" location="tst_helpers.qml" filepath="D:/coding/SortFilterProxyModel/tests/tst_helpers.qml" lineno="7" title="tst_helpers" fulltitle="tst_helpers" subtitle=""/>
+        <qmlclass threadsafety="unspecified" name="tst_indexfilter" qml-module-name="tst_indexfilter" href="qml-tst-indexfilter.html" status="internal" access="private" location="tst_indexfilter.qml" filepath="D:/coding/SortFilterProxyModel/tests/tst_indexfilter.qml" lineno="6" title="tst_indexfilter" fulltitle="tst_indexfilter" subtitle="">
+            <qmlproperty threadsafety="unspecified" name="filters" fullname="tst_indexfilter::filters" href="qml-tst-indexfilter.html#filters-prop" status="active" access="public" location="tst_indexfilter.qml" filepath="D:/coding/SortFilterProxyModel/tests/tst_indexfilter.qml" lineno="7" type="IndexFilter" attached="false" writable="true"/>
+        </qmlclass>
+        <qmlclass threadsafety="unspecified" name="tst_rangefilter" qml-module-name="tst_rangefilter" href="qml-tst-rangefilter.html" status="internal" access="private" location="tst_rangefilter.qml" filepath="D:/coding/SortFilterProxyModel/tests/tst_rangefilter.qml" lineno="6" title="tst_rangefilter" fulltitle="tst_rangefilter" subtitle="">
+            <qmlproperty threadsafety="unspecified" name="filters" fullname="tst_rangefilter::filters" href="qml-tst-rangefilter.html#filters-prop" status="active" access="public" location="tst_rangefilter.qml" filepath="D:/coding/SortFilterProxyModel/tests/tst_rangefilter.qml" lineno="7" type="RangeFilter" attached="false" writable="true"/>
+        </qmlclass>
+        <qmlclass threadsafety="unspecified" name="tst_sorters" qml-module-name="tst_sorters" href="qml-tst-sorters.html" status="internal" access="private" location="tst_sorters.qml" filepath="D:/coding/SortFilterProxyModel/tests/tst_sorters.qml" lineno="7" title="tst_sorters" fulltitle="tst_sorters" subtitle="">
+            <qmlproperty threadsafety="unspecified" name="sorters" fullname="tst_sorters::sorters" href="qml-tst-sorters.html#sorters-prop" status="active" access="public" location="tst_sorters.qml" filepath="D:/coding/SortFilterProxyModel/tests/tst_sorters.qml" lineno="16" type="QtObject" attached="false" writable="true"/>
+        </qmlclass>
+        <qmlclass threadsafety="unspecified" name="tst_sourceroles" qml-module-name="tst_sourceroles" href="qml-tst-sourceroles.html" status="internal" access="private" location="tst_sourceroles.qml" filepath="D:/coding/SortFilterProxyModel/tests/tst_sourceroles.qml" lineno="6" title="tst_sourceroles" fulltitle="tst_sourceroles" subtitle=""/>
+        <qmlmodule name="SortFilterProxyModel" qml-module-name="SortFilterProxyModel" qml-module-version="." href="sortfilterproxymodel-qmlmodule.html" status="internal" seen="false" title="" members="Filter,RoleFilter,ValueFilter,IndexFilter,RegExpFilter,RangeFilter,ExpressionFilter,AnyOf,AllOf,SortFilterProxyModel,Sorter,RoleSorter,ExpressionSorter"/>
+    </namespace>
+</INDEX>
