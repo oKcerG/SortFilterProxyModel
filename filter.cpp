@@ -162,12 +162,12 @@ void RegExpFilter::setPattern(const QString& pattern)
     filterChanged();
 }
 
-QQmlSortFilterProxyModel::PatternSyntax RegExpFilter::syntax() const
+RegExpFilter::PatternSyntax RegExpFilter::syntax() const
 {
     return m_syntax;
 }
 
-void RegExpFilter::setSyntax(QQmlSortFilterProxyModel::PatternSyntax syntax)
+void RegExpFilter::setSyntax(RegExpFilter::PatternSyntax syntax)
 {
     if (m_syntax == syntax)
         return;
