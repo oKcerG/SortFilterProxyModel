@@ -6,6 +6,24 @@
 
 namespace qqsfpm {
 
+/*!
+    \page index.html overview
+
+    \title SortFilterProxyModel QML Module
+
+    SortFilterProxyModel is an implementation of QSortFilterProxyModel conveniently exposed for QML.
+
+    \generatelist qmltypesbymodule SortFilterProxyModel
+*/
+
+/*!
+    \qmltype SortFilterProxyModel
+    \inqmlmodule SortFilterProxyModel
+    \brief Filters and sorts data coming from a source \l {http://doc.qt.io/qt-5/qabstractitemmodel.html} {QAbstractItemModel}
+
+    The SortFilterProxyModel type provides support for filtering and sorting data coming from a source model.
+*/
+
 QQmlSortFilterProxyModel::QQmlSortFilterProxyModel(QObject *parent) :
     QSortFilterProxyModel(parent)
 {
@@ -17,6 +35,18 @@ QQmlSortFilterProxyModel::QQmlSortFilterProxyModel(QObject *parent) :
     connect(this, &QAbstractItemModel::layoutChanged, this, &QQmlSortFilterProxyModel::countChanged);
     setDynamicSortFilter(true);
 }
+
+/*!
+    \qmlproperty QAbstractItemModel* SortFilterProxyModel::sourceModel
+
+    The source model of this proxy model
+*/
+
+/*!
+    \qmlproperty int SortFilterProxyModel::count
+
+    The number of rows in the proxy model (not filtered out the source model)
+*/
 
 int QQmlSortFilterProxyModel::count() const
 {
@@ -86,6 +116,14 @@ void QQmlSortFilterProxyModel::setFilterValue(const QVariant& filterValue)
     Q_EMIT filterValueChanged();
 }
 
+/*!
+    \qmlproperty string SortFilterProxyModel::sortRoleName
+
+    The role name of the source model's data used for the sorting.
+
+    \sa {http://doc.qt.io/qt-5/qsortfilterproxymodel.html#sortRole-prop} {sortRole}, roleForName
+*/
+
 const QString& QQmlSortFilterProxyModel::sortRoleName() const
 {
     return m_sortRoleName;
@@ -116,6 +154,13 @@ void QQmlSortFilterProxyModel::setAscendingSortOrder(bool ascendingSortOrder)
     invalidate();
 }
 
+/*!
+    \qmlproperty list<Filter> SortFilterProxyModel::filters
+
+    This property holds the list of filters for this proxy model. To be included in the model, a row of the source model has to be accepted by all the top level filters of this list.
+
+    \sa Filter
+*/
 QQmlListProperty<Filter> QQmlSortFilterProxyModel::filters()
 {
     return QQmlListProperty<Filter>(this, &m_filters,
@@ -125,6 +170,13 @@ QQmlListProperty<Filter> QQmlSortFilterProxyModel::filters()
                                     &QQmlSortFilterProxyModel::clear_filters);
 }
 
+/*!
+    \qmlproperty list<Sorter> SortFilterProxyModel::sorters
+
+    This property holds the list of sorters for this proxy model. The rows of the source model are sorted by the sorters of this list, in their order of insertion.
+
+    \sa Sorter
+*/
 QQmlListProperty<Sorter> QQmlSortFilterProxyModel::sorters()
 {
     return QQmlListProperty<Sorter>(this, &m_sorters,
@@ -158,11 +210,23 @@ QVariant QQmlSortFilterProxyModel::sourceData(const QModelIndex &sourceIndex, in
     return sourceModel()->data(sourceIndex, role);
 }
 
+/*!
+    \qmlmethod int SortFilterProxyModel::roleForName(string roleName)
+
+    Returns the role number for the given \a roleName.
+    If no role is found for this \a roleName, \c -1 is returned.
+*/
+
 int QQmlSortFilterProxyModel::roleForName(const QString& roleName) const
 {
     return roleNames().key(roleName.toUtf8(), -1);
 }
 
+/*!
+    \qmlmethod object SortFilterProxyModel::get(int row)
+
+    Return the item at \a row in the proxy model as a map of all its roles. This allows the item data to be read (not modified) from JavaScript.
+*/
 QVariantMap QQmlSortFilterProxyModel::get(int row) const
 {
     QVariantMap map;
@@ -173,16 +237,33 @@ QVariantMap QQmlSortFilterProxyModel::get(int row) const
     return map;
 }
 
+/*!
+    \qmlmethod variant SortFilterProxyModel::get(int row, string roleName)
+
+    Return the data for the given \a roleNamte of the item at \a row in the proxy model. This allows the role data to be read (not modified) from JavaScript.
+    This equivalent to calling \c {data(index(row, 0), roleForName(roleName))}.
+*/
 QVariant QQmlSortFilterProxyModel::get(int row, const QString& roleName) const
 {
     return data(index(row, 0), roleForName(roleName));
 }
 
+/*!
+    \qmlmethod index SortFilterProxyModel::mapToSource(index proxyIndex)
+
+    Returns the source model index corresponding to the given \a proxyIndex from the SortFilterProxyModel.
+*/
 QModelIndex QQmlSortFilterProxyModel::mapToSource(const QModelIndex& proxyIndex) const
 {
     return QSortFilterProxyModel::mapToSource(proxyIndex);
 }
 
+/*!
+    \qmlmethod int SortFilterProxyModel::mapToSource(int proxyRow)
+
+    Returns the source model row corresponding to the given \a proxyRow from the SortFilterProxyModel.
+    Returns -1 if there is no corresponding row.
+*/
 int QQmlSortFilterProxyModel::mapToSource(int proxyRow) const
 {
     QModelIndex proxyIndex = index(proxyRow, 0);
@@ -190,11 +271,22 @@ int QQmlSortFilterProxyModel::mapToSource(int proxyRow) const
     return sourceIndex.isValid() ? sourceIndex.row() : -1;
 }
 
+/*!
+    \qmlmethod QModelIndex SortFilterProxyModel::mapFromSource(QModelIndex sourceIndex)
+
+    Returns the model index in the SortFilterProxyModel given the sourceIndex from the source model.
+*/
 QModelIndex QQmlSortFilterProxyModel::mapFromSource(const QModelIndex& sourceIndex) const
 {
     return QSortFilterProxyModel::mapFromSource(sourceIndex);
 }
 
+/*!
+    \qmlmethod int SortFilterProxyModel::mapFromSource(int sourceRow)
+
+    Returns the row in the SortFilterProxyModel given the \a sourceRow from the source model.
+    Returns -1 if there is no corresponding row.
+*/
 int QQmlSortFilterProxyModel::mapFromSource(int sourceRow) const
 {
     QModelIndex proxyIndex;

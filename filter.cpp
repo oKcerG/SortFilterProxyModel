@@ -3,10 +3,29 @@
 
 namespace qqsfpm {
 
+/*!
+    \qmltype Filter
+    \inqmlmodule SortFilterProxyModel
+    \brief Base type for the \l SortFilterProxyModel filters
+
+    The Filter type cannot be used directly in a QML file.
+    It exists to provide a set of common properties and methods,
+    available across all the other filter types that inherit from it.
+    Attempting to use the Filter type directly will result in an error.
+*/
+
 Filter::Filter(QObject *parent) : QObject(parent)
 {
 }
 
+/*!
+    \qmlproperty bool Filter::enabled
+
+    This property holds whether the filter is enabled.
+    A disabled filter will accept every rows unconditionally (even if it's inverted).
+
+    By default, filters are enabled.
+*/
 bool Filter::enabled() const
 {
     return m_enabled;
@@ -22,6 +41,14 @@ void Filter::setEnabled(bool enabled)
     Q_EMIT invalidate();
 }
 
+/*!
+    \qmlproperty bool Filter::inverted
+
+    This property holds whether the filter is inverted.
+    When a filter is inverted, a row normally accepted would be rejected, and vice-versa.
+
+    By default, filters are not inverted.
+*/
 bool Filter::inverted() const
 {
     return m_inverted;
@@ -58,6 +85,24 @@ void Filter::filterChanged()
         invalidate();
 }
 
+/*!
+    \qmltype RoleFilter
+    \qmlabstract
+    \inherits Filter
+    \inqmlmodule SortFilterProxyModel
+    \brief Base type for filters based on a source model role
+
+    The RoleFilter type cannot be used directly in a QML file.
+    It exists to provide a set of common properties and methods,
+    available across all the other filter types that inherit from it.
+    Attempting to use the RoleFilter type directly will result in an error.
+*/
+
+/*!
+    \qmlproperty string RoleFilter::roleName
+
+    This property holds the role name that the filter is using to query the source model's data when filtering items.
+*/
 const QString& RoleFilter::roleName() const
 {
     return m_roleName;
@@ -78,6 +123,37 @@ QVariant RoleFilter::sourceData(const QModelIndex &sourceIndex) const
     return proxyModel()->sourceData(sourceIndex, m_roleName);
 }
 
+/*!
+    \qmltype ValueFilter
+    \inherits RoleFilter
+    \inqmlmodule SortFilterProxyModel
+    \brief Filters rows matching exactly a value
+
+    A ValueFilter is a simple \l RoleFilter that accepts rows matching exactly the filter's value
+
+    In the following example, only rows with their \c favorite role set to \c true will be accepted when the checkbox is checked :
+    \code
+    CheckBox {
+       id: showOnlyFavoriteCheckBox
+    }
+
+    SortFilterProxyModel {
+       sourceModel: contactModel
+       filters: ValueFilter {
+           roleName: "favorite"
+           value: true
+           enabled: showOnlyFavoriteCheckBox.checked
+       }
+    }
+    \endcode
+
+*/
+
+/*!
+    \qmlproperty variant ValueFilter::value
+
+    This property holds the value used to filter the contents of the source model.
+*/
 const QVariant &ValueFilter::value() const
 {
     return m_value;
@@ -98,6 +174,37 @@ bool ValueFilter::filterRow(const QModelIndex& sourceIndex) const
     return !m_value.isValid() || m_value == sourceData(sourceIndex);
 }
 
+/*!
+    \qmltype IndexFilter
+    \inherits Filter
+    \inqmlmodule SortFilterProxyModel
+    \brief Filters rows based on their source index
+
+    An IndexFilter is a filter allowing contents to be filtered based on their source model index.
+
+    In the following example, only the first row of the source model will be accepted:
+    \code
+    SortFilterProxyModel {
+       sourceModel: contactModel
+       filters: IndexFilter {
+           maximumIndex: 0
+       }
+    }
+    \endcode
+*/
+
+/*!
+    \qmlproperty int IndexFilter::minimumIndex
+
+    This property holds the minimumIndex of the filter.
+    Rows with a source index lower than \c minimumIndex will be rejected.
+
+    If \c minimumIndex is negative, it is counted from the end of the source model, meaning that :
+    \code minimumIndex: -1\endcode
+    is equivalent to :
+    \code minimumIndex: sourceModel.count - 1\endcode
+    By default, no value is set.
+*/
 const QVariant& IndexFilter::minimumIndex() const
 {
     return m_minimumIndex;
@@ -113,6 +220,18 @@ void IndexFilter::setMinimumIndex(const QVariant& minimumIndex)
     filterChanged();
 }
 
+/*!
+    \qmlproperty int IndexFilter::maximumIndex
+
+    This property holds the maximumIndex of the filter.
+    Rows with a source index higher than \c maximumIndex will be rejected.
+
+    If \c maximumIndex is negative, it is counted from the end of the source model, meaning that:
+    \code maximumIndex: -1\endcode
+    is equivalent to :
+    \code maximumIndex: sourceModel.count - 1\endcode
+    By default, no value is set.
+*/
 const QVariant& IndexFilter::maximumIndex() const
 {
     return m_maximumIndex;
@@ -146,6 +265,37 @@ bool IndexFilter::filterRow(const QModelIndex& sourceIndex) const
     return !lowerThanMinimumIndex && !greaterThanMaximumIndex;
 }
 
+/*!
+    \qmltype RegExpFilter
+    \inherits RoleFilter
+    \inqmlmodule SortFilterProxyModel
+    \brief  Filters rows matching a regular expression
+
+    A RegExpFilter is a \l RoleFilter that accepts rows matching a regular rexpression.
+
+    In the following example, only rows with their \c lastName role beggining with the content of textfield the will be accepted:
+    \code
+    TextField {
+       id: nameTextField
+    }
+
+    SortFilterProxyModel {
+       sourceModel: contactModel
+       filters: RegExpFilter {
+           roleName: "lastName"
+           pattern: "^" + nameTextField.displayText
+       }
+    }
+    \endcode
+*/
+
+/*!
+    \qmlproperty bool RegExpFilter::pattern
+
+    The pattern used to filter the contents of the source model.
+
+    \sa syntax
+*/
 QString RegExpFilter::pattern() const
 {
     return m_pattern;
@@ -162,6 +312,22 @@ void RegExpFilter::setPattern(const QString& pattern)
     filterChanged();
 }
 
+/*!
+    \qmlproperty enum RegExpFilter::syntax
+
+    The pattern used to filter the contents of the source model.
+
+    Only the source model's value having their \l roleName data matching this \l pattern with the specified \l syntax will be kept.
+
+    \value RegExpFilter.RegExp A rich Perl-like pattern matching syntax. This is the default.
+    \value RegExpFilter.Wildcard This provides a simple pattern matching syntax similar to that used by shells (command interpreters) for "file globbing".
+    \value RegExpFilter.FixedString The pattern is a fixed string. This is equivalent to using the RegExp pattern on a string in which all metacharacters are escaped.
+    \value RegExpFilter.RegExp2 Like RegExp, but with greedy quantifiers.
+    \value RegExpFilter.WildcardUnix This is similar to Wildcard but with the behavior of a Unix shell. The wildcard characters can be escaped with the character "\".
+    \value RegExpFilter.W3CXmlSchema11 The pattern is a regular expression as defined by the W3C XML Schema 1.1 specification.
+
+    \sa pattern
+*/
 RegExpFilter::PatternSyntax RegExpFilter::syntax() const
 {
     return m_syntax;
@@ -178,6 +344,11 @@ void RegExpFilter::setSyntax(RegExpFilter::PatternSyntax syntax)
     filterChanged();
 }
 
+/*!
+    \qmlproperty Qt::CaseSensitivity RegExpFilter::caseSensitivity
+
+    This property holds the caseSensitivity of the filter.
+*/
 Qt::CaseSensitivity RegExpFilter::caseSensitivity() const
 {
     return m_caseSensitivity;
@@ -200,6 +371,41 @@ bool RegExpFilter::filterRow(const QModelIndex& sourceIndex) const
     return m_regExp.indexIn(string) != -1;
 }
 
+/*!
+    \qmltype RangeFilter
+    \inherits RoleFilter
+    \inqmlmodule SortFilterProxyModel
+    \brief Filters rows between boundary values
+
+    A RangeFilter is a \l RoleFilter that accepts rows if their data is between the filter's minimum and maximum value.
+
+    In the following example, only rows with their \c price role set to a value between the tow boundary of the slider will be accepted :
+    \code
+    RangeSlider {
+       id: priceRangeSlider
+    }
+
+    SortFilterProxyModel {
+       sourceModel: priceModel
+       filters: RangeFilter {
+           roleName: "price"
+           minimumValue: priceRangeSlider.first.value
+           maximumValue: priceRangeSlider.second.value
+       }
+    }
+    \endcode
+*/
+
+/*!
+    \qmlproperty int RangeFilter::minimumValue
+
+    This property holds the minimumValue of the filter.
+    Rows with a value lower than \c minimumValue will be rejected.
+
+    By default, no value is set.
+
+    \sa minimumInclusive
+*/
 QVariant RangeFilter::minimumValue() const
 {
     return m_minimumValue;
@@ -215,6 +421,15 @@ void RangeFilter::setMinimumValue(QVariant minimumValue)
     filterChanged();
 }
 
+/*!
+    \qmlproperty int RangeFilter::minimumInclusive
+
+    This property holds whether the \l minimumValue is inclusive.
+
+    By default, the \l minimumValue is inclusive.
+
+    \sa minimumValue
+*/
 bool RangeFilter::minimumInclusive() const
 {
     return m_minimumInclusive;
@@ -230,6 +445,16 @@ void RangeFilter::setMinimumInclusive(bool minimumInclusive)
     filterChanged();
 }
 
+/*!
+    \qmlproperty int RangeFilter::maximumValue
+
+    This property holds the maximumValue of the filter.
+    Rows with a value higher than \c maximumValue will be rejected.
+
+    By default, no value is set.
+
+    \sa maximumInclusive
+*/
 QVariant RangeFilter::maximumValue() const
 {
     return m_maximumValue;
@@ -245,6 +470,15 @@ void RangeFilter::setMaximumValue(QVariant maximumValue)
     filterChanged();
 }
 
+/*!
+    \qmlproperty int RangeFilter::maximumInclusive
+
+    This property holds whether the \l minimumValue is inclusive.
+
+    By default, the \l minimumValue is inclusive.
+
+    \sa minimumValue
+*/
 bool RangeFilter::maximumInclusive() const
 {
     return m_maximumInclusive;
@@ -270,6 +504,30 @@ bool RangeFilter::filterRow(const QModelIndex& sourceIndex) const
     return !(lessThanMin || moreThanMax);
 }
 
+/*!
+    \qmltype ExpressionFilter
+    \inherits Filter
+    \inqmlmodule SortFilterProxyModel
+    \brief Filters row with a custom filtering
+
+    An ExpressionFilter is a \l Filter allowing to implement custom filtering based on a javascript expression.
+*/
+
+/*!
+    \qmlproperty expression ExpressionFilter::expression
+
+    An expression to implement custom filtering, it must evaluate to a boolean.
+    It has the same syntax has a \l {http://doc.qt.io/qt-5/qtqml-syntax-propertybinding.html} {Property Binding} except it will be evaluated for each of the source model's rows.
+    Rows that have their expression evaluating to \c true will be accepted by the model.
+    Data for each row is exposed like for a delegate of a QML View.
+
+    This expression is reevaluated for a row every time its model data changes.
+    When an external property (not \c index or in \c model) the expression depends on changes, the expression is reevaluated for every row of the source model.
+    To capture the properties the expression depends on, the expression is first executed with invalid data and each property access is detected by the QML engine.
+    This means that if a property is not accessed because of a conditional, it won't be captured and the expression won't be reevaluted when this property changes.
+
+    A workaround to this problem is to access all the properties the expressions depends unconditionally at the beggining of the expression.
+*/
 const QQmlScriptString& ExpressionFilter::expression() const
 {
     return m_scriptString;
@@ -413,6 +671,37 @@ void FilterContainer::proxyModelCompleted()
     }
 }
 
+/*!
+    \qmltype AnyOf
+    \inherits Filter
+    \inqmlmodule SortFilterProxyModel
+    \brief Filter container accepting rows accepted by at least one of its child filters
+
+    The AnyOf type is a \l Filter container that accepts rows if any of its contained (and enabled) filters accept them.
+
+    In the following example, only the rows where the \c firstName role or the \c lastName role match the text entered in the \c nameTextField will be accepted :
+    \code
+    TextField {
+      id: nameTextField
+    }
+
+    SortFilterProxyModel {
+      sourceModel: contactModel
+      filters: AnyOf {
+          RegExpFilter {
+              roleName: "lastName"
+              pattern: nameTextField.text
+              caseSensitivity: Qt.CaseInsensitive
+          }
+          RegExpFilter {
+              roleName: "firstName"
+              pattern: nameTextField.text
+              caseSensitivity: Qt.CaseInsensitive
+          }
+      }
+    }
+    \endcode
+*/
 bool AnyOfFilter::filterRow(const QModelIndex& sourceIndex) const
 {
     //return true if any of the enabled filters return true
@@ -423,6 +712,16 @@ bool AnyOfFilter::filterRow(const QModelIndex& sourceIndex) const
     );
 }
 
+/*!
+    \qmltype AllOf
+    \inherits Filter
+    \inqmlmodule SortFilterProxyModel
+    \brief Filter container accepting rows accepted by all its child filters
+
+    The AllOf type is a \l Filter container that accepts rows if all of its contained (and enabled) filters accept them, or if it has no filter.
+
+    Using it as a top level filter has the same effect as putting all its child filters as top level filters. It can however be usefull to use an AllOf filter when nested in an AnyOf filter.
+*/
 bool AllOfFilter::filterRow(const QModelIndex& sourceIndex) const
 {
     //return true if all filters return false, or if there is no filter.

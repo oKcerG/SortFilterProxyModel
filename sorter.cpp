@@ -3,12 +3,31 @@
 
 namespace qqsfpm {
 
+/*!
+    \qmltype Sorter
+    \inqmlmodule SortFilterProxyModel
+    \brief Base type for the \l SortFilterProxyModel sorters
+
+    The Sorter type cannot be used directly in a QML file.
+    It exists to provide a set of common properties and methods,
+    available across all the other sorters types that inherit from it.
+    Attempting to use the Sorter type directly will result in an error.
+*/
+
 Sorter::Sorter(QObject *parent) : QObject(parent)
 {
 }
 
 Sorter::~Sorter() = default;
 
+/*!
+    \qmlproperty bool Sorter::enabled
+
+    This property holds whether the sorter is enabled.
+    A disabled sorter will not change the order of the rows.
+
+    By default, sorters are enabled.
+*/
 bool Sorter::enabled() const
 {
     return m_enabled;
@@ -34,6 +53,17 @@ void Sorter::setAscendingOrder(bool ascendingOrder)
     setSortOrder(ascendingOrder ? Qt::AscendingOrder : Qt::DescendingOrder);
 }
 
+
+/*!
+    \qmlproperty Qt::SortOrder Sorter::sortOrder
+
+    This property holds the sort order of this sorter.
+
+    \value Qt.AscendingOrder The items are sorted ascending e.g. starts with 'AAA' ends with 'ZZZ' in Latin-1 locales
+    \value Qt.DescendingOrder The items are sorted descending e.g. starts with 'ZZZ' ends with 'AAA' in Latin-1 locales
+
+    By default, sorting is in ascending order.
+*/
 Qt::SortOrder Sorter::sortOrder() const
 {
     return m_sortOrder;
@@ -92,6 +122,28 @@ const QString& RoleSorter::roleName() const
     return m_roleName;
 }
 
+/*!
+    \qmltype RoleSorter
+    \inherits Sorter
+    \inqmlmodule SortFilterProxyModel
+    \brief Sorts rows based on a source model role
+
+    A RoleSorter is a simple \l Sorter that sorts rows based on a source model role.
+
+    In the following example, rows with be sorted by their \c lastName role :
+    \code
+    SortFilterProxyModel {
+       sourceModel: contactModel
+       sorters: RoleSorter { roleName: "lastName" }
+    }
+    \endcode
+*/
+
+/*!
+    \qmlproperty string RoleSorter::roleName
+
+    This property holds the role name that the sorter is using to query the source model's data when sorting items.
+*/
 void RoleSorter::setRoleName(const QString& roleName)
 {
     if (m_roleName == roleName)
@@ -113,6 +165,30 @@ int RoleSorter::compare(const QModelIndex &sourceLeft, const QModelIndex& source
     return 0;
 }
 
+/*!
+    \qmltype ExpressionSorter
+    \inherits Sorter
+    \inqmlmodule SortFilterProxyModel
+    \brief Sorts row with a custom sorting
+
+    An ExpressionSorter is a \l Sorter allowing to implement custom sorting based on a javascript expression.
+*/
+
+/*!
+    \qmlproperty expression ExpressionSorter::expression
+
+    An expression to implement custom sorting, it must evaluate to a bool.
+    It has the same syntax has a \l {http://doc.qt.io/qt-5/qtqml-syntax-propertybinding.html} {Property Binding} except it will be evaluated for each of the source model's rows.
+    Model data is accessible for both row with the \c indexLeft, \c modelLeft, \c indexRight and \c modelRight properties.
+    The expression should return \c true if the value of the left item is less than the value of the right item, otherwise returns false.
+
+    This expression is reevaluated for a row every time its model data changes.
+    When an external property (not \c index* or in \c model*) the expression depends on changes, the expression is reevaluated for every row of the source model.
+    To capture the properties the expression depends on, the expression is first executed with invalid data and each property access is detected by the QML engine.
+    This means that if a property is not accessed because of a conditional, it won't be captured and the expression won't be reevaluted when this property changes.
+
+    A workaround to this problem is to access all the properties the expressions depends unconditionally at the beggining of the expression.
+*/
 const QQmlScriptString& ExpressionSorter::expression() const
 {
     return m_scriptString;
