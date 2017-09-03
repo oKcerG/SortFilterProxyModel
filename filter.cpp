@@ -254,15 +254,21 @@ bool IndexFilter::filterRow(const QModelIndex& sourceIndex) const
 
     bool minimumIsValid;
     int minimum = m_minimumIndex.toInt(&minimumIsValid);
-    int actualMinimum = (sourceRowCount + minimum) % sourceRowCount;
-    bool lowerThanMinimumIndex = minimumIsValid && sourceRow < actualMinimum;
+    if (minimumIsValid) {
+        int actualMinimum = minimum < 0 ? sourceRowCount + minimum : minimum;
+        if (sourceRow < actualMinimum)
+            return false;
+    }
 
     bool maximumIsValid;
     int maximum = m_maximumIndex.toInt(&maximumIsValid);
-    int actualMaximum = (sourceRowCount + maximum) % sourceRowCount;
-    bool greaterThanMaximumIndex = maximumIsValid && sourceRow >actualMaximum;
+    if (maximumIsValid) {
+        int actualMaximum = maximum < 0 ? sourceRowCount + maximum : maximum;
+        if (sourceRow > actualMaximum)
+            return false;
+    }
 
-    return !lowerThanMinimumIndex && !greaterThanMaximumIndex;
+    return true;
 }
 
 /*!
