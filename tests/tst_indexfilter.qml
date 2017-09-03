@@ -61,9 +61,22 @@ Item {
             maximumIndex: -2
         },
         IndexFilter {
+            property string tag: "toBigFilter"
+            property int expectedModelCount: 0
+            property var expectedValues: []
+            minimumIndex: 5
+        },
+        IndexFilter {
             property string tag: "noFilter"
             property int expectedModelCount: 5
             property var expectedValues: [5, 3, 1, 2, 4]
+        },
+        IndexFilter {
+            property string tag: "undefinedFilter"
+            property int expectedModelCount: 5
+            property var expectedValues: [5, 3, 1, 2, 4]
+            minimumIndex: undefined
+            maximumIndex: null
         }
     ]
 
