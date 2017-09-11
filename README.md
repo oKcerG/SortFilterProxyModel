@@ -90,9 +90,9 @@ Here the `ListView` will only show elements that contains the content of the `Te
             }
         ]
         sorters: [
-            RoleSorter { roleName: "favorite"; ascendingOrder: false },
-            RoleSorter { roleName: "firstName" },
-            RoleSorter { roleName: "lastName" }
+            RoleSorter { roleName: "favorite"; sortOrder: Qt.DescendingOrder },
+            StringSorter { roleName: "firstName" },
+            StringSorter { roleName: "lastName" }
         ]
     }
 ```
