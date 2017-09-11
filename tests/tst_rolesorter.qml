@@ -64,7 +64,7 @@ Item {
             {
                 var modelValue = testModel.get(i, sorter.roleName);
                 verify(modelValue === sorter.expectedValues[i],
-                       "Expected testModel value " + modelValue + ", actual: " + sorter.expectedValues[i]);
+                       "Expected testModel value " + sorter.expectedValues[i] + ", actual: " + modelValue);
             }
         }
     }

@@ -111,7 +111,7 @@ Item {
             {
                 var modelValue = testModel.data(testModel.index(i, 0));
                 verify(modelValue === filter.expectedValues[i],
-                       "Expected testModel value " + modelValue + ", actual: " + filter.expectedValues[i]);
+                       "Expected testModel value " + filter.expectedValues[i] + ", actual: " + modelValue);
             }
         }
     }
