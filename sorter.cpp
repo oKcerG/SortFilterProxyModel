@@ -154,15 +154,138 @@ void RoleSorter::setRoleName(const QString& roleName)
     sorterChanged();
 }
 
+QPair<QVariant, QVariant> RoleSorter::sourceData(const QModelIndex &sourceLeft, const QModelIndex& sourceRight) const
+{
+    QPair<QVariant, QVariant> pair;
+    if (QQmlSortFilterProxyModel* proxy = proxyModel()) {
+        int role = proxy->roleForName(m_roleName);
+        pair.first = proxy->sourceData(sourceLeft, role);
+        pair.second = proxy->sourceData(sourceRight, role);
+    }
+    return pair;
+}
+
 int RoleSorter::compare(const QModelIndex &sourceLeft, const QModelIndex& sourceRight) const
 {
-    QVariant leftValue = proxyModel()->sourceData(sourceLeft, m_roleName);
-    QVariant rightValue = proxyModel()->sourceData(sourceRight, m_roleName);
+    QPair<QVariant, QVariant> pair = sourceData(sourceLeft, sourceRight);
+    QVariant leftValue = pair.first;
+    QVariant rightValue = pair.second;
     if (leftValue < rightValue)
         return -1;
     if (leftValue > rightValue)
         return 1;
     return 0;
+}
+
+/*!
+    \qmltype StringSorter
+    \inherits RoleSorter
+    \inqmlmodule SortFilterProxyModel
+    \brief Sorts rows based on a source model string role
+
+    \l StringSorter is a specialized \l RoleSorter that sorts rows based on a source model string role.
+    \l StringSorter compares strings according to a localized collation algorithm.
+
+    In the following example, rows with be sorted by their \c lastName role :
+    \code
+    SortFilterProxyModel {
+       sourceModel: contactModel
+       sorters: StringSorter { roleName: "lastName" }
+    }
+    \endcode
+*/
+
+/*!
+    \qmlproperty Qt.CaseSensitivity StringSorter::caseSensitivity
+
+    This property holds the case sensitivity of the sorter.
+*/
+Qt::CaseSensitivity StringSorter::caseSensitivity() const
+{
+    return m_collator.caseSensitivity();
+}
+
+void StringSorter::setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)
+{
+    if (m_collator.caseSensitivity() == caseSensitivity)
+        return;
+
+    m_collator.setCaseSensitivity(caseSensitivity);
+    Q_EMIT caseSensitivityChanged();
+    sorterChanged();
+}
+
+/*!
+    \qmlproperty bool StringSorter::ignorePunctation
+
+    This property holds whether the sorter ignores punctation.
+    if \c ignorePunctuation is \c true, punctuation characters and symbols are ignored when determining sort order.
+
+    \note This property is not currently supported on Apple platforms or if Qt is configured to not use ICU on Linux.
+*/
+bool StringSorter::ignorePunctation() const
+{
+    return m_collator.ignorePunctuation();
+}
+
+void StringSorter::setIgnorePunctation(bool ignorePunctation)
+{
+    if (m_collator.ignorePunctuation() == ignorePunctation)
+        return;
+
+    m_collator.setIgnorePunctuation(ignorePunctation);
+    Q_EMIT ignorePunctationChanged();
+    sorterChanged();
+}
+
+/*!
+    \qmlproperty Locale StringSorter::locale
+
+    This property holds the locale of the sorter.
+*/
+QLocale StringSorter::locale() const
+{
+    return m_collator.locale();
+}
+
+void StringSorter::setLocale(const QLocale &locale)
+{
+    if (m_collator.locale() == locale)
+        return;
+
+    m_collator.setLocale(locale);
+    Q_EMIT localeChanged();
+    sorterChanged();
+}
+
+/*!
+    \qmlproperty bool StringSorter::numericMode
+
+    This property holds whether the numeric mode of the sorter is enabled.
+    This will enable proper sorting of numeric digits, so that e.g. 100 sorts after 99.
+    By default this mode is off.
+*/
+bool StringSorter::numericMode() const
+{
+    return m_collator.numericMode();
+}
+
+void StringSorter::setNumericMode(bool numericMode)
+{
+    if (m_collator.numericMode() == numericMode)
+        return;
+
+    m_collator.setNumericMode(numericMode);
+    Q_EMIT numericModeChanged();
+    sorterChanged();
+}
+
+int StringSorter::compare(const QModelIndex &sourceLeft, const QModelIndex &sourceRight) const
+{
+    QPair<QVariant, QVariant> pair = sourceData(sourceLeft, sourceRight);
+    QString leftValue = pair.first.toString();
+    QString rightValue = pair.second.toString();
+    return m_collator.compare(leftValue, rightValue);
 }
 
 /*!
@@ -298,6 +421,7 @@ void ExpressionSorter::updateExpression()
 void registerSorterTypes() {
     qmlRegisterUncreatableType<Sorter>("SortFilterProxyModel", 0, 2, "Sorter", "Sorter is an abstract class");
     qmlRegisterType<RoleSorter>("SortFilterProxyModel", 0, 2, "RoleSorter");
+    qmlRegisterType<StringSorter>("SortFilterProxyModel", 0, 2, "StringSorter");
     qmlRegisterType<ExpressionSorter>("SortFilterProxyModel", 0, 2, "ExpressionSorter");
 }
 

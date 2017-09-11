@@ -19,4 +19,5 @@ OTHER_FILES += \
     tst_sorters.qml \
     tst_helpers.qml \
     tst_builtins.qml \
-    tst_rolesorter.qml
+    tst_rolesorter.qml \
+    tst_stringsorter.qml
