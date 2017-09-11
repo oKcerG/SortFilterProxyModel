@@ -18,7 +18,7 @@ Install
 Sample Usage
 ------------
 
-- You can do simple filtering and sorting with SortFilterProxyModel's own properties (`filter*` and `sort*`):
+- You can do simple filtering and sorting with SortFilterProxyModel:
 ```qml
 import QtQuick 2.2
 import QtQuick.Controls 1.2
@@ -48,22 +48,24 @@ ApplicationWindow {
     SortFilterProxyModel {
         id: personProxyModel
         sourceModel: personModel
-        filterRoleName: "lastName"
-        filterPattern: textField.text
-        filterCaseSensitivity: Qt.CaseInsensitive
-        sortRoleName: "FirstName"
+        filters: RegExpFilter {
+            roleName: "lastName"
+            pattern: textField.text
+            caseSensitivity: Qt.CaseInsensitive
+        }
+        sorters: StringSorter { roleName: "firstName" }
     }
 
     ListView {
         anchors { top: textField.bottom; bottom: parent.bottom; left: parent.left; right: parent.right }
         model: personProxyModel
-        delegate: Text { text: firstName + " " + lastName}
+        delegate: Text { text: model.firstName + " " + model.lastName}
     }
 }
 ```
 Here the `ListView` will only show elements that contains the content of the `TextField` in their `lastName` role.
 
-- But you can also achieve more complex filtering or sorting with the `filters` and `sorters` list properties :
+- But you can also achieve more complex filtering or sorting with multiple `filters` and `sorters`:
 ```qml
     SortFilterProxyModel {
         id: personProxyModel
@@ -106,79 +108,7 @@ Documentation
 This component is a subclass of [`QSortFilterProxyModel`](http://doc.qt.io/qt-5/qsortfilterproxymodel.html), to use it, you need to set the `sourceModel` property to a [`QAbstractItemModel*`](http://doc.qt.io/qt-5/qabstractitemmodel.html) with correct role names.
 This means you can use it with custom c++ models or `ListModel`, but not with JavaScript models like arrays, integers or object instances.
 
-You can then define how the source model is filtered or sorted by setting the different provided properties.  
-By default the source model is not sorted or filtered by the proxy model.
-
-When filtering, `filterValue` is taken in account first, then `filterPattern` and eventually `filterExpression` if it's a valid expression.
-This means you can combine different filtering methods. Prefer using `filterValue` or `filterPattern` when possible, `filterExpression` is slower.  
-When sorting, the sort is done with `sortExpression` if it's a valid expression, otherwise it is done with `sortRoleName` in combination with `sortOrder`.
-
-#### Properties
-<li>
-[__`sourceModel`__](http://doc.qt.io/qt-5/qabstractproxymodel.html#sourceModel-prop) : _`QAbstractItemModel*`_  
-This property holds the source model of this proxy model.
-</li>
-
-<li>
-__`filterRoleName`__ : _string_  
-The role name of the source model's data on which `filterPattern` and `filterValue` are tested against.
-</li>
-
-<li>
-__`filterValue`__ : _any_  
-Only contents with their `filterRoleName` data matching exactly this value (or that can be converted to this value) are available.
-</li>
-
-<li>
-__`filterPattern`__ : _string_  
-The pattern used to filter the contents of the source model.
-Only the source model's value having their `filterRoleName` data matching this `filterPatern` with the specified `filterPatternSyntax` will be available.
-</li>
-
-<li>
-__`filterPatternSyntax`__ : _enumeration_  
-This property represents the syntax of the pattern used to filter the contents of the source model.
-The possible values are mirrored from [`QRegExp::PatternSyntax`](http://doc.qt.io/qt-5/qregexp.html#PatternSyntax-enum) :
-
-| Value                                 | Description                                                                                                                       |
-|---------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| `SortFilterProxyModel.RegExp`         |	A rich Perl-like pattern matching syntax. __This is the default__                                                                |
-| `SortFilterProxyModel.RegExp2`        |	Like RegExp, but with greedy quantifiers                                                                                          |
-| `SortFilterProxyModel.Wildcard`       |	This provides a simple pattern matching syntax similar to that used by shells (command interpreters) for "file globbing"          |
-| `SortFilterProxyModel.WildcardUnix`   |	This is similar to Wildcard but with the behavior of a Unix shell. The wildcard characters can be escaped with the character "\"  |
-| `SortFilterProxyModel.FixedString`    |	The pattern is a fixed string. This is equivalent to using the RegExp pattern on a string in which all metacharacters are escaped |
-| `SortFilterProxyModel.W3CXmlSchema11` |	The pattern is a regular expression as defined by the W3C XML Schema 1.1 specification                                            |
-</li>
-
-<li>
-__`filterCaseSensitivity`__ : _enumeration_  
-This property holds the case sensitivity of the pattern used to filter the contents of the source model.  Can be `Qt.CaseSensitive` or `Qt.CaseInsensitive`.  
-This property only affects the filtering made with `filterPattern`, it does not affect `filterValue` or `filterExpression`.  
-By default, the filter is case sensitive.
-</li>
-
-<li>
-__`sortRoleName`__ : _string_  
-The role name of the source model's data used for the sorting.
-</li>
-
-<li>
-__`ascendingSortOrder`__ : _bool_  
-This property holds whether the sort is done in ascending order.  
-By default, sorting is in ascending order.
-</li>
-
-<li>
-__`sortCaseSensitivity`__ : _enumeration_  
-This property holds the case sensitivity setting used for comparing strings when sorting. Can be `Qt.CaseSensitive` or `Qt.CaseInsensitive`.  
-By default, sorting is case sensitive.
-</li>
-
-<li>
-__`isSortLocaleAware`__ : _bool_  
-This property holds the local aware setting used for comparing strings when sorting.  
-By default, sorting is not local aware.
-</li>
+The complete documentation reference is available here: https://okcerg.github.io/SortFilterProxyModel/
 
 Contributing
 ------------
