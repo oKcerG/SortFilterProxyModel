@@ -23,4 +23,5 @@ OTHER_FILES += \
     tst_builtins.qml \
     tst_rolesorter.qml \
     tst_stringsorter.qml \
-    tst_proxyroles.qml
+    tst_proxyroles.qml \
+    tst_joinrole.qml

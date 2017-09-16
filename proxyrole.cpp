@@ -41,9 +41,52 @@ void ProxyRole::invalidate()
     Q_EMIT invalidated();
 }
 
+QStringList JoinRole::roleNames() const
+{
+    return m_roleNames;
+}
+
+void JoinRole::setRoleNames(const QStringList& roleNames)
+{
+    if (m_roleNames == roleNames)
+        return;
+
+    m_roleNames = roleNames;
+    Q_EMIT roleNamesChanged();
+    invalidate();
+}
+
+QString JoinRole::separator() const
+{
+    return m_separator;
+}
+
+void JoinRole::setSeparator(const QString& separator)
+{
+    if (m_separator == separator)
+        return;
+
+    m_separator = separator;
+    Q_EMIT separatorChanged();
+    invalidate();
+}
+
+QVariant JoinRole::data(const QModelIndex &sourceIndex, const QQmlSortFilterProxyModel &proxyModel)
+{
+    QString result;
+
+    for (const QString& roleName : m_roleNames)
+        result += proxyModel.sourceData(sourceIndex, roleName).toString() + m_separator;
+
+    if (!m_roleNames.isEmpty())
+        result.chop(m_separator.length());
+
+    return result;
+}
 
 void registerProxyRoleTypes() {
     qmlRegisterUncreatableType<ProxyRole>("SortFilterProxyModel", 0, 2, "ProxyRole", "ProxyRole is an abstract class");
+    qmlRegisterType<JoinRole>("SortFilterProxyModel", 0, 2, "JoinRole");
 }
 
 Q_COREAPP_STARTUP_FUNCTION(registerProxyRoleTypes)
