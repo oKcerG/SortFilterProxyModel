@@ -9,6 +9,7 @@ namespace qqsfpm {
 
 class Filter;
 class Sorter;
+class ProxyRole;
 
 class QQmlSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParserStatus
 {
@@ -27,6 +28,7 @@ class QQmlSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParser
 
     Q_PROPERTY(QQmlListProperty<qqsfpm::Filter> filters READ filters)
     Q_PROPERTY(QQmlListProperty<qqsfpm::Sorter> sorters READ sorters)
+    Q_PROPERTY(QQmlListProperty<qqsfpm::ProxyRole> proxyRoles READ proxyRoles)
 
 public:
     enum PatternSyntax {
@@ -62,12 +64,17 @@ public:
 
     QQmlListProperty<Filter> filters();
     QQmlListProperty<Sorter> sorters();
+    QQmlListProperty<ProxyRole> proxyRoles();
 
     void classBegin() override;
     void componentComplete() override;
 
     QVariant sourceData(const QModelIndex& sourceIndex, const QString& roleName) const;
     QVariant sourceData(const QModelIndex& sourceIndex, int role) const;
+
+    void setSourceModel(QAbstractItemModel *sourceModel) override;
+    QVariant data(const QModelIndex& index, int role) const override;
+    QHash<int, QByteArray> roleNames() const override;
 
     Q_INVOKABLE int roleForName(const QString& roleName) const;
 
@@ -104,6 +111,8 @@ private Q_SLOTS:
     void updateSortRole();
     void updateRoles();
     void initRoles();
+    void sourceDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles);
+    void emitProxyRolesChanged();
 
 private:
     QVariantMap modelDataMap(const QModelIndex& modelIndex) const;
@@ -118,13 +127,21 @@ private:
     static Sorter* at_sorter(QQmlListProperty<Sorter>* list, int index);
     static void clear_sorters(QQmlListProperty<Sorter>* list);
 
+    static void append_proxyRole(QQmlListProperty<ProxyRole>* list, ProxyRole* proxyRole);
+    static int count_proxyRole(QQmlListProperty<ProxyRole>* list);
+    static ProxyRole* at_proxyRole(QQmlListProperty<ProxyRole>* list, int index);
+    static void clear_proxyRoles(QQmlListProperty<ProxyRole>* list);
+
     QString m_filterRoleName;
     QVariant m_filterValue;
     QString m_sortRoleName;
     bool m_ascendingSortOrder = true;
     QList<Filter*> m_filters;
     QList<Sorter*> m_sorters;
+    QList<ProxyRole*> m_proxyRoles;
     bool m_completed = false;
+    QHash<int, QByteArray> m_roleNames;
+    QHash<int, ProxyRole*> m_proxyRoleMap;
 };
 
 }

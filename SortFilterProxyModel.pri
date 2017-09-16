@@ -4,7 +4,9 @@ INCLUDEPATH += $$PWD
 
 HEADERS += $$PWD/qqmlsortfilterproxymodel.h \
     $$PWD/filter.h \
-    $$PWD/sorter.h
+    $$PWD/sorter.h \
+    $$PWD/proxyrole.h
 SOURCES += $$PWD/qqmlsortfilterproxymodel.cpp \
     $$PWD/filter.cpp \
-    $$PWD/sorter.cpp
+    $$PWD/sorter.cpp \
+    $$PWD/proxyrole.cpp
