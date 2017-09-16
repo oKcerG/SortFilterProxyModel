@@ -212,7 +212,7 @@ void QQmlSortFilterProxyModel::componentComplete()
 
 QVariant QQmlSortFilterProxyModel::sourceData(const QModelIndex& sourceIndex, const QString& roleName) const
 {
-    int role = sourceModel()->roleNames().key(roleName.toUtf8());
+    int role = roleNames().key(roleName.toUtf8());
     return sourceData(sourceIndex, role);
 }
 
@@ -441,7 +441,8 @@ void QQmlSortFilterProxyModel::sourceDataChanged(const QModelIndex& topLeft, con
 
 void QQmlSortFilterProxyModel::emitProxyRolesChanged()
 {
-    Q_EMIT dataChanged(index(0, 0), index(rowCount()-1, columnCount()-1), m_proxyRoleMap.keys().toVector());
+    invalidate();
+    Q_EMIT dataChanged(index(0,0), index(rowCount() - 1, columnCount() - 1), m_proxyRoleMap.keys().toVector());
 }
 
 QVariantMap QQmlSortFilterProxyModel::modelDataMap(const QModelIndex& modelIndex) const

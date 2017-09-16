@@ -16,14 +16,21 @@ Item {
     SortFilterProxyModel {
         id: testModel
         sourceModel: listModel
-        filters: ValueFilter {
-            roleName: "keep"
-            value: true
-        }
+        filters: [
+            ValueFilter {
+                roleName: "keep"
+                value: true
+            },
+            ValueFilter {
+                inverted: true
+                roleName: "staticRole"
+                value: "filterMe"
+            }
+        ]
 
         proxyRoles: [
             StaticRole {
-                id: proxyRole
+                id: staticRole
                 name: "staticRole"
                 value: "foo"
             },
@@ -47,12 +54,14 @@ Item {
 
         function test_proxyRole() {
             compare(instantiator.object.staticRole, "foo");
-            proxyRole.value = "bar";
+            staticRole.value = "bar";
             compare(instantiator.object.staticRole, "bar");
             compare(instantiator.object.sourceIndexRole, 0);
             compare(testModel.get(1, "sourceIndexRole"), 1);
             listModel.setProperty(1, "keep", false);
             compare(testModel.get(1, "sourceIndexRole"), 2);
+            staticRole.value = "filterMe";
+            compare(testModel.count, 0)
         }
     }
 }
