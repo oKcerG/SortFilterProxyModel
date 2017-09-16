@@ -34,6 +34,7 @@ QQmlSortFilterProxyModel::QQmlSortFilterProxyModel(QObject *parent) :
     connect(this, &QAbstractItemModel::rowsRemoved, this, &QQmlSortFilterProxyModel::countChanged);
     connect(this, &QAbstractItemModel::modelReset, this, &QQmlSortFilterProxyModel::countChanged);
     connect(this, &QAbstractItemModel::layoutChanged, this, &QQmlSortFilterProxyModel::countChanged);
+    connect(this, &QAbstractItemModel::dataChanged, this, &QQmlSortFilterProxyModel::onDataChanged);
     setDynamicSortFilter(true);
 }
 
@@ -224,16 +225,6 @@ QVariant QQmlSortFilterProxyModel::sourceData(const QModelIndex &sourceIndex, in
         return sourceModel()->data(sourceIndex, role);
 }
 
-void QQmlSortFilterProxyModel::setSourceModel(QAbstractItemModel* sourceModel)
-{
-    beginResetModel();
-    if (this->sourceModel())
-        disconnect(this->sourceModel(), &QAbstractItemModel::dataChanged, this, &QQmlSortFilterProxyModel::sourceDataChanged);
-    QSortFilterProxyModel::setSourceModel(sourceModel);
-    connect(this->sourceModel(), &QAbstractItemModel::dataChanged, this, &QQmlSortFilterProxyModel::sourceDataChanged);
-    endResetModel();
-}
-
 QVariant QQmlSortFilterProxyModel::data(const QModelIndex &index, int role) const
 {
     return sourceData(mapToSource(index), role);
@@ -376,6 +367,7 @@ void QQmlSortFilterProxyModel::resetInternalData()
     }
     m_roleNames = QSortFilterProxyModel::roleNames();
     m_proxyRoleMap.clear();
+    m_proxyRoleNumbers.clear();
 
     auto roles = m_roleNames.keys();
     auto maxIt = std::max_element(roles.cbegin(), roles.cend());
@@ -384,6 +376,7 @@ void QQmlSortFilterProxyModel::resetInternalData()
         ++maxRole;
         m_roleNames[maxRole] = proxyRole->name().toUtf8();
         m_proxyRoleMap[maxRole] = proxyRole;
+        m_proxyRoleNumbers.append(maxRole);
         connect(proxyRole, &ProxyRole::invalidated, this, &QQmlSortFilterProxyModel::emitProxyRolesChanged, Qt::UniqueConnection);
     }
 }
@@ -433,16 +426,17 @@ void QQmlSortFilterProxyModel::initRoles()
     updateRoles();
 }
 
-void QQmlSortFilterProxyModel::sourceDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles)
+void QQmlSortFilterProxyModel::onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles)
 {
     Q_UNUSED(roles);
-    Q_EMIT dataChanged(topLeft, bottomRight, m_proxyRoleMap.keys().toVector());
+    if (!roles.isEmpty() && roles != m_proxyRoleNumbers)
+        Q_EMIT dataChanged(topLeft, bottomRight, m_proxyRoleNumbers);
 }
 
 void QQmlSortFilterProxyModel::emitProxyRolesChanged()
 {
     invalidate();
-    Q_EMIT dataChanged(index(0,0), index(rowCount() - 1, columnCount() - 1), m_proxyRoleMap.keys().toVector());
+    Q_EMIT dataChanged(index(0,0), index(rowCount() - 1, columnCount() - 1), m_proxyRoleNumbers);
 }
 
 QVariantMap QQmlSortFilterProxyModel::modelDataMap(const QModelIndex& modelIndex) const

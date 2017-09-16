@@ -72,7 +72,6 @@ public:
     QVariant sourceData(const QModelIndex& sourceIndex, const QString& roleName) const;
     QVariant sourceData(const QModelIndex& sourceIndex, int role) const;
 
-    void setSourceModel(QAbstractItemModel *sourceModel) override;
     QVariant data(const QModelIndex& index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
 
@@ -111,7 +110,7 @@ private Q_SLOTS:
     void updateSortRole();
     void updateRoles();
     void initRoles();
-    void sourceDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles);
+    void onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles);
     void emitProxyRolesChanged();
 
 private:
@@ -142,6 +141,7 @@ private:
     bool m_completed = false;
     QHash<int, QByteArray> m_roleNames;
     QHash<int, ProxyRole*> m_proxyRoleMap;
+    QVector<int> m_proxyRoleNumbers;
 };
 
 }
