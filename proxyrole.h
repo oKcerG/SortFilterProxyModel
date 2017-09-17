@@ -25,6 +25,7 @@ protected:
     void invalidate();
 
 Q_SIGNALS:
+    void nameAboutToBeChanged();
     void nameChanged();
     void invalidated();
 

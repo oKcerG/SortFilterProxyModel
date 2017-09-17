@@ -377,7 +377,6 @@ void QQmlSortFilterProxyModel::resetInternalData()
         m_roleNames[maxRole] = proxyRole->name().toUtf8();
         m_proxyRoleMap[maxRole] = proxyRole;
         m_proxyRoleNumbers.append(maxRole);
-        connect(proxyRole, &ProxyRole::invalidated, this, &QQmlSortFilterProxyModel::emitProxyRolesChanged, Qt::UniqueConnection);
     }
 }
 
@@ -516,6 +515,9 @@ void QQmlSortFilterProxyModel::append_proxyRole(QQmlListProperty<ProxyRole>* lis
         return;
 
     auto that = static_cast<QQmlSortFilterProxyModel*>(list->object);
+    connect(proxyRole, &ProxyRole::invalidated, that, &QQmlSortFilterProxyModel::emitProxyRolesChanged);
+    connect(proxyRole, &ProxyRole::nameAboutToBeChanged, that, &QQmlSortFilterProxyModel::beginResetModel);
+    connect(proxyRole, &ProxyRole::nameChanged, that, &QQmlSortFilterProxyModel::endResetModel);
     that->beginResetModel();
     that->m_proxyRoles.append(proxyRole);
     that->endResetModel();

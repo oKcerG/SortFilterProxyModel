@@ -21,6 +21,7 @@ void ProxyRole::setName(const QString& name)
     if (m_name == name)
         return;
 
+    Q_EMIT nameAboutToBeChanged();
     m_name = name;
     Q_EMIT nameChanged();
 }

@@ -34,6 +34,11 @@ Item {
                 name: "staticRole"
                 value: "foo"
             },
+            StaticRole {
+                id: renameRole
+                name: "renameMe"
+                value: "test"
+            },
             SourceIndexRole {
                 name: "sourceIndexRole"
             }
@@ -52,16 +57,30 @@ Item {
     TestCase {
         name: "ProxyRoles"
 
-        function test_proxyRole() {
+        function test_resetAfterNameChange() {
+            var oldObject = instantiator.object;
+            renameRole.name = "foobarRole";
+            var newObject = instantiator.object;
+            verify(newObject !== oldObject, "Instantiator object should have been reinstantiated");
+        }
+
+        function test_proxyRoleInvalidation() {
             compare(instantiator.object.staticRole, "foo");
             staticRole.value = "bar";
             compare(instantiator.object.staticRole, "bar");
+        }
+
+        function test_proxyRoleGetDataFromSource() {
             compare(instantiator.object.sourceIndexRole, 0);
             compare(testModel.get(1, "sourceIndexRole"), 1);
             listModel.setProperty(1, "keep", false);
             compare(testModel.get(1, "sourceIndexRole"), 2);
+        }
+
+        function test_filterFromProxyRole() {
             staticRole.value = "filterMe";
             compare(testModel.count, 0)
+            staticRole.value = "foo";
         }
     }
 }
