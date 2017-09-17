@@ -14,7 +14,6 @@ class Sorter : public QObject
     Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
     Q_PROPERTY(bool ascendingOrder READ ascendingOrder WRITE setAscendingOrder NOTIFY sortOrderChanged)
     Q_PROPERTY(Qt::SortOrder sortOrder READ sortOrder WRITE setSortOrder NOTIFY sortOrderChanged)
-    friend class QQmlSortFilterProxyModel;
 
 public:
     Sorter(QObject* parent = nullptr);
@@ -29,26 +28,24 @@ public:
     Qt::SortOrder sortOrder() const;
     void setSortOrder(Qt::SortOrder sortOrder);
 
-    int compareRows(const QModelIndex& source_left, const QModelIndex& source_right) const;
+    int compareRows(const QModelIndex& source_left, const QModelIndex& source_right, const QQmlSortFilterProxyModel& proxyModel) const;
+
+    virtual void proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel);
 
 Q_SIGNALS:
     void enabledChanged();
     void sortOrderChanged();
 
-    void invalidate();
+    void invalidated();
 
 protected:
-    QQmlSortFilterProxyModel* proxyModel() const;
-
-    virtual int compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const;
-    virtual bool lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const;
-    virtual void proxyModelCompleted();
-    void sorterChanged();
+    virtual int compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight, const QQmlSortFilterProxyModel& proxyModel) const;
+    virtual bool lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight, const QQmlSortFilterProxyModel& proxyModel) const;
+    void invalidate();
 
 private:
     bool m_enabled = true;
     Qt::SortOrder m_sortOrder = Qt::AscendingOrder;
-    QQmlSortFilterProxyModel* m_proxyModel = nullptr;
 };
 
 class RoleSorter : public Sorter
@@ -66,8 +63,8 @@ Q_SIGNALS:
     void roleNameChanged();
 
 protected:
-    QPair<QVariant, QVariant> sourceData(const QModelIndex &sourceLeft, const QModelIndex& sourceRight) const;
-    int compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const override;
+    QPair<QVariant, QVariant> sourceData(const QModelIndex &sourceLeft, const QModelIndex& sourceRight, const QQmlSortFilterProxyModel& proxyModel) const;
+    int compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight, const QQmlSortFilterProxyModel& proxyModel) const override;
 
 private:
     QString m_roleName;
@@ -103,7 +100,7 @@ Q_SIGNALS:
     void numericModeChanged();
 
 protected:
-    int compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const override;
+    int compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight, const QQmlSortFilterProxyModel& proxyModel) const override;
 
 private:
     QCollator m_collator;
@@ -120,15 +117,16 @@ public:
     const QQmlScriptString& expression() const;
     void setExpression(const QQmlScriptString& scriptString);
 
+    void proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel) override;
+
 Q_SIGNALS:
     void expressionChanged();
 
 protected:
-    int compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const override;
-    void proxyModelCompleted() override;
+    int compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight, const QQmlSortFilterProxyModel& proxyModel) const override;
 
 private:
-    void updateContext();
+    void updateContext(const QQmlSortFilterProxyModel& proxyModel);
     void updateExpression();
 
     QQmlScriptString m_scriptString;

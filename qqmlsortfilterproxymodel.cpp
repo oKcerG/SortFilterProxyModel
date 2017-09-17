@@ -206,7 +206,7 @@ void QQmlSortFilterProxyModel::componentComplete()
 {
     m_completed = true;
     for (const auto& filter : m_filters)
-        filter->proxyModelCompleted();
+        filter->proxyModelCompleted(*this);
     invalidate();
     sort(0);
 }
@@ -331,7 +331,7 @@ bool QQmlSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInde
     bool baseAcceptsRow = valueAccepted && QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
     baseAcceptsRow = baseAcceptsRow && std::all_of(m_filters.begin(), m_filters.end(),
         [=, &source_parent] (Filter* filter) {
-            return filter->filterAcceptsRow(sourceIndex);
+            return filter->filterAcceptsRow(sourceIndex, *this);
         }
     );
     return baseAcceptsRow;
@@ -348,7 +348,7 @@ bool QQmlSortFilterProxyModel::lessThan(const QModelIndex& source_left, const QM
         }
         for(auto sorter : m_sorters) {
             if (sorter->enabled()) {
-                int comparison = sorter->compareRows(source_left, source_right);
+                int comparison = sorter->compareRows(source_left, source_right, *this);
                 if (comparison != 0)
                     return comparison < 0;
             }
@@ -454,8 +454,7 @@ void QQmlSortFilterProxyModel::append_filter(QQmlListProperty<Filter>* list, Fil
 
     QQmlSortFilterProxyModel* that = static_cast<QQmlSortFilterProxyModel*>(list->object);
     that->m_filters.append(filter);
-    connect(filter, &Filter::invalidate, that, &QQmlSortFilterProxyModel::invalidateFilter);
-    filter->m_proxyModel = that;
+    connect(filter, &Filter::invalidated, that, &QQmlSortFilterProxyModel::invalidateFilter);
     that->invalidateFilter();
 }
 
@@ -485,8 +484,7 @@ void QQmlSortFilterProxyModel::append_sorter(QQmlListProperty<Sorter>* list, Sor
 
     auto that = static_cast<QQmlSortFilterProxyModel*>(list->object);
     that->m_sorters.append(sorter);
-    connect(sorter, &Sorter::invalidate, that, &QQmlSortFilterProxyModel::invalidate);
-    sorter->m_proxyModel = that;
+    connect(sorter, &Sorter::invalidated, that, &QQmlSortFilterProxyModel::invalidate);
     that->invalidate();
 }
 

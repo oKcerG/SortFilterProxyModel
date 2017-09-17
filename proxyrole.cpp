@@ -37,6 +37,11 @@ QVariant ProxyRole::roleData(const QModelIndex& sourceIndex, const QQmlSortFilte
     }
 }
 
+void ProxyRole::proxyModelCompleted(const QQmlSortFilterProxyModel &proxyModel)
+{
+    Q_UNUSED(proxyModel)
+}
+
 void ProxyRole::invalidate()
 {
     Q_EMIT invalidated();
@@ -72,7 +77,7 @@ void JoinRole::setSeparator(const QString& separator)
     invalidate();
 }
 
-QVariant JoinRole::data(const QModelIndex &sourceIndex, const QQmlSortFilterProxyModel &proxyModel)
+QVariant JoinRole::data(const QModelIndex &sourceIndex, const QQmlSortFilterProxyModel& proxyModel)
 {
     QString result;
 

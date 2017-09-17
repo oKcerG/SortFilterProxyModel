@@ -11,7 +11,6 @@ class ProxyRole : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    friend class QQmlSortFilterProxyModel;
 
 public:
     explicit ProxyRole(QObject *parent = nullptr);
@@ -20,6 +19,7 @@ public:
     void setName(const QString& name);
 
     QVariant roleData(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel);
+    virtual void proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel);
 
 protected:
     void invalidate();

@@ -40,7 +40,7 @@ void Sorter::setEnabled(bool enabled)
 
     m_enabled = enabled;
     Q_EMIT enabledChanged();
-    Q_EMIT invalidate();
+    Q_EMIT invalidated();
 }
 
 bool Sorter::ascendingOrder() const
@@ -76,45 +76,41 @@ void Sorter::setSortOrder(Qt::SortOrder sortOrder)
 
     m_sortOrder = sortOrder;
     Q_EMIT sortOrderChanged();
-    sorterChanged();
+    invalidate();
 }
 
-int Sorter::compareRows(const QModelIndex &source_left, const QModelIndex &source_right) const
+int Sorter::compareRows(const QModelIndex &source_left, const QModelIndex &source_right, const QQmlSortFilterProxyModel& proxyModel) const
 {
-    int comparison = compare(source_left, source_right);
+    int comparison = compare(source_left, source_right, proxyModel);
     return (m_sortOrder == Qt::AscendingOrder) ? comparison : -comparison;
 }
 
-QQmlSortFilterProxyModel* Sorter::proxyModel() const
+int Sorter::compare(const QModelIndex &sourceLeft, const QModelIndex &sourceRight, const QQmlSortFilterProxyModel& proxyModel) const
 {
-    return m_proxyModel;
-}
-
-int Sorter::compare(const QModelIndex &sourceLeft, const QModelIndex &sourceRight) const
-{
-    if (lessThan(sourceLeft, sourceRight))
+    if (lessThan(sourceLeft, sourceRight, proxyModel))
         return -1;
-    if (lessThan(sourceRight, sourceLeft))
+    if (lessThan(sourceRight, sourceLeft, proxyModel))
         return 1;
     return 0;
 }
 
-bool Sorter::lessThan(const QModelIndex &sourceLeft, const QModelIndex &sourceRight) const
+void Sorter::proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel)
+{
+    Q_UNUSED(proxyModel)
+}
+
+bool Sorter::lessThan(const QModelIndex &sourceLeft, const QModelIndex &sourceRight, const QQmlSortFilterProxyModel& proxyModel) const
 {
     Q_UNUSED(sourceLeft)
     Q_UNUSED(sourceRight)
+    Q_UNUSED(proxyModel)
     return false;
 }
 
-void Sorter::proxyModelCompleted()
-{
-
-}
-
-void Sorter::sorterChanged()
+void Sorter::invalidate()
 {
     if (m_enabled)
-        Q_EMIT invalidate();
+        Q_EMIT invalidated();
 }
 
 const QString& RoleSorter::roleName() const
@@ -151,23 +147,21 @@ void RoleSorter::setRoleName(const QString& roleName)
 
     m_roleName = roleName;
     Q_EMIT roleNameChanged();
-    sorterChanged();
+    invalidate();
 }
 
-QPair<QVariant, QVariant> RoleSorter::sourceData(const QModelIndex &sourceLeft, const QModelIndex& sourceRight) const
+QPair<QVariant, QVariant> RoleSorter::sourceData(const QModelIndex &sourceLeft, const QModelIndex& sourceRight, const QQmlSortFilterProxyModel& proxyModel) const
 {
     QPair<QVariant, QVariant> pair;
-    if (QQmlSortFilterProxyModel* proxy = proxyModel()) {
-        int role = proxy->roleForName(m_roleName);
-        pair.first = proxy->sourceData(sourceLeft, role);
-        pair.second = proxy->sourceData(sourceRight, role);
-    }
+    int role = proxyModel.roleForName(m_roleName);
+    pair.first = proxyModel.sourceData(sourceLeft, role);
+    pair.second = proxyModel.sourceData(sourceRight, role);
     return pair;
 }
 
-int RoleSorter::compare(const QModelIndex &sourceLeft, const QModelIndex& sourceRight) const
+int RoleSorter::compare(const QModelIndex &sourceLeft, const QModelIndex& sourceRight, const QQmlSortFilterProxyModel& proxyModel) const
 {
-    QPair<QVariant, QVariant> pair = sourceData(sourceLeft, sourceRight);
+    QPair<QVariant, QVariant> pair = sourceData(sourceLeft, sourceRight, proxyModel);
     QVariant leftValue = pair.first;
     QVariant rightValue = pair.second;
     if (leftValue < rightValue)
@@ -212,7 +206,7 @@ void StringSorter::setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)
 
     m_collator.setCaseSensitivity(caseSensitivity);
     Q_EMIT caseSensitivityChanged();
-    sorterChanged();
+    invalidate();
 }
 
 /*!
@@ -235,7 +229,7 @@ void StringSorter::setIgnorePunctation(bool ignorePunctation)
 
     m_collator.setIgnorePunctuation(ignorePunctation);
     Q_EMIT ignorePunctationChanged();
-    sorterChanged();
+    invalidate();
 }
 
 /*!
@@ -255,7 +249,7 @@ void StringSorter::setLocale(const QLocale &locale)
 
     m_collator.setLocale(locale);
     Q_EMIT localeChanged();
-    sorterChanged();
+    invalidate();
 }
 
 /*!
@@ -277,12 +271,12 @@ void StringSorter::setNumericMode(bool numericMode)
 
     m_collator.setNumericMode(numericMode);
     Q_EMIT numericModeChanged();
-    sorterChanged();
+    invalidate();
 }
 
-int StringSorter::compare(const QModelIndex &sourceLeft, const QModelIndex &sourceRight) const
+int StringSorter::compare(const QModelIndex &sourceLeft, const QModelIndex &sourceRight, const QQmlSortFilterProxyModel& proxyModel) const
 {
-    QPair<QVariant, QVariant> pair = sourceData(sourceLeft, sourceRight);
+    QPair<QVariant, QVariant> pair = sourceData(sourceLeft, sourceRight, proxyModel);
     QString leftValue = pair.first.toString();
     QString rightValue = pair.second.toString();
     return m_collator.compare(leftValue, rightValue);
@@ -326,7 +320,12 @@ void ExpressionSorter::setExpression(const QQmlScriptString& scriptString)
     updateExpression();
 
     Q_EMIT expressionChanged();
-    sorterChanged();
+    invalidate();
+}
+
+void ExpressionSorter::proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel)
+{
+    updateContext(proxyModel);
 }
 
 bool evaluateBoolExpression(QQmlExpression& expression)
@@ -347,17 +346,17 @@ bool evaluateBoolExpression(QQmlExpression& expression)
     }
 }
 
-int ExpressionSorter::compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const
+int ExpressionSorter::compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight, const QQmlSortFilterProxyModel& proxyModel) const
 {
     if (!m_scriptString.isEmpty()) {
         QVariantMap modelLeftMap, modelRightMap;
-        QHash<int, QByteArray> roles = proxyModel()->roleNames();
+        QHash<int, QByteArray> roles = proxyModel.roleNames();
 
         QQmlContext context(qmlContext(this));
 
         for (auto it = roles.cbegin(); it != roles.cend(); ++it) {
-            modelLeftMap.insert(it.value(), proxyModel()->sourceData(sourceLeft, it.key()));
-            modelRightMap.insert(it.value(), proxyModel()->sourceData(sourceRight, it.key()));
+            modelLeftMap.insert(it.value(), proxyModel.sourceData(sourceLeft, it.key()));
+            modelRightMap.insert(it.value(), proxyModel.sourceData(sourceRight, it.key()));
         }
         modelLeftMap.insert("index", sourceLeft.row());
         modelRightMap.insert("index", sourceRight.row());
@@ -377,23 +376,15 @@ int ExpressionSorter::compare(const QModelIndex& sourceLeft, const QModelIndex& 
     return 0;
 }
 
-void ExpressionSorter::proxyModelCompleted()
+void ExpressionSorter::updateContext(const QQmlSortFilterProxyModel& proxyModel)
 {
-    updateContext();
-}
-
-void ExpressionSorter::updateContext()
-{
-    if (!proxyModel())
-        return;
-
     delete m_context;
     m_context = new QQmlContext(qmlContext(this), this);
 
     QVariantMap modelLeftMap, modelRightMap;
     // what about roles changes ?
 
-    for (const QByteArray& roleName : proxyModel()->roleNames().values()) {
+    for (const QByteArray& roleName : proxyModel.roleNames().values()) {
         modelLeftMap.insert(roleName, QVariant());
         modelRightMap.insert(roleName, QVariant());
     }
@@ -413,7 +404,7 @@ void ExpressionSorter::updateExpression()
 
     delete m_expression;
     m_expression = new QQmlExpression(m_scriptString, m_context, 0, this);
-    connect(m_expression, &QQmlExpression::valueChanged, this, &ExpressionSorter::sorterChanged);
+    connect(m_expression, &QQmlExpression::valueChanged, this, &ExpressionSorter::invalidate);
     m_expression->setNotifyOnValueChanged(true);
     m_expression->evaluate();
 }

@@ -38,7 +38,7 @@ void Filter::setEnabled(bool enabled)
 
     m_enabled = enabled;
     Q_EMIT enabledChanged();
-    Q_EMIT invalidate();
+    Q_EMIT invalidated();
 }
 
 /*!
@@ -61,28 +61,23 @@ void Filter::setInverted(bool inverted)
 
     m_inverted = inverted;
     Q_EMIT invertedChanged();
-    filterChanged();
+    invalidate();
 }
 
-bool Filter::filterAcceptsRow(const QModelIndex &sourceIndex) const
+bool Filter::filterAcceptsRow(const QModelIndex &sourceIndex, const QQmlSortFilterProxyModel& proxyModel) const
 {
-    return !m_enabled || filterRow(sourceIndex) ^ m_inverted;
+    return !m_enabled || filterRow(sourceIndex, proxyModel) ^ m_inverted;
 }
 
-QQmlSortFilterProxyModel* Filter::proxyModel() const
+void Filter::proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel)
 {
-    return m_proxyModel;
+    Q_UNUSED(proxyModel)
 }
 
-void Filter::proxyModelCompleted()
-{
-
-}
-
-void Filter::filterChanged()
+void Filter::invalidate()
 {
     if (m_enabled)
-        invalidate();
+        Q_EMIT invalidated();
 }
 
 /*!
@@ -115,12 +110,12 @@ void RoleFilter::setRoleName(const QString& roleName)
 
     m_roleName = roleName;
     Q_EMIT roleNameChanged();
-    filterChanged();
+    invalidate();
 }
 
-QVariant RoleFilter::sourceData(const QModelIndex &sourceIndex) const
+QVariant RoleFilter::sourceData(const QModelIndex &sourceIndex, const QQmlSortFilterProxyModel& proxyModel) const
 {
-    return proxyModel()->sourceData(sourceIndex, m_roleName);
+    return proxyModel.sourceData(sourceIndex, m_roleName);
 }
 
 /*!
@@ -166,12 +161,12 @@ void ValueFilter::setValue(const QVariant& value)
 
     m_value = value;
     Q_EMIT valueChanged();
-    filterChanged();
+    invalidate();
 }
 
-bool ValueFilter::filterRow(const QModelIndex& sourceIndex) const
+bool ValueFilter::filterRow(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel) const
 {
-    return !m_value.isValid() || m_value == sourceData(sourceIndex);
+    return !m_value.isValid() || m_value == sourceData(sourceIndex, proxyModel);
 }
 
 /*!
@@ -217,7 +212,7 @@ void IndexFilter::setMinimumIndex(const QVariant& minimumIndex)
 
     m_minimumIndex = minimumIndex;
     Q_EMIT minimumIndexChanged();
-    filterChanged();
+    invalidate();
 }
 
 /*!
@@ -244,12 +239,12 @@ void IndexFilter::setMaximumIndex(const QVariant& maximumIndex)
 
     m_maximumIndex = maximumIndex;
     Q_EMIT maximumIndexChanged();
-    filterChanged();
+    invalidate();
 }
 
-bool IndexFilter::filterRow(const QModelIndex& sourceIndex) const
+bool IndexFilter::filterRow(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel) const
 {
-    int sourceRowCount = proxyModel()->sourceModel()->rowCount();
+    int sourceRowCount = proxyModel.sourceModel()->rowCount();
     int sourceRow = sourceIndex.row();
 
     bool minimumIsValid;
@@ -315,7 +310,7 @@ void RegExpFilter::setPattern(const QString& pattern)
     m_pattern = pattern;
     m_regExp.setPattern(pattern);
     Q_EMIT patternChanged();
-    filterChanged();
+    invalidate();
 }
 
 /*!
@@ -347,7 +342,7 @@ void RegExpFilter::setSyntax(RegExpFilter::PatternSyntax syntax)
     m_syntax = syntax;
     m_regExp.setPatternSyntax(static_cast<QRegExp::PatternSyntax>(syntax));
     Q_EMIT syntaxChanged();
-    filterChanged();
+    invalidate();
 }
 
 /*!
@@ -368,12 +363,12 @@ void RegExpFilter::setCaseSensitivity(Qt::CaseSensitivity caseSensitivity)
     m_caseSensitivity = caseSensitivity;
     m_regExp.setCaseSensitivity(caseSensitivity);
     Q_EMIT caseSensitivityChanged();
-    filterChanged();
+    invalidate();
 }
 
-bool RegExpFilter::filterRow(const QModelIndex& sourceIndex) const
+bool RegExpFilter::filterRow(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel) const
 {
-    QString string = sourceData(sourceIndex).toString();
+    QString string = sourceData(sourceIndex, proxyModel).toString();
     return m_regExp.indexIn(string) != -1;
 }
 
@@ -424,7 +419,7 @@ void RangeFilter::setMinimumValue(QVariant minimumValue)
 
     m_minimumValue = minimumValue;
     Q_EMIT minimumValueChanged();
-    filterChanged();
+    invalidate();
 }
 
 /*!
@@ -448,7 +443,7 @@ void RangeFilter::setMinimumInclusive(bool minimumInclusive)
 
     m_minimumInclusive = minimumInclusive;
     Q_EMIT minimumInclusiveChanged();
-    filterChanged();
+    invalidate();
 }
 
 /*!
@@ -473,7 +468,7 @@ void RangeFilter::setMaximumValue(QVariant maximumValue)
 
     m_maximumValue = maximumValue;
     Q_EMIT maximumValueChanged();
-    filterChanged();
+    invalidate();
 }
 
 /*!
@@ -497,12 +492,12 @@ void RangeFilter::setMaximumInclusive(bool maximumInclusive)
 
     m_maximumInclusive = maximumInclusive;
     Q_EMIT maximumInclusiveChanged();
-    filterChanged();
+    invalidate();
 }
 
-bool RangeFilter::filterRow(const QModelIndex& sourceIndex) const
+bool RangeFilter::filterRow(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel) const
 {
-    QVariant value = sourceData(sourceIndex);
+    QVariant value = sourceData(sourceIndex, proxyModel);
     bool lessThanMin = m_minimumValue.isValid() &&
             m_minimumInclusive ? value < m_minimumValue : value <= m_minimumValue;
     bool moreThanMax = m_maximumValue.isValid() &&
@@ -548,14 +543,19 @@ void ExpressionFilter::setExpression(const QQmlScriptString& scriptString)
     updateExpression();
 
     Q_EMIT expressionChanged();
-    filterChanged();
+    invalidate();
 }
 
-bool ExpressionFilter::filterRow(const QModelIndex& sourceIndex) const
+void ExpressionFilter::proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel)
+{
+    updateContext(proxyModel);
+}
+
+bool ExpressionFilter::filterRow(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel) const
 {
     if (!m_scriptString.isEmpty()) {
         QVariantMap modelMap;
-        QHash<int, QByteArray> roles = proxyModel()->roleNames();
+        QHash<int, QByteArray> roles = proxyModel.roleNames();
 
         QQmlContext context(qmlContext(this));
         auto addToContext = [&] (const QString &name, const QVariant& value) {
@@ -564,7 +564,7 @@ bool ExpressionFilter::filterRow(const QModelIndex& sourceIndex) const
         };
 
         for (auto it = roles.cbegin(); it != roles.cend(); ++it)
-            addToContext(it.value(), proxyModel()->sourceData(sourceIndex, it.key()));
+            addToContext(it.value(), proxyModel.sourceData(sourceIndex, it.key()));
         addToContext("index", sourceIndex.row());
 
         context.setContextProperty("model", modelMap);
@@ -589,16 +589,8 @@ bool ExpressionFilter::filterRow(const QModelIndex& sourceIndex) const
     return true;
 }
 
-void ExpressionFilter::proxyModelCompleted()
+void ExpressionFilter::updateContext(const QQmlSortFilterProxyModel& proxyModel)
 {
-    updateContext();
-}
-
-void ExpressionFilter::updateContext()
-{
-    if (!proxyModel())
-        return;
-
     delete m_context;
     m_context = new QQmlContext(qmlContext(this), this);
     // what about roles changes ?
@@ -609,7 +601,7 @@ void ExpressionFilter::updateContext()
         modelMap.insert(name, value);
     };
 
-    for (const QByteArray& roleName : proxyModel()->roleNames().values())
+    for (const QByteArray& roleName : proxyModel.roleNames().values())
         addToContext(roleName, QVariant());
 
     addToContext("index", -1);
@@ -625,7 +617,7 @@ void ExpressionFilter::updateExpression()
 
     delete m_expression;
     m_expression = new QQmlExpression(m_scriptString, m_context, 0, this);
-    connect(m_expression, &QQmlExpression::valueChanged, this, &ExpressionFilter::filterChanged);
+    connect(m_expression, &QQmlExpression::valueChanged, this, &ExpressionFilter::invalidate);
     m_expression->setNotifyOnValueChanged(true);
     m_expression->evaluate();
 }
@@ -639,6 +631,12 @@ QQmlListProperty<Filter> FilterContainer::filters()
                                     &FilterContainer::clear_filters);
 }
 
+void FilterContainer::proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel)
+{
+    for (Filter* filter : m_filters)
+        filter->proxyModelCompleted(proxyModel);
+}
+
 void FilterContainer::append_filter(QQmlListProperty<Filter>* list, Filter* filter)
 {
     if (!filter)
@@ -646,8 +644,8 @@ void FilterContainer::append_filter(QQmlListProperty<Filter>* list, Filter* filt
 
     FilterContainer* that = static_cast<FilterContainer*>(list->object);
     that->m_filters.append(filter);
-    connect(filter, &Filter::invalidate, that, &FilterContainer::filterChanged);
-    that->filterChanged();
+    connect(filter, &Filter::invalidated, that, &FilterContainer::invalidate);
+    that->invalidate();
 }
 
 int FilterContainer::count_filter(QQmlListProperty<Filter>* list)
@@ -666,15 +664,7 @@ void FilterContainer::clear_filters(QQmlListProperty<Filter> *list)
 {
     FilterContainer* that = static_cast<FilterContainer*>(list->object);
     that->m_filters.clear();
-    that->filterChanged();
-}
-
-void FilterContainer::proxyModelCompleted()
-{
-    for (Filter* filter : m_filters) {
-        filter->m_proxyModel = proxyModel();
-        filter->proxyModelCompleted();
-    }
+    that->invalidate();
 }
 
 /*!
@@ -708,12 +698,12 @@ void FilterContainer::proxyModelCompleted()
     }
     \endcode
 */
-bool AnyOfFilter::filterRow(const QModelIndex& sourceIndex) const
+bool AnyOfFilter::filterRow(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel) const
 {
     //return true if any of the enabled filters return true
     return std::any_of(m_filters.begin(), m_filters.end(),
-        [&sourceIndex] (Filter* filter) {
-            return filter->enabled() && filter->filterAcceptsRow(sourceIndex);
+        [&sourceIndex, &proxyModel] (Filter* filter) {
+            return filter->enabled() && filter->filterAcceptsRow(sourceIndex, proxyModel);
         }
     );
 }
@@ -728,12 +718,12 @@ bool AnyOfFilter::filterRow(const QModelIndex& sourceIndex) const
 
     Using it as a top level filter has the same effect as putting all its child filters as top level filters. It can however be usefull to use an AllOf filter when nested in an AnyOf filter.
 */
-bool AllOfFilter::filterRow(const QModelIndex& sourceIndex) const
+bool AllOfFilter::filterRow(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel) const
 {
     //return true if all filters return false, or if there is no filter.
     return std::all_of(m_filters.begin(), m_filters.end(),
-        [&sourceIndex] (Filter* filter) {
-            return filter->filterAcceptsRow(sourceIndex);
+        [&sourceIndex, &proxyModel] (Filter* filter) {
+            return filter->filterAcceptsRow(sourceIndex, proxyModel);
         }
     );
 }
