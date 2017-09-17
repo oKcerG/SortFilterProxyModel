@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMutex>
+#include <qqml.h>
 #include "qqmlsortfilterproxymodel.h"
 
 namespace qqsfpm {
@@ -62,6 +63,57 @@ private:
     QString m_separator = " ";
 };
 
+class SwitchRoleAttached : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
+public:
+    SwitchRoleAttached(QObject* parent);
+
+    QVariant value() const;
+    void setValue(QVariant value);
+
+Q_SIGNALS:
+    void valueChanged();
+
+private:
+    QVariant m_value;
+};
+
+class SwitchRole : public ProxyRole
+{
+    Q_OBJECT
+    Q_PROPERTY(QString defaultRoleName READ defaultRoleName WRITE setDefaultRoleName NOTIFY defaultRoleNameChanged)
+    Q_PROPERTY(QQmlListProperty<qqsfpm::Filter> filters READ filters)
+
+public:
+    using ProxyRole::ProxyRole;
+
+    QString defaultRoleName() const;
+    void setDefaultRoleName(QString defaultRoleName);
+
+    QQmlListProperty<Filter> filters();
+    void proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel) override;
+
+    static SwitchRoleAttached* qmlAttachedProperties(QObject* object);
+
+Q_SIGNALS:
+    void defaultRoleNameChanged();
+
+private:
+    QVariant data(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel) override;
+
+    static void append_filter(QQmlListProperty<Filter>* list, Filter* filter);
+    static int count_filter(QQmlListProperty<Filter>* list);
+    static Filter* at_filter(QQmlListProperty<Filter>* list, int index);
+    static void clear_filters(QQmlListProperty<Filter>* list);
+
+    QString m_defaultRoleName;
+    QList<Filter*> m_filters;
+};
+
 }
+
+QML_DECLARE_TYPEINFO(qqsfpm::SwitchRole, QML_HAS_ATTACHED_PROPERTIES)
 
 #endif // PROXYROLE_H
