@@ -18,6 +18,7 @@ Item {
         sourceModel: listModel
 
         proxyRoles: SwitchRole {
+            id: switchRole
             name: "switchRole"
             filters: [
                 ValueFilter {
@@ -40,6 +41,7 @@ Item {
                 }
             ]
             defaultRoleName: "name"
+            defaultValue: "foo"
         }
     }
 
@@ -85,6 +87,15 @@ Item {
 
             listModel.setProperty(1, "name", "2");
             listModel.setProperty(0, "favorite", true);
+        }
+
+        function test_defaultValue() {
+            switchRole.defaultRoleName = "";
+            compare(instantiator.objectAt(1).switchRole, "foo");
+            switchRole.defaultValue = "bar";
+            compare(instantiator.objectAt(1).switchRole, "bar");
+            switchRole.defaultRoleName = "name";
+            switchRole.defaultValue = "foo";
         }
     }
 }

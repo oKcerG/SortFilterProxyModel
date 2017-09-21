@@ -117,13 +117,28 @@ QString SwitchRole::defaultRoleName() const
     return m_defaultRoleName;
 }
 
-void SwitchRole::setDefaultRoleName(QString defaultRoleName)
+void SwitchRole::setDefaultRoleName(const QString& defaultRoleName)
 {
     if (m_defaultRoleName == defaultRoleName)
         return;
 
     m_defaultRoleName = defaultRoleName;
     Q_EMIT defaultRoleNameChanged();
+    invalidate();
+}
+
+QVariant SwitchRole::defaultValue() const
+{
+    return m_defaultValue;
+}
+
+void SwitchRole::setDefaultValue(const QVariant& defaultValue)
+{
+    if (m_defaultValue == defaultValue)
+        return;
+
+    m_defaultValue = defaultValue;
+    Q_EMIT defaultValueChanged();
     invalidate();
 }
 
@@ -166,7 +181,9 @@ QVariant SwitchRole::data(const QModelIndex &sourceIndex, const QQmlSortFilterPr
             return value;
         }
     }
-    return proxyModel.sourceData(sourceIndex, m_defaultRoleName);
+    if (!m_defaultRoleName.isEmpty())
+        return proxyModel.sourceData(sourceIndex, m_defaultRoleName);
+    return m_defaultValue;
 }
 
 void SwitchRole::append_filter(QQmlListProperty<Filter>* list, Filter* filter)

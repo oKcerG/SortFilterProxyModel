@@ -84,13 +84,17 @@ class SwitchRole : public ProxyRole
 {
     Q_OBJECT
     Q_PROPERTY(QString defaultRoleName READ defaultRoleName WRITE setDefaultRoleName NOTIFY defaultRoleNameChanged)
+    Q_PROPERTY(QVariant defaultValue READ defaultValue WRITE setDefaultValue NOTIFY defaultValueChanged)
     Q_PROPERTY(QQmlListProperty<qqsfpm::Filter> filters READ filters)
 
 public:
     using ProxyRole::ProxyRole;
 
     QString defaultRoleName() const;
-    void setDefaultRoleName(QString defaultRoleName);
+    void setDefaultRoleName(const QString& defaultRoleName);
+
+    QVariant defaultValue() const;
+    void setDefaultValue(const QVariant& defaultValue);
 
     QQmlListProperty<Filter> filters();
     void proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel) override;
@@ -99,6 +103,7 @@ public:
 
 Q_SIGNALS:
     void defaultRoleNameChanged();
+    void defaultValueChanged();
 
 private:
     QVariant data(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel) override;
@@ -109,6 +114,7 @@ private:
     static void clear_filters(QQmlListProperty<Filter>* list);
 
     QString m_defaultRoleName;
+    QVariant m_defaultValue;
     QList<Filter*> m_filters;
 };
 
