@@ -23,9 +23,8 @@ Item {
             numericMode: false
         },
         StringSorter {
-            //fails because of QTBUG-57034 and QTBUG-58621
             property string tag: "caseSensitive"
-            property var expectedValues: ["A", "Z", "a", "b", "c", "z"]
+            property var expectedValues: ["a", "A", "b", "c", "z", "Z"]
             roleName: "caseRole"
             caseSensitivity: Qt.CaseSensitive
         },
