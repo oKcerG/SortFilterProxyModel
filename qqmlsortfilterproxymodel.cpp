@@ -205,8 +205,14 @@ void QQmlSortFilterProxyModel::classBegin()
 void QQmlSortFilterProxyModel::componentComplete()
 {
     m_completed = true;
+
     for (const auto& filter : m_filters)
         filter->proxyModelCompleted(*this);
+    for (const auto& sorter : m_sorters)
+        sorter->proxyModelCompleted(*this);
+    for (const auto& proxyRole : m_proxyRoles)
+        proxyRole->proxyModelCompleted(*this);
+
     invalidate();
     sort(0);
 }
