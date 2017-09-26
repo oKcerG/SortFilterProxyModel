@@ -188,6 +188,13 @@ QQmlListProperty<Sorter> QQmlSortFilterProxyModel::sorters()
                                     &QQmlSortFilterProxyModel::clear_sorters);
 }
 
+/*!
+    \qmlproperty list<ProxyRole> SortFilterProxyModel::proxyRoles
+
+    This property holds the list of proxy roles for this proxy model. Each proxy role adds a new custom role to the model.
+
+    \sa ProxyRole
+*/
 QQmlListProperty<ProxyRole> QQmlSortFilterProxyModel::proxyRoles()
 {
     return QQmlListProperty<ProxyRole>(this, &m_proxyRoles,
