@@ -32,6 +32,7 @@
 <ul>
 <li class="fn"><b><b><a href="qml-sortfilterproxymodel.html#count-prop">count</a></b></b> : int</li>
 <li class="fn"><b><b><a href="qml-sortfilterproxymodel.html#filters-prop">filters</a></b></b> : list&lt;Filter&gt;</li>
+<li class="fn"><b><b><a href="qml-sortfilterproxymodel.html#proxyRoles-prop">proxyRoles</a></b></b> : list&lt;ProxyRole&gt;</li>
 <li class="fn"><b><b><a href="qml-sortfilterproxymodel.html#sortRoleName-prop">sortRoleName</a></b></b> : string</li>
 <li class="fn"><b><b><a href="qml-sortfilterproxymodel.html#sorters-prop">sorters</a></b></b> : list&lt;Sorter&gt;</li>
 <li class="fn"><b><b><a href="qml-sortfilterproxymodel.html#sourceModel-prop">sourceModel</a></b></b> : QAbstractItemModel*</li>
@@ -50,7 +51,6 @@
 <!-- $$$SortFilterProxyModel-description -->
 <a name="details"></a>
 <h2 id="details">Detailed Description</h2>
-</p>
 <p>The <a href="qml-sortfilterproxymodel.html">SortFilterProxyModel</a> type provides support for filtering and sorting data coming from a source model.</p>
 <!-- @@@SortFilterProxyModel -->
 <h2>Property Documentation</h2>
@@ -74,6 +74,17 @@
 </div><div class="qmldoc"><p>This property holds the list of filters for this proxy model. To be included in the model, a row of the source model has to be accepted by all the top level filters of this list.</p>
 <p><b>See also </b><a href="qml-filter.html">Filter</a>.</p>
 </div></div><!-- @@@filters -->
+<br/>
+<!-- $$$proxyRoles -->
+<div class="qmlitem"><div class="qmlproto">
+<div class="table"><table class="qmlname">
+<tr valign="top" class="odd" id="proxyRoles-prop">
+<td class="tblQmlPropNode"><p>
+<a name="proxyRoles-prop"></a><span class="name">proxyRoles</span> : <span class="type">list</span>&lt;<span class="type"><a href="qml-proxyrole.html">ProxyRole</a></span>&gt;</p></td></tr>
+</table></div>
+</div><div class="qmldoc"><p>This property holds the list of proxy roles for this proxy model. Each proxy role adds a new custom role to the model.</p>
+<p><b>See also </b><a href="qml-proxyrole.html">ProxyRole</a>.</p>
+</div></div><!-- @@@proxyRoles -->
 <br/>
 <!-- $$$sortRoleName -->
 <div class="qmlitem"><div class="qmlproto">

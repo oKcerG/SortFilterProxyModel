@@ -1,0 +1,15 @@
+project = SortFilterProxyModel
+description = lol
+
+sourcedirs = .
+
+sources.fileextensions = "*.cpp *.qdoc *.qml"
+headers.fileextensions = "*.h"
+
+outputdir = docs/
+
+HTML.templatedir = .
+HTML.stylesheets = "D:\\coding\\Qt\\Docs\\Qt-5.8\\global\\template\\style\\offline.css"
+
+HTML.headerstyles = \
+    "  <link rel=\"stylesheet\" type=\"text/css\" href=\"style/offline.css\" />\n"
