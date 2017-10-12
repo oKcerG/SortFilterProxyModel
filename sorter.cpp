@@ -294,9 +294,20 @@ int StringSorter::compare(const QModelIndex &sourceLeft, const QModelIndex &sour
 /*!
     \qmlproperty expression ExpressionSorter::expression
 
-    An expression to implement custom sorting, it must evaluate to a bool.
-    It has the same syntax has a \l {http://doc.qt.io/qt-5/qtqml-syntax-propertybinding.html} {Property Binding} except it will be evaluated for each of the source model's rows.
-    Model data is accessible for both row with the \c indexLeft, \c modelLeft, \c indexRight and \c modelRight properties.
+    An expression to implement custom sorting. It must evaluate to a bool.
+    It has the same syntax has a \l {http://doc.qt.io/qt-5/qtqml-syntax-propertybinding.html} {Property Binding}, except that it will be evaluated for each of the source model's rows.
+    Model data is accessible for both rows with the \c modelLeft, and \c modelRight properties:
+
+    \code
+    sorters: ExpressionSorter {
+        expression: {
+            return modelLeft.someRole < modelRight.someRole;
+        }
+    }
+    \endcode
+
+    The \c index of the row is also available through \c modelLeft and \c modelRight.
+
     The expression should return \c true if the value of the left item is less than the value of the right item, otherwise returns false.
 
     This expression is reevaluated for a row every time its model data changes.
