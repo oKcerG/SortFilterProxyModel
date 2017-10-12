@@ -45,7 +45,14 @@
 <td class="tblQmlPropNode"><p>
 <a name="expression-prop"></a><span class="name">expression</span> : <span class="type"><a href="qml-expressionsorter.html#expression-prop">expression</a></span></p></td></tr>
 </table></div>
-</div><div class="qmldoc"><p>An expression to implement custom sorting, it must evaluate to a bool. It has the same syntax has a <a href="http://doc.qt.io/qt-5/qtqml-syntax-propertybinding.html">Property Binding</a> except it will be evaluated for each of the source model's rows. Model data is accessible for both row with the <code>indexLeft</code>, <code>modelLeft</code>, <code>indexRight</code> and <code>modelRight</code> properties. The expression should return <code>true</code> if the value of the left item is less than the value of the right item, otherwise returns false.</p>
+</div><div class="qmldoc"><p>An expression to implement custom sorting. It must evaluate to a bool. It has the same syntax has a <a href="http://doc.qt.io/qt-5/qtqml-syntax-propertybinding.html">Property Binding</a>, except that it will be evaluated for each of the source model's rows. Model data is accessible for both rows with the <code>modelLeft</code>, and <code>modelRight</code> properties:</p>
+<pre class="cpp">sorters: ExpressionSorter {
+    expression: {
+        <span class="keyword">return</span> modelLeft<span class="operator">.</span>someRole <span class="operator">&lt;</span> modelRight<span class="operator">.</span>someRole;
+    }
+}</pre>
+<p>The <code>index</code> of the row is also available through <code>modelLeft</code> and <code>modelRight</code>.</p>
+<p>The expression should return <code>true</code> if the value of the left item is less than the value of the right item, otherwise returns false.</p>
 <p>This expression is reevaluated for a row every time its model data changes. When an external property (not <code>index*</code> or in <code>model*</code>) the expression depends on changes, the expression is reevaluated for every row of the source model. To capture the properties the expression depends on, the expression is first executed with invalid data and each property access is detected by the QML engine. This means that if a property is not accessed because of a conditional, it won't be captured and the expression won't be reevaluted when this property changes.</p>
 <p>A workaround to this problem is to access all the properties the expressions depends unconditionally at the beggining of the expression.</p>
 </div></div><!-- @@@expression -->
