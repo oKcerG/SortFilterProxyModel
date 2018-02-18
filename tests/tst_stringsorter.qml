@@ -42,7 +42,11 @@ Item {
         },
         StringSorter {
             property string tag: "doNotIgnorePunctuation"
-            property var expectedValues: ["aa", "a-a", "b.c", "b-b", "bc", "b-c"]
+            // depends on ICU usage (TODO: howto check on compiletime?)
+            // with ICU support: (Qt with ICU configured)
+            //property var expectedValues: ["a-a", "aa", "b.c", "b-b", "bc", "b-c"]
+            // without ICU support (default: Linux, Apple platforms):
+            property var expectedValues: ["a-a", "aa", "b-b", "b-c", "b.c", "bc"]
             roleName: "punctuationRole"
             ignorePunctation: false
         }
