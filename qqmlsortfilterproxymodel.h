@@ -85,6 +85,8 @@ public:
     Q_INVOKABLE QModelIndex mapFromSource(const QModelIndex& sourceIndex) const override;
     Q_INVOKABLE int mapFromSource(int sourceRow) const;
 
+    void setSourceModel(QAbstractItemModel *sourceModel) override;
+
 Q_SIGNALS:
     void countChanged();
 
@@ -106,6 +108,7 @@ protected Q_SLOTS:
 private Q_SLOTS:
     void invalidateFilter();
     void invalidate();
+    void updateRoleNames();
     void updateFilterRole();
     void updateSortRole();
     void updateRoles();

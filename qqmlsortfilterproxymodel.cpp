@@ -198,10 +198,10 @@ QQmlListProperty<Sorter> QQmlSortFilterProxyModel::sorters()
 QQmlListProperty<ProxyRole> QQmlSortFilterProxyModel::proxyRoles()
 {
     return QQmlListProperty<ProxyRole>(this, &m_proxyRoles,
-                                    &QQmlSortFilterProxyModel::append_proxyRole,
-                                    &QQmlSortFilterProxyModel::count_proxyRole,
-                                    &QQmlSortFilterProxyModel::at_proxyRole,
-                                    &QQmlSortFilterProxyModel::clear_proxyRoles);
+                                       &QQmlSortFilterProxyModel::append_proxyRole,
+                                       &QQmlSortFilterProxyModel::count_proxyRole,
+                                       &QQmlSortFilterProxyModel::at_proxyRole,
+                                       &QQmlSortFilterProxyModel::clear_proxyRoles);
 }
 
 void QQmlSortFilterProxyModel::classBegin()
@@ -245,7 +245,7 @@ QVariant QQmlSortFilterProxyModel::data(const QModelIndex &index, int role) cons
 
 QHash<int, QByteArray> QQmlSortFilterProxyModel::roleNames() const
 {
-    return m_roleNames;
+    return m_roleNames.isEmpty() && sourceModel() ? sourceModel()->roleNames() : m_roleNames;
 }
 
 /*!
@@ -257,7 +257,7 @@ QHash<int, QByteArray> QQmlSortFilterProxyModel::roleNames() const
 
 int QQmlSortFilterProxyModel::roleForName(const QString& roleName) const
 {
-    return roleNames().key(roleName.toUtf8(), -1);
+    return m_roleNames.key(roleName.toUtf8(), -1);
 }
 
 /*!
@@ -373,24 +373,16 @@ bool QQmlSortFilterProxyModel::lessThan(const QModelIndex& source_left, const QM
 void QQmlSortFilterProxyModel::resetInternalData()
 {
     QSortFilterProxyModel::resetInternalData();
-    if (sourceModel() && QSortFilterProxyModel::roleNames().isEmpty()) { // workaround for when a model has no roles and roles are added when the model is populated (ListModel)
-        // QTBUG-57971
-        connect(sourceModel(), &QAbstractItemModel::rowsInserted, this, &QQmlSortFilterProxyModel::initRoles);
-        connect(this, &QAbstractItemModel::rowsAboutToBeInserted, this, &QQmlSortFilterProxyModel::initRoles);
-    }
-    m_roleNames = QSortFilterProxyModel::roleNames();
-    m_proxyRoleMap.clear();
-    m_proxyRoleNumbers.clear();
+    updateRoleNames();
+}
 
-    auto roles = m_roleNames.keys();
-    auto maxIt = std::max_element(roles.cbegin(), roles.cend());
-    int maxRole = maxIt != roles.cend() ? *maxIt : -1;
-    for (auto proxyRole : m_proxyRoles) {
-        ++maxRole;
-        m_roleNames[maxRole] = proxyRole->name().toUtf8();
-        m_proxyRoleMap[maxRole] = proxyRole;
-        m_proxyRoleNumbers.append(maxRole);
+void QQmlSortFilterProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
+{
+    if (sourceModel && sourceModel->roleNames().isEmpty()) { // workaround for when a model has no roles and roles are added when the model is populated (ListModel)
+        // QTBUG-57971
+        connect(sourceModel, &QAbstractItemModel::rowsInserted, this, &QQmlSortFilterProxyModel::initRoles);
     }
+    QSortFilterProxyModel::setSourceModel(sourceModel);
 }
 
 void QQmlSortFilterProxyModel::invalidateFilter()
@@ -403,6 +395,25 @@ void QQmlSortFilterProxyModel::invalidate()
 {
     if (m_completed)
         QSortFilterProxyModel::invalidate();
+}
+
+void QQmlSortFilterProxyModel::updateRoleNames()
+{
+    if (!sourceModel())
+        return;
+    m_roleNames = sourceModel()->roleNames();
+    m_proxyRoleMap.clear();
+    m_proxyRoleNumbers.clear();
+
+    auto roles = m_roleNames.keys();
+    auto maxIt = std::max_element(roles.cbegin(), roles.cend());
+    int maxRole = maxIt != roles.cend() ? *maxIt : -1;
+    for (auto proxyRole : m_proxyRoles) {
+        ++maxRole;
+        m_roleNames[maxRole] = proxyRole->name().toUtf8();
+        m_proxyRoleMap[maxRole] = proxyRole;
+        m_proxyRoleNumbers.append(maxRole);
+    }
 }
 
 void QQmlSortFilterProxyModel::updateFilterRole()
@@ -433,7 +444,6 @@ void QQmlSortFilterProxyModel::updateRoles()
 void QQmlSortFilterProxyModel::initRoles()
 {
     disconnect(sourceModel(), &QAbstractItemModel::rowsInserted, this, &QQmlSortFilterProxyModel::initRoles);
-    disconnect(this, &QAbstractItemModel::rowsAboutToBeInserted, this , &QQmlSortFilterProxyModel::initRoles);
     resetInternalData();
     updateRoles();
 }
