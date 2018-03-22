@@ -13,6 +13,10 @@ Item {
         ListElement { test: "fourth"; test2: "b" }
     }
 
+    ListModel {
+        id: noRolesFirstListModel
+    }
+
     property list<QtObject> sorters: [
         QtObject {
           property string tag: "no sorter"
@@ -75,6 +79,12 @@ Item {
         sourceModel: listModel
     }
 
+    SortFilterProxyModel {
+        id: noRolesFirstProxyModel
+        sourceModel: noRolesFirstListModel
+        sorters: RoleSorter { roleName: "test" }
+    }
+
     TestCase {
         name: "SortersTests"
 
@@ -111,6 +121,12 @@ Item {
             testModel.sorters = tieSorters;
             var expectedValues = ["second", "fourth", "third", "first"];
             verifyModelValues(testModel, expectedValues);
+        }
+
+        function test_noRolesFirstModel() {
+            noRolesFirstListModel.append([{test: "b"}, {test: "a"}]);
+            var expectedValues = ["a", "b"];
+            verifyModelValues(noRolesFirstProxyModel, expectedValues);
         }
 
         function verifyModelValues(model, expectedValues) {
