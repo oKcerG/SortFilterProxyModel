@@ -154,6 +154,10 @@ QPair<QVariant, QVariant> RoleSorter::sourceData(const QModelIndex &sourceLeft, 
 {
     QPair<QVariant, QVariant> pair;
     int role = proxyModel.roleForName(m_roleName);
+
+    if (role == -1)
+        return pair;
+
     pair.first = proxyModel.sourceData(sourceLeft, role);
     pair.second = proxyModel.sourceData(sourceRight, role);
     return pair;
