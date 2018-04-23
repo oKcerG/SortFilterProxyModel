@@ -27,3 +27,6 @@ OTHER_FILES += \
     tst_joinrole.qml \
     tst_switchrole.qml \
     tst_expressionrole.qml
+
+DISTFILES += \
+    tst_filtercontainers.qml
