@@ -6,7 +6,40 @@
 #include <QQmlScriptString>
 #include <QQmlExpression>
 #include <qqml.h>
-#include "qqmlsortfilterproxymodel.h"
+#include "filter.h"
+
+namespace qqsfpm {
+
+class ProxyRole;
+class QQmlSortFilterProxyModel;
+
+class ProxyRoleContainer {
+public:
+    virtual ~ProxyRoleContainer();
+
+    QList<ProxyRole*> proxyRoles() const;
+    void appendProxyRole(ProxyRole* proxyRole);
+    void removeProxyRole(ProxyRole* proxyRole);
+    void clearProxyRoles();
+
+    QQmlListProperty<ProxyRole> proxyRolesListProperty();
+
+protected:
+    QList<ProxyRole*> m_proxyRoles;
+
+private:
+    virtual void onProxyRoleAppended(ProxyRole* proxyRole) = 0;
+    virtual void onProxyRoleRemoved(ProxyRole* proxyRole) = 0;
+    virtual void onProxyRolesCleared() = 0;
+
+    static void append_proxyRole(QQmlListProperty<ProxyRole>* list, ProxyRole* proxyRole);
+    static int count_proxyRole(QQmlListProperty<ProxyRole>* list);
+    static ProxyRole* at_proxyRole(QQmlListProperty<ProxyRole>* list, int index);
+    static void clear_proxyRoles(QQmlListProperty<ProxyRole>* list);
+};
+}
+#define ProxyRoleContainer_iid "fr.grecko.SortFilterProxyModel.ProxyRoleContainer"
+Q_DECLARE_INTERFACE(qqsfpm::ProxyRoleContainer, ProxyRoleContainer_iid)
 
 namespace qqsfpm {
 
@@ -82,12 +115,13 @@ private:
     QVariant m_value;
 };
 
-class SwitchRole : public ProxyRole
+class SwitchRole : public ProxyRole, public FilterContainer
 {
     Q_OBJECT
+    Q_INTERFACES(qqsfpm::FilterContainer)
     Q_PROPERTY(QString defaultRoleName READ defaultRoleName WRITE setDefaultRoleName NOTIFY defaultRoleNameChanged)
     Q_PROPERTY(QVariant defaultValue READ defaultValue WRITE setDefaultValue NOTIFY defaultValueChanged)
-    Q_PROPERTY(QQmlListProperty<qqsfpm::Filter> filters READ filters)
+    Q_PROPERTY(QQmlListProperty<qqsfpm::Filter> filters READ filtersListProperty)
 
 public:
     using ProxyRole::ProxyRole;
@@ -98,7 +132,6 @@ public:
     QVariant defaultValue() const;
     void setDefaultValue(const QVariant& defaultValue);
 
-    QQmlListProperty<Filter> filters();
     void proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel) override;
 
     static SwitchRoleAttached* qmlAttachedProperties(QObject* object);
@@ -110,14 +143,12 @@ Q_SIGNALS:
 private:
     QVariant data(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel) override;
 
-    static void append_filter(QQmlListProperty<Filter>* list, Filter* filter);
-    static int count_filter(QQmlListProperty<Filter>* list);
-    static Filter* at_filter(QQmlListProperty<Filter>* list, int index);
-    static void clear_filters(QQmlListProperty<Filter>* list);
+    void onFilterAppended(Filter *filter) override;
+    void onFilterRemoved(Filter *filter) override;
+    void onFiltersCleared() override;
 
     QString m_defaultRoleName;
     QVariant m_defaultValue;
-    QList<Filter*> m_filters;
 };
 
 class ExpressionRole : public ProxyRole

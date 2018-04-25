@@ -6,8 +6,73 @@
 #include <QDebug>
 #include <QQmlInfo>
 #include "filter.h"
+#include "qqmlsortfilterproxymodel.h"
 
 namespace qqsfpm {
+
+ProxyRoleContainer::~ProxyRoleContainer()
+{
+
+}
+
+QList<ProxyRole*> ProxyRoleContainer::proxyRoles() const
+{
+    return m_proxyRoles;
+}
+
+void ProxyRoleContainer::appendProxyRole(ProxyRole* proxyRole)
+{
+    m_proxyRoles.append(proxyRole);
+    onProxyRoleAppended(proxyRole);
+}
+
+void ProxyRoleContainer::removeProxyRole(ProxyRole* proxyRole)
+{
+    m_proxyRoles.removeOne(proxyRole);
+    onProxyRoleRemoved(proxyRole);
+}
+
+void ProxyRoleContainer::clearProxyRoles()
+{
+    m_proxyRoles.clear();
+    onProxyRolesCleared();
+}
+
+QQmlListProperty<ProxyRole> ProxyRoleContainer::proxyRolesListProperty()
+{
+    return QQmlListProperty<ProxyRole>(reinterpret_cast<QObject*>(this), &m_proxyRoles,
+                                    &ProxyRoleContainer::append_proxyRole,
+                                    &ProxyRoleContainer::count_proxyRole,
+                                    &ProxyRoleContainer::at_proxyRole,
+                                    &ProxyRoleContainer::clear_proxyRoles);
+}
+
+void ProxyRoleContainer::append_proxyRole(QQmlListProperty<ProxyRole>* list, ProxyRole* proxyRole)
+{
+    if (!proxyRole)
+        return;
+
+    ProxyRoleContainer* that = reinterpret_cast<ProxyRoleContainer*>(list->object);
+    that->appendProxyRole(proxyRole);
+}
+
+int ProxyRoleContainer::count_proxyRole(QQmlListProperty<ProxyRole>* list)
+{
+    QList<ProxyRole*>* ProxyRoles = static_cast<QList<ProxyRole*>*>(list->data);
+    return ProxyRoles->count();
+}
+
+ProxyRole* ProxyRoleContainer::at_proxyRole(QQmlListProperty<ProxyRole>* list, int index)
+{
+    QList<ProxyRole*>* ProxyRoles = static_cast<QList<ProxyRole*>*>(list->data);
+    return ProxyRoles->at(index);
+}
+
+void ProxyRoleContainer::clear_proxyRoles(QQmlListProperty<ProxyRole> *list)
+{
+    ProxyRoleContainer* that = reinterpret_cast<ProxyRoleContainer*>(list->object);
+    that->clearProxyRoles();
+}
 
 /*!
     \qmltype ProxyRole
@@ -242,14 +307,6 @@ void SwitchRole::setDefaultValue(const QVariant& defaultValue)
 
     \sa Filter
 */
-QQmlListProperty<Filter> SwitchRole::filters()
-{
-    return QQmlListProperty<Filter>(this, &m_filters,
-                                    &SwitchRole::append_filter,
-                                    &SwitchRole::count_filter,
-                                    &SwitchRole::at_filter,
-                                    &SwitchRole::clear_filters);
-}
 
 void SwitchRole::proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel)
 {
@@ -286,36 +343,23 @@ QVariant SwitchRole::data(const QModelIndex &sourceIndex, const QQmlSortFilterPr
     return m_defaultValue;
 }
 
-void SwitchRole::append_filter(QQmlListProperty<Filter>* list, Filter* filter)
+void SwitchRole::onFilterAppended(Filter *filter)
 {
-    if (!filter)
-        return;
-
-    SwitchRole* that = static_cast<SwitchRole*>(list->object);
-    that->m_filters.append(filter);
-    connect(filter, &Filter::invalidated, that, &SwitchRole::invalidate);
+    connect(filter, &Filter::invalidated, this, &SwitchRole::invalidate);
     auto attached = static_cast<SwitchRoleAttached*>(qmlAttachedPropertiesObject<SwitchRole>(filter, true));
-    connect(attached, &SwitchRoleAttached::valueChanged, that, &SwitchRole::invalidate);
-    that->invalidate();
+    connect(attached, &SwitchRoleAttached::valueChanged, this, &SwitchRole::invalidate);
+    invalidate();
 }
 
-int SwitchRole::count_filter(QQmlListProperty<Filter>* list)
+void SwitchRole::onFilterRemoved(Filter *filter)
 {
-    QList<Filter*>* filters = static_cast<QList<Filter*>*>(list->data);
-    return filters->count();
+    Q_UNUSED(filter)
+    invalidate();
 }
 
-Filter* SwitchRole::at_filter(QQmlListProperty<Filter>* list, int index)
+void SwitchRole::onFiltersCleared()
 {
-    QList<Filter*>* filters = static_cast<QList<Filter*>*>(list->data);
-    return filters->at(index);
-}
-
-void SwitchRole::clear_filters(QQmlListProperty<Filter> *list)
-{
-    SwitchRole* that = static_cast<SwitchRole*>(list->object);
-    that->m_filters.clear();
-    that->invalidate();
+    invalidate();
 }
 
 /*!

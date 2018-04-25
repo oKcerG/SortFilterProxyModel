@@ -1,7 +1,72 @@
 #include "filter.h"
+#include "qqmlsortfilterproxymodel.h"
 #include <QtQml>
 
 namespace qqsfpm {
+
+FilterContainer::~FilterContainer()
+{
+
+}
+
+QList<Filter*> FilterContainer::filters() const
+{
+    return m_filters;
+}
+
+void FilterContainer::appendFilter(Filter* filter)
+{
+    m_filters.append(filter);
+    onFilterAppended(filter);
+}
+
+void FilterContainer::removeFilter(Filter* filter)
+{
+    m_filters.removeOne(filter);
+    onFilterRemoved(filter);
+}
+
+void FilterContainer::clearFilters()
+{
+    m_filters.clear();
+    onFiltersCleared();
+}
+
+QQmlListProperty<Filter> FilterContainer::filtersListProperty()
+{
+    return QQmlListProperty<Filter>(reinterpret_cast<QObject*>(this), &m_filters,
+                                    &FilterContainer::append_filter,
+                                    &FilterContainer::count_filter,
+                                    &FilterContainer::at_filter,
+                                    &FilterContainer::clear_filters);
+}
+
+void FilterContainer::append_filter(QQmlListProperty<Filter>* list, Filter* filter)
+{
+    if (!filter)
+        return;
+
+    FilterContainer* that = reinterpret_cast<FilterContainer*>(list->object);
+    that->appendFilter(filter);
+}
+
+int FilterContainer::count_filter(QQmlListProperty<Filter>* list)
+{
+    QList<Filter*>* filters = static_cast<QList<Filter*>*>(list->data);
+    return filters->count();
+}
+
+Filter* FilterContainer::at_filter(QQmlListProperty<Filter>* list, int index)
+{
+    QList<Filter*>* filters = static_cast<QList<Filter*>*>(list->data);
+    return filters->at(index);
+}
+
+void FilterContainer::clear_filters(QQmlListProperty<Filter> *list)
+{
+    FilterContainer* that = reinterpret_cast<FilterContainer*>(list->object);
+    that->clearFilters();
+}
 
 /*!
     \qmltype Filter
@@ -622,49 +687,27 @@ void ExpressionFilter::updateExpression()
     m_expression->evaluate();
 }
 
-QQmlListProperty<Filter> FilterContainer::filters()
-{
-    return QQmlListProperty<Filter>(this, &m_filters,
-                                    &FilterContainer::append_filter,
-                                    &FilterContainer::count_filter,
-                                    &FilterContainer::at_filter,
-                                    &FilterContainer::clear_filters);
-}
-
-void FilterContainer::proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel)
+void FilterContainerFilter::proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel)
 {
     for (Filter* filter : m_filters)
         filter->proxyModelCompleted(proxyModel);
 }
 
-void FilterContainer::append_filter(QQmlListProperty<Filter>* list, Filter* filter)
+void FilterContainerFilter::onFilterAppended(Filter* filter)
 {
-    if (!filter)
-        return;
-
-    FilterContainer* that = static_cast<FilterContainer*>(list->object);
-    that->m_filters.append(filter);
-    connect(filter, &Filter::invalidated, that, &FilterContainer::invalidate);
-    that->invalidate();
+    connect(filter, &Filter::invalidated, this, &FilterContainerFilter::invalidate);
+    invalidate();
 }
 
-int FilterContainer::count_filter(QQmlListProperty<Filter>* list)
+void FilterContainerFilter::onFilterRemoved(Filter* filter)
 {
-    QList<Filter*>* filters = static_cast<QList<Filter*>*>(list->data);
-    return filters->count();
+    Q_UNUSED(filter)
+    invalidate();
 }
 
-Filter* FilterContainer::at_filter(QQmlListProperty<Filter>* list, int index)
+void qqsfpm::FilterContainerFilter::onFiltersCleared()
 {
-    QList<Filter*>* filters = static_cast<QList<Filter*>*>(list->data);
-    return filters->at(index);
-}
-
-void FilterContainer::clear_filters(QQmlListProperty<Filter> *list)
-{
-    FilterContainer* that = static_cast<FilterContainer*>(list->object);
-    that->m_filters.clear();
-    that->invalidate();
+    invalidate();
 }
 
 /*!

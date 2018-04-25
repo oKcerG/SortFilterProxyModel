@@ -3,18 +3,23 @@
 
 #include <QSortFilterProxyModel>
 #include <QQmlParserStatus>
-#include <QQmlListProperty>
+#include "filter.h"
+#include "sorter.h"
+#include "proxyrole.h"
 
 namespace qqsfpm {
 
-class Filter;
-class Sorter;
-class ProxyRole;
-
-class QQmlSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParserStatus
+class QQmlSortFilterProxyModel : public QSortFilterProxyModel,
+                                 public QQmlParserStatus,
+                                 public FilterContainer,
+                                 public SorterContainer,
+                                 public ProxyRoleContainer
 {
     Q_OBJECT
     Q_INTERFACES(QQmlParserStatus)
+    Q_INTERFACES(qqsfpm::FilterContainer)
+    Q_INTERFACES(qqsfpm::SorterContainer)
+    Q_INTERFACES(qqsfpm::ProxyRoleContainer)
 
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 
@@ -26,9 +31,9 @@ class QQmlSortFilterProxyModel : public QSortFilterProxyModel, public QQmlParser
     Q_PROPERTY(QString sortRoleName READ sortRoleName WRITE setSortRoleName NOTIFY sortRoleNameChanged)
     Q_PROPERTY(bool ascendingSortOrder READ ascendingSortOrder WRITE setAscendingSortOrder NOTIFY ascendingSortOrderChanged)
 
-    Q_PROPERTY(QQmlListProperty<qqsfpm::Filter> filters READ filters)
-    Q_PROPERTY(QQmlListProperty<qqsfpm::Sorter> sorters READ sorters)
-    Q_PROPERTY(QQmlListProperty<qqsfpm::ProxyRole> proxyRoles READ proxyRoles)
+    Q_PROPERTY(QQmlListProperty<qqsfpm::Filter> filters READ filtersListProperty)
+    Q_PROPERTY(QQmlListProperty<qqsfpm::Sorter> sorters READ sortersListProperty)
+    Q_PROPERTY(QQmlListProperty<qqsfpm::ProxyRole> proxyRoles READ proxyRolesListProperty)
 
 public:
     enum PatternSyntax {
@@ -61,10 +66,6 @@ public:
 
     bool ascendingSortOrder() const;
     void setAscendingSortOrder(bool ascendingSortOrder);
-
-    QQmlListProperty<Filter> filters();
-    QQmlListProperty<Sorter> sorters();
-    QQmlListProperty<ProxyRole> proxyRoles();
 
     void classBegin() override;
     void componentComplete() override;
@@ -119,28 +120,22 @@ private Q_SLOTS:
 private:
     QVariantMap modelDataMap(const QModelIndex& modelIndex) const;
 
-    static void append_filter(QQmlListProperty<Filter>* list, Filter* filter);
-    static int count_filter(QQmlListProperty<Filter>* list);
-    static Filter* at_filter(QQmlListProperty<Filter>* list, int index);
-    static void clear_filters(QQmlListProperty<Filter>* list);
+    void onFilterAppended(Filter* filter) override;
+    void onFilterRemoved(Filter* filter) override;
+    void onFiltersCleared() override;
 
-    static void append_sorter(QQmlListProperty<Sorter>* list, Sorter* sorter);
-    static int count_sorter(QQmlListProperty<Sorter>* list);
-    static Sorter* at_sorter(QQmlListProperty<Sorter>* list, int index);
-    static void clear_sorters(QQmlListProperty<Sorter>* list);
+    void onSorterAppended(Sorter* sorter) override;
+    void onSorterRemoved(Sorter* sorter) override;
+    void onSortersCleared() override;
 
-    static void append_proxyRole(QQmlListProperty<ProxyRole>* list, ProxyRole* proxyRole);
-    static int count_proxyRole(QQmlListProperty<ProxyRole>* list);
-    static ProxyRole* at_proxyRole(QQmlListProperty<ProxyRole>* list, int index);
-    static void clear_proxyRoles(QQmlListProperty<ProxyRole>* list);
+    void onProxyRoleAppended(ProxyRole *proxyRole) override;
+    void onProxyRoleRemoved(ProxyRole *proxyRole) override;
+    void onProxyRolesCleared() override;
 
     QString m_filterRoleName;
     QVariant m_filterValue;
     QString m_sortRoleName;
     bool m_ascendingSortOrder = true;
-    QList<Filter*> m_filters;
-    QList<Sorter*> m_sorters;
-    QList<ProxyRole*> m_proxyRoles;
     bool m_completed = false;
     QHash<int, QByteArray> m_roleNames;
     QHash<int, ProxyRole*> m_proxyRoleMap;
