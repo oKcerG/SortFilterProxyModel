@@ -5,7 +5,7 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QQmlInfo>
-#include "filter.h"
+#include "filters/filter.h"
 #include "qqmlsortfilterproxymodel.h"
 
 namespace qqsfpm {

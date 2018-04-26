@@ -6,7 +6,7 @@
 #include <QQmlScriptString>
 #include <QQmlExpression>
 #include <qqml.h>
-#include "filter.h"
+#include "filters/filtercontainer.h"
 
 namespace qqsfpm {
 

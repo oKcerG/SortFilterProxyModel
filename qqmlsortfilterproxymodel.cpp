@@ -1,7 +1,7 @@
 #include "qqmlsortfilterproxymodel.h"
 #include <QtQml>
 #include <algorithm>
-#include "filter.h"
+#include "filters/filter.h"
 #include "sorter.h"
 #include "proxyrole.h"
 
