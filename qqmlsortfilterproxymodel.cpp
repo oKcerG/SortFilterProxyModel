@@ -2,7 +2,7 @@
 #include <QtQml>
 #include <algorithm>
 #include "filters/filter.h"
-#include "sorter.h"
+#include "sorters/sorter.h"
 #include "proxyrole.h"
 
 namespace qqsfpm {

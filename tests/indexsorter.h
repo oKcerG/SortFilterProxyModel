@@ -1,7 +1,7 @@
 #ifndef INDEXSORTER_H
 #define INDEXSORTER_H
 
-#include <sorter.h>
+#include "sorters/sorter.h"
 
 class IndexSorter : public qqsfpm::Sorter
 {
