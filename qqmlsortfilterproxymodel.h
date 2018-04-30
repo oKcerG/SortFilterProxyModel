@@ -3,9 +3,9 @@
 
 #include <QSortFilterProxyModel>
 #include <QQmlParserStatus>
-#include "filter.h"
-#include "sorter.h"
-#include "proxyrole.h"
+#include "filters/filtercontainer.h"
+#include "sorters/sortercontainer.h"
+#include "proxyroles/proxyrolecontainer.h"
 
 namespace qqsfpm {
 
