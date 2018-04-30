@@ -1,7 +1,8 @@
 #ifndef TESTROLES_H
 #define TESTROLES_H
 
-#include "proxyrole.h"
+#include "proxyroles/proxyrole.h"
+#include <QVariant>
 
 class StaticRole : public qqsfpm::ProxyRole
 {

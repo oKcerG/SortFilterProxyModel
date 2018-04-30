@@ -3,7 +3,7 @@
 #include <algorithm>
 #include "filters/filter.h"
 #include "sorters/sorter.h"
-#include "proxyrole.h"
+#include "proxyroles/proxyrole.h"
 
 namespace qqsfpm {
 
