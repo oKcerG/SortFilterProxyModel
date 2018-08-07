@@ -1,7 +1,7 @@
 #ifndef SWITCHROLE_H
 #define SWITCHROLE_H
 
-#include "proxyrole.h"
+#include "singlerole.h"
 #include "filters/filtercontainer.h"
 #include <QtQml>
 
@@ -24,7 +24,7 @@ private:
     QVariant m_value;
 };
 
-class SwitchRole : public ProxyRole, public FilterContainer
+class SwitchRole : public SingleRole, public FilterContainer
 {
     Q_OBJECT
     Q_INTERFACES(qqsfpm::FilterContainer)

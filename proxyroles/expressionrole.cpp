@@ -6,7 +6,7 @@ namespace qqsfpm {
 
 /*!
     \qmltype ExpressionRole
-    \inherits ProxyRole
+    \inherits SingleRole
     \inqmlmodule SortFilterProxyModel
     \brief A custom role computed from a javascrip expression
 

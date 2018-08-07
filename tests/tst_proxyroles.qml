@@ -41,7 +41,8 @@ Item {
             },
             SourceIndexRole {
                 name: "sourceIndexRole"
-            }
+            },
+            MultiRole {}
         ]
     }
 
@@ -79,8 +80,13 @@ Item {
 
         function test_filterFromProxyRole() {
             staticRole.value = "filterMe";
-            compare(testModel.count, 0)
+            compare(testModel.count, 0);
             staticRole.value = "foo";
+        }
+
+        function test_multiRole() {
+            compare(testModel.get(0, "role1"), "data for role1");
+            compare(testModel.get(0, "role2"), "data for role2");
         }
     }
 }

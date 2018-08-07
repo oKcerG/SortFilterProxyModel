@@ -11,29 +11,27 @@ class QQmlSortFilterProxyModel;
 class ProxyRole : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 
 public:
-    explicit ProxyRole(QObject *parent = nullptr);
+    using QObject::QObject;
+    virtual ~ProxyRole() = default;
 
-    const QString& name() const;
-    void setName(const QString& name);
-
-    QVariant roleData(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel);
+    QVariant roleData(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel, const QString& name);
     virtual void proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel);
+
+    virtual QStringList names() = 0;
 
 protected:
     void invalidate();
 
 Q_SIGNALS:
-    void nameAboutToBeChanged();
-    void nameChanged();
     void invalidated();
+    void namesAboutToBeChanged();
+    void namesChanged();
 
 private:
-    virtual QVariant data(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel) = 0;
+    virtual QVariant data(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel, const QString& name) = 0;
 
-    QString m_name;
     QMutex m_mutex;
 };
 

@@ -138,7 +138,7 @@ private:
     bool m_ascendingSortOrder = true;
     bool m_completed = false;
     QHash<int, QByteArray> m_roleNames;
-    QHash<int, ProxyRole*> m_proxyRoleMap;
+    QHash<int, QPair<ProxyRole*, QString>> m_proxyRoleMap;
     QVector<int> m_proxyRoleNumbers;
 };
 

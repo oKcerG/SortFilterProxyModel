@@ -29,9 +29,20 @@ QVariant SourceIndexRole::data(const QModelIndex& sourceIndex, const qqsfpm::QQm
     return sourceIndex.row();
 }
 
+QStringList MultiRole::names()
+{
+    return {"role1", "role2"};
+}
+
+QVariant MultiRole::data(const QModelIndex&, const qqsfpm::QQmlSortFilterProxyModel&, const QString& name)
+{
+    return "data for " + name;
+}
+
 void registerTestRolesTypes() {
     qmlRegisterType<StaticRole>("SortFilterProxyModel.Test", 0, 2, "StaticRole");
     qmlRegisterType<SourceIndexRole>("SortFilterProxyModel.Test", 0, 2, "SourceIndexRole");
+    qmlRegisterType<MultiRole>("SortFilterProxyModel.Test", 0, 2, "MultiRole");
 }
 
 Q_COREAPP_STARTUP_FUNCTION(registerTestRolesTypes)

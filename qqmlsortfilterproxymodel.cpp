@@ -208,8 +208,9 @@ QVariant QQmlSortFilterProxyModel::sourceData(const QModelIndex& sourceIndex, co
 
 QVariant QQmlSortFilterProxyModel::sourceData(const QModelIndex &sourceIndex, int role) const
 {
-    if (ProxyRole* proxyRole = m_proxyRoleMap[role])
-        return proxyRole->roleData(sourceIndex, *this);
+    QPair<ProxyRole*, QString> proxyRolePair = m_proxyRoleMap[role];
+    if (ProxyRole* proxyRole = proxyRolePair.first)
+        return proxyRole->roleData(sourceIndex, *this, proxyRolePair.second);
     else
         return sourceModel()->data(sourceIndex, role);
 }
@@ -385,10 +386,12 @@ void QQmlSortFilterProxyModel::updateRoleNames()
     auto maxIt = std::max_element(roles.cbegin(), roles.cend());
     int maxRole = maxIt != roles.cend() ? *maxIt : -1;
     for (auto proxyRole : m_proxyRoles) {
-        ++maxRole;
-        m_roleNames[maxRole] = proxyRole->name().toUtf8();
-        m_proxyRoleMap[maxRole] = proxyRole;
-        m_proxyRoleNumbers.append(maxRole);
+        for (auto roleName : proxyRole->names()) {
+            ++maxRole;
+            m_roleNames[maxRole] = roleName.toUtf8();
+            m_proxyRoleMap[maxRole] = {proxyRole, roleName};
+            m_proxyRoleNumbers.append(maxRole);
+        }
     }
 }
 
@@ -484,8 +487,8 @@ void QQmlSortFilterProxyModel::onProxyRoleAppended(ProxyRole *proxyRole)
 {
     beginResetModel();
     connect(proxyRole, &ProxyRole::invalidated, this, &QQmlSortFilterProxyModel::emitProxyRolesChanged);
-    connect(proxyRole, &ProxyRole::nameAboutToBeChanged, this, &QQmlSortFilterProxyModel::beginResetModel);
-    connect(proxyRole, &ProxyRole::nameChanged, this, &QQmlSortFilterProxyModel::endResetModel);
+    connect(proxyRole, &ProxyRole::namesAboutToBeChanged, this, &QQmlSortFilterProxyModel::beginResetModel);
+    connect(proxyRole, &ProxyRole::namesChanged, this, &QQmlSortFilterProxyModel::endResetModel);
     endResetModel();
 }
 

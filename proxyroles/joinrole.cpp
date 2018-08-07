@@ -5,7 +5,7 @@ namespace qqsfpm {
 
 /*!
     \qmltype JoinRole
-    \inherits ProxyRole
+    \inherits SingleRole
     \inqmlmodule SortFilterProxyModel
     \brief a role made from concatenating other roles
 

@@ -1,20 +1,20 @@
 #ifndef EXPRESSIONROLE_H
 #define EXPRESSIONROLE_H
 
-#include "proxyrole.h"
+#include "singlerole.h"
 #include <QQmlScriptString>
 
 class QQmlExpression;
 
 namespace qqsfpm {
 
-class ExpressionRole : public ProxyRole
+class ExpressionRole : public SingleRole
 {
     Q_OBJECT
     Q_PROPERTY(QQmlScriptString expression READ expression WRITE setExpression NOTIFY expressionChanged)
 
 public:
-    using ProxyRole::ProxyRole;
+    using SingleRole::SingleRole;
 
     const QQmlScriptString& expression() const;
     void setExpression(const QQmlScriptString& scriptString);

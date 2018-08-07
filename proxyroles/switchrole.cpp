@@ -7,7 +7,7 @@ namespace qqsfpm {
 
 /*!
     \qmltype SwitchRole
-    \inherits ProxyRole
+    \inherits SingleRole
     \inqmlmodule SortFilterProxyModel
     \brief a role using \l Filter to conditionnaly compute its data
 
