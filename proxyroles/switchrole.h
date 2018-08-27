@@ -33,7 +33,7 @@ class SwitchRole : public SingleRole, public FilterContainer
     Q_PROPERTY(QQmlListProperty<qqsfpm::Filter> filters READ filtersListProperty)
 
 public:
-    using ProxyRole::ProxyRole;
+    using SingleRole::SingleRole;
 
     QString defaultRoleName() const;
     void setDefaultRoleName(const QString& defaultRoleName);
