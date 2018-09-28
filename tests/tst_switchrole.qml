@@ -20,26 +20,24 @@ Item {
         proxyRoles: SwitchRole {
             id: switchRole
             name: "switchRole"
-            filters: [
-                ValueFilter {
-                    id: valueFilter
-                    roleName: "favorite"
-                    value: true
-                    SwitchRole.value: "*"
-                },
-                ValueFilter {
-                    id: secondValueFilter
-                    roleName: "favorite"
-                    value: true
-                    SwitchRole.value: "%"
-                },
-                ValueFilter {
-                    id: thirdValueFilter
-                    roleName: "name"
-                    value: 3
-                    SwitchRole.value: "three"
-                }
-            ]
+            ValueFilter {
+                id: valueFilter
+                roleName: "favorite"
+                value: true
+                SwitchRole.value: "*"
+            }
+            ValueFilter {
+                id: secondValueFilter
+                roleName: "favorite"
+                value: true
+                SwitchRole.value: "%"
+            }
+            ValueFilter {
+                id: thirdValueFilter
+                roleName: "name"
+                value: 3
+                SwitchRole.value: "three"
+            }
             defaultRoleName: "name"
             defaultValue: "foo"
         }
@@ -56,7 +54,7 @@ Item {
     TestCase {
         name: "SwitchRole"
 
-        function test_data() {
+        function test_role() {
             compare(testModel.get(0, "switchRole"), "*");
             compare(testModel.get(1, "switchRole"), "2");
             compare(testModel.get(2, "switchRole"), "three");
