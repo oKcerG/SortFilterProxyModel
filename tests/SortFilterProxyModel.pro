@@ -31,4 +31,5 @@ OTHER_FILES += \
 DISTFILES += \
     tst_filtercontainers.qml \
     tst_regexprole.qml \
-    tst_filtersorter.qml
+    tst_filtersorter.qml \
+    tst_filterrole.qml
