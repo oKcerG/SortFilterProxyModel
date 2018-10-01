@@ -13,6 +13,7 @@ namespace qqsfpm {
     A RegExpRole is a \l ProxyRole that provides a role for each named capture group of its regular expression \l pattern.
 
     In the following example, the \c date role of the source model will be extracted in 3 roles in the proxy moodel: \c year, \c month and \c day.
+    \code
     SortFilterProxyModel {
         sourceModel: eventModel
         proxyRoles: RegExpRole {

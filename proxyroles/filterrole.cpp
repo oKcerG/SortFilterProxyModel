@@ -12,6 +12,7 @@ namespace qqsfpm {
     A FilterRole is a \l ProxyRole that returns \c true for rows matching all its filters.
 
     In the following example, the \c isAdult role will be equal to \c true if the \c age role is superior or equal to 18.
+    \code
     SortFilterProxyModel {
         sourceModel: personModel
         proxyRoles: FilterRole {
