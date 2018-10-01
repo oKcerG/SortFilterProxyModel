@@ -7,11 +7,11 @@ import QtQml 2.2
 Item {
     ListModel {
         id: listModel
-        ListElement { dummRole: false; compoundRole: "0 - zero"; unusedRole: "" }
-        ListElement { dummRole: false; compoundRole: "1 - one"; unusedRole: "" }
-        ListElement { dummRole: false; compoundRole: "2 - two"; unusedRole: "" }
-        ListElement { dummRole: false; compoundRole: "3 - three"; unusedRole: "" }
-        ListElement { dummRole: false; compoundRole: "four"; unusedRole: "" }
+        ListElement { dummyRole: false; compoundRole: "0 - zero"; unusedRole: "" }
+        ListElement { dummyRole: false; compoundRole: "1 - one"; unusedRole: "" }
+        ListElement { dummyRole: false; compoundRole: "2 - two"; unusedRole: "" }
+        ListElement { dummyRole: false; compoundRole: "3 - three"; unusedRole: "" }
+        ListElement { dummyRole: false; compoundRole: "four"; unusedRole: "" }
     }
 
     SortFilterProxyModel {
