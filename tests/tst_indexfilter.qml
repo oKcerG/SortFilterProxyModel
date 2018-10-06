@@ -66,6 +66,26 @@ Item {
             property var expectedValues: [5, 3, 1, 2, 4]
             minimumIndex: undefined
             maximumIndex: null
+        },
+        IndexFilter {
+            property string tag: "null index list"
+            property var expectedValues: [5, 3, 1, 2, 4]
+            indexes: null
+        },
+        IndexFilter {
+            property string tag: "empty index list"
+            property var expectedValues: []
+            indexes: []
+        },
+        IndexFilter {
+            property string tag: "valid index list"
+            property var expectedValues: [5, 1]
+            indexes: [2, 0]
+        },
+        IndexFilter {
+            property string tag: "single index list"
+            property var expectedValues: [3]
+            indexes: [1]
         }
     ]
 
