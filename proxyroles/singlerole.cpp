@@ -43,6 +43,7 @@ QStringList SingleRole::names()
 
 QVariant SingleRole::data(const QModelIndex &sourceIndex, const QQmlSortFilterProxyModel &proxyModel, const QString &name)
 {
+    Q_UNUSED(name);
     return data(sourceIndex, proxyModel);
 }
 
