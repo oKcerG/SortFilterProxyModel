@@ -31,6 +31,7 @@ class SwitchRole : public SingleRole, public FilterContainer
     Q_PROPERTY(QString defaultRoleName READ defaultRoleName WRITE setDefaultRoleName NOTIFY defaultRoleNameChanged)
     Q_PROPERTY(QVariant defaultValue READ defaultValue WRITE setDefaultValue NOTIFY defaultValueChanged)
     Q_PROPERTY(QQmlListProperty<qqsfpm::Filter> filters READ filtersListProperty)
+    Q_CLASSINFO("DefaultProperty", "filters")
 
 public:
     using SingleRole::SingleRole;

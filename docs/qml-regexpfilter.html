@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<!-- filter.cpp -->
+<!-- regexpfilter.cpp -->
   <title>RegExpFilter QML Type | SortFilterProxyModel</title>
   <link rel="stylesheet" type="text/css" href="style/offline.css" />
 </head>
@@ -92,7 +92,7 @@ SortFilterProxyModel {
 <a name="syntax-prop"></a><span class="name">syntax</span> : <span class="type">enum</span></p></td></tr>
 </table></div>
 </div><div class="qmldoc"><p>The pattern used to filter the contents of the source model.</p>
-<p>Only the source model's value having their roleName data matching this <a href="qml-regexpfilter.html#pattern-prop">pattern</a> with the specified syntax will be kept.</p>
+<p>Only the source model's value having their <a href="qml-regexpfilter.html#roleName-prop">RoleFilter::roleName</a> data matching this <a href="qml-regexpfilter.html#pattern-prop">pattern</a> with the specified syntax will be kept.</p>
 <div class="table"><table class="valuelist"><tr valign="top" class="odd"><th class="tblConst">Constant</th><th class="tbldscr">Description</th></tr>
 <tr><td class="topAlign"><code>RegExpFilter.RegExp</code></td><td class="topAlign">A rich Perl-like pattern matching syntax. This is the default.</td></tr>
 <tr><td class="topAlign"><code>RegExpFilter.Wildcard</code></td><td class="topAlign">This provides a simple pattern matching syntax similar to that used by shells (command interpreters) for &quot;file globbing&quot;.</td></tr>

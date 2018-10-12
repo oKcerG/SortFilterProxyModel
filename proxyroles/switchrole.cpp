@@ -9,7 +9,7 @@ namespace qqsfpm {
     \qmltype SwitchRole
     \inherits SingleRole
     \inqmlmodule SortFilterProxyModel
-    \brief a role using \l Filter to conditionnaly compute its data
+    \brief A role using \l Filter to conditionnaly compute its data
 
     A SwitchRole is a \l ProxyRole that computes its data with the help of \l Filter.
     Each top level filters specified in the \l SwitchRole is evaluated on the rows of the model, if a \l Filter evaluates to true, the data of the \l SwitchRole for this row will be the one of the attached \l {value} {SwitchRole.value} property.
