@@ -38,6 +38,8 @@ add_library(SortFilterProxyModel OBJECT
     proxyroles/proxyrolesqmltypes.cpp   
     proxyroles/singlerole.cpp   
     proxyroles/regexprole.cpp
+    sorters/filtersorter.cpp
+    proxyroles/filterrole.cpp
     )
 
 target_include_directories(SortFilterProxyModel PUBLIC
