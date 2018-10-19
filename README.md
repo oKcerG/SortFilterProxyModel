@@ -12,7 +12,8 @@ Install
 
 ##### Without qpm :
 1. clone or download this repository
-2. add `include  (<path/to/SortFilterProxyModel>/SortFilterProxyModel.pri)` in your `.pro`
+2. * `qmake` add `include  (<path/to/SortFilterProxyModel>/SortFilterProxyModel.pri)` in your `.pro`
+   * `CMake` add $<TARGET_OBJECTS:SortFilterProxyModel> to the sources of your executable target in your cmake project
 3. `import SortFilterProxyModel 0.2` to use this library in your QML files
 
 Sample Usage
