@@ -42,9 +42,16 @@ Item {
         },
         RangeFilter {
             property string tag: "outOfBoundsRange"
-            property int expectedModelCount: 0
+            property var expectedValues: []
             property QtObject dataModel: dataModel1
             roleName: "value"; minimumValue: 4; maximumValue: 2
+        },
+        RangeFilter {
+            objectName: tag
+            property string tag: "noMinimum"
+            property var expectedValues: [3, 1, 2]
+            property QtObject dataModel: dataModel0
+            roleName: "value"; maximumValue: 3
         }
     ]
 
@@ -79,11 +86,11 @@ Item {
             testModel.sourceModel = filter.dataModel;
             testModel.filters = filter;
 
-            verify(testModel.count === filter.expectedModelCount,
-                   "Expected count " + filter.expectedModelCount + ", actual count: " + testModel.count);
+            verify(testModel.count === filter.expectedValues.length,
+                   "Expected count " + filter.expectedValues.length + ", actual count: " + testModel.count);
             for (var i = 0; i < testModel.count; i++)
             {
-                var modelValue = testModel.data(testModel.index(i, 0), "value");
+                var modelValue = testModel.get(i, filter.roleName);
                 verify(modelValue === filter.expectedValues[i],
                        "Expected testModel value " + filter.expectedValues[i] + ", actual: " + modelValue);
             }
