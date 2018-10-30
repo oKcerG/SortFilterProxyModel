@@ -129,9 +129,9 @@ bool RangeFilter::filterRow(const QModelIndex& sourceIndex, const QQmlSortFilter
 {
     QVariant value = sourceData(sourceIndex, proxyModel);
     bool lessThanMin = m_minimumValue.isValid() &&
-            m_minimumInclusive ? value < m_minimumValue : value <= m_minimumValue;
+            (m_minimumInclusive ? value < m_minimumValue : value <= m_minimumValue);
     bool moreThanMax = m_maximumValue.isValid() &&
-            m_maximumInclusive ? value > m_maximumValue : value >= m_maximumValue;
+            (m_maximumInclusive ? value > m_maximumValue : value >= m_maximumValue);
     return !(lessThanMin || moreThanMax);
 }
 
