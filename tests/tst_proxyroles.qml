@@ -82,6 +82,7 @@ Item {
             staticRole.value = "filterMe";
             compare(testModel.count, 0);
             staticRole.value = "foo";
+            compare(testModel.count, 3);
         }
 
         function test_multiRole() {
