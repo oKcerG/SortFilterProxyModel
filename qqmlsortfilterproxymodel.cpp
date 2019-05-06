@@ -430,7 +430,7 @@ void QQmlSortFilterProxyModel::initRoles()
 void QQmlSortFilterProxyModel::onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles)
 {
     Q_UNUSED(roles);
-    if (!roles.isEmpty() && roles != m_proxyRoleNumbers)
+    if (!roles.isEmpty() && !m_proxyRoleNumbers.empty() && roles != m_proxyRoleNumbers)
         Q_EMIT dataChanged(topLeft, bottomRight, m_proxyRoleNumbers);
 }
 
