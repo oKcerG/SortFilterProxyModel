@@ -22,6 +22,7 @@ class QQmlSortFilterProxyModel : public QSortFilterProxyModel,
     Q_INTERFACES(qqsfpm::ProxyRoleContainer)
 
     Q_PROPERTY(int count READ count NOTIFY countChanged)
+    Q_PROPERTY(bool delayed READ delayed WRITE setDelayed NOTIFY delayedChanged)
 
     Q_PROPERTY(QString filterRoleName READ filterRoleName WRITE setFilterRoleName NOTIFY filterRoleNameChanged)
     Q_PROPERTY(QString filterPattern READ filterPattern WRITE setFilterPattern NOTIFY filterPatternChanged)
@@ -48,6 +49,9 @@ public:
     QQmlSortFilterProxyModel(QObject* parent = 0);
 
     int count() const;
+
+    bool delayed() const;
+    void setDelayed(bool delayed);
 
     const QString& filterRoleName() const;
     void setFilterRoleName(const QString& filterRoleName);
@@ -90,6 +94,7 @@ public:
 
 Q_SIGNALS:
     void countChanged();
+    void delayedChanged();
 
     void filterRoleNameChanged();
     void filterPatternSyntaxChanged();
@@ -107,7 +112,9 @@ protected Q_SLOTS:
     void resetInternalData();
 
 private Q_SLOTS:
+    void queueInvalidateFilter();
     void invalidateFilter();
+    void queueInvalidate();
     void invalidate();
     void updateRoleNames();
     void updateFilterRole();
@@ -115,7 +122,8 @@ private Q_SLOTS:
     void updateRoles();
     void initRoles();
     void onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int>& roles);
-    void emitProxyRolesChanged();
+    void queueInvalidateProxyRoles();
+    void invalidateProxyRoles();
 
 private:
     QVariantMap modelDataMap(const QModelIndex& modelIndex) const;
@@ -132,6 +140,7 @@ private:
     void onProxyRoleRemoved(ProxyRole *proxyRole) override;
     void onProxyRolesCleared() override;
 
+    bool m_delayed;
     QString m_filterRoleName;
     QVariant m_filterValue;
     QString m_sortRoleName;
@@ -140,6 +149,10 @@ private:
     QHash<int, QByteArray> m_roleNames;
     QHash<int, QPair<ProxyRole*, QString>> m_proxyRoleMap;
     QVector<int> m_proxyRoleNumbers;
+
+    bool m_invalidateFilterQueued = false;
+    bool m_invalidateQueued = false;
+    bool m_invalidateProxyRolesQueued = false;
 };
 
 }

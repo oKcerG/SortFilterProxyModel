@@ -26,7 +26,12 @@ namespace qqsfpm {
 */
 
 QQmlSortFilterProxyModel::QQmlSortFilterProxyModel(QObject *parent) :
-    QSortFilterProxyModel(parent)
+    QSortFilterProxyModel(parent),
+#ifdef SFPM_DELAYED
+    m_delayed(true)
+#else
+    m_delayed(false)
+#endif
 {
     connect(this, &QAbstractProxyModel::sourceModelChanged, this, &QQmlSortFilterProxyModel::updateRoles);
     connect(this, &QAbstractItemModel::modelReset, this, &QQmlSortFilterProxyModel::updateRoles);
@@ -53,6 +58,30 @@ QQmlSortFilterProxyModel::QQmlSortFilterProxyModel(QObject *parent) :
 int QQmlSortFilterProxyModel::count() const
 {
     return rowCount();
+}
+
+/*!
+    \qmlproperty int SortFilterProxyModel::delayed
+
+    Delay the execution of filters, sorters and proxyRoles until the next event loop.
+    This can be used as an optimization when multiple filters, sorters or proxyRoles are changed in a single event loop.
+    They will be executed once in a single batch at the next event loop instead of being executed in multiple sequential batches.
+
+    By default, the SortFilterProxyModel is not delayed, unless the SFPM_DELAYED is defined at compile time.
+*/
+
+bool QQmlSortFilterProxyModel::delayed() const
+{
+    return m_delayed;
+}
+
+void QQmlSortFilterProxyModel::setDelayed(bool delayed)
+{
+    if (m_delayed == delayed)
+        return;
+
+    m_delayed = delayed;
+    Q_EMIT delayedChanged();
 }
 
 const QString& QQmlSortFilterProxyModel::filterRoleName() const
@@ -114,7 +143,7 @@ void QQmlSortFilterProxyModel::setFilterValue(const QVariant& filterValue)
         return;
 
     m_filterValue = filterValue;
-    invalidateFilter();
+    queueInvalidateFilter();
     Q_EMIT filterValueChanged();
 }
 
@@ -153,7 +182,7 @@ void QQmlSortFilterProxyModel::setAscendingSortOrder(bool ascendingSortOrder)
 
     m_ascendingSortOrder = ascendingSortOrder;
     Q_EMIT ascendingSortOrderChanged();
-    invalidate();
+    queueInvalidate();
 }
 
 /*!
@@ -362,14 +391,40 @@ void QQmlSortFilterProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
     QSortFilterProxyModel::setSourceModel(sourceModel);
 }
 
+void QQmlSortFilterProxyModel::queueInvalidateFilter()
+{
+    if (m_delayed) {
+        if (!m_invalidateFilterQueued && !m_invalidateQueued) {
+            m_invalidateFilterQueued = true;
+            QMetaObject::invokeMethod(this, "invalidateFilter", Qt::QueuedConnection);
+        }
+    } else {
+        invalidateFilter();
+    }
+}
+
 void QQmlSortFilterProxyModel::invalidateFilter()
 {
-    if (m_completed)
+    m_invalidateFilterQueued = false;
+    if (m_completed && !m_invalidateQueued)
         QSortFilterProxyModel::invalidateFilter();
+}
+
+void QQmlSortFilterProxyModel::queueInvalidate()
+{
+    if (m_delayed) {
+        if (!m_invalidateQueued) {
+            m_invalidateQueued = true;
+            QMetaObject::invokeMethod(this, "invalidate", Qt::QueuedConnection);
+        }
+    } else {
+        invalidate();
+    }
 }
 
 void QQmlSortFilterProxyModel::invalidate()
 {
+    m_invalidateQueued = false;
     if (m_completed)
         QSortFilterProxyModel::invalidate();
 }
@@ -410,7 +465,7 @@ void QQmlSortFilterProxyModel::updateSortRole()
     if (!sortRoles.empty())
     {
         setSortRole(sortRoles.first());
-        invalidate();
+        queueInvalidate();
     }
 }
 
@@ -434,10 +489,24 @@ void QQmlSortFilterProxyModel::onDataChanged(const QModelIndex& topLeft, const Q
         Q_EMIT dataChanged(topLeft, bottomRight, m_proxyRoleNumbers);
 }
 
-void QQmlSortFilterProxyModel::emitProxyRolesChanged()
+void QQmlSortFilterProxyModel::queueInvalidateProxyRoles()
 {
-    invalidate();
-    Q_EMIT dataChanged(index(0,0), index(rowCount() - 1, columnCount() - 1), m_proxyRoleNumbers);
+    queueInvalidate();
+    if (m_delayed) {
+        if (!m_invalidateProxyRolesQueued) {
+            m_invalidateProxyRolesQueued = true;
+            QMetaObject::invokeMethod(this, "invalidateProxyRoles", Qt::QueuedConnection);
+        }
+    } else {
+        invalidateProxyRoles();
+    }
+}
+
+void QQmlSortFilterProxyModel::invalidateProxyRoles()
+{
+    m_invalidateProxyRolesQueued = false;
+    if (m_completed)
+        Q_EMIT dataChanged(index(0,0), index(rowCount() - 1, columnCount() - 1), m_proxyRoleNumbers);
 }
 
 QVariantMap QQmlSortFilterProxyModel::modelDataMap(const QModelIndex& modelIndex) const
@@ -451,42 +520,42 @@ QVariantMap QQmlSortFilterProxyModel::modelDataMap(const QModelIndex& modelIndex
 
 void QQmlSortFilterProxyModel::onFilterAppended(Filter* filter)
 {
-    connect(filter, &Filter::invalidated, this, &QQmlSortFilterProxyModel::invalidateFilter);
-    this->invalidateFilter();
+    connect(filter, &Filter::invalidated, this, &QQmlSortFilterProxyModel::queueInvalidateFilter);
+    queueInvalidateFilter();
 }
 
 void QQmlSortFilterProxyModel::onFilterRemoved(Filter* filter)
 {
     Q_UNUSED(filter)
-    invalidateFilter();
+    queueInvalidateFilter();
 }
 
 void QQmlSortFilterProxyModel::onFiltersCleared()
 {
-    invalidateFilter();
+    queueInvalidateFilter();
 }
 
 void QQmlSortFilterProxyModel::onSorterAppended(Sorter* sorter)
 {
-    connect(sorter, &Sorter::invalidated, this, &QQmlSortFilterProxyModel::invalidate);
-    invalidate();
+    connect(sorter, &Sorter::invalidated, this, &QQmlSortFilterProxyModel::queueInvalidate);
+    queueInvalidate();
 }
 
 void QQmlSortFilterProxyModel::onSorterRemoved(Sorter* sorter)
 {
     Q_UNUSED(sorter)
-    invalidate();
+    queueInvalidate();
 }
 
 void QQmlSortFilterProxyModel::onSortersCleared()
 {
-    invalidate();
+    queueInvalidate();
 }
 
 void QQmlSortFilterProxyModel::onProxyRoleAppended(ProxyRole *proxyRole)
 {
     beginResetModel();
-    connect(proxyRole, &ProxyRole::invalidated, this, &QQmlSortFilterProxyModel::emitProxyRolesChanged);
+    connect(proxyRole, &ProxyRole::invalidated, this, &QQmlSortFilterProxyModel::queueInvalidateProxyRoles);
     connect(proxyRole, &ProxyRole::namesAboutToBeChanged, this, &QQmlSortFilterProxyModel::beginResetModel);
     connect(proxyRole, &ProxyRole::namesChanged, this, &QQmlSortFilterProxyModel::endResetModel);
     endResetModel();
