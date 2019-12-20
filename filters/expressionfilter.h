@@ -4,7 +4,7 @@
 #include "filter.h"
 #include <QQmlScriptString>
 
-class QQmlExpression;
+class QT_PREPEND_NAMESPACE(QQmlExpression);
 
 namespace qqsfpm {
 

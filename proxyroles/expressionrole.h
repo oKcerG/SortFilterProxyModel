@@ -4,7 +4,7 @@
 #include "singlerole.h"
 #include <QQmlScriptString>
 
-class QQmlExpression;
+class QT_PREPEND_NAMESPACE(QQmlExpression);
 
 namespace qqsfpm {
 
