@@ -42,10 +42,6 @@ add_library(SortFilterProxyModel OBJECT
     proxyroles/filterrole.cpp
     )
 
-target_compile_definitions(SortFilterProxyModel PUBLIC
-    $<TARGET_PROPERTY:Qt5::Core,INTERFACE_COMPILE_DEFINITIONS>
-    )
-
 target_include_directories(SortFilterProxyModel PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}
     $<TARGET_PROPERTY:Qt5::Core,INTERFACE_INCLUDE_DIRECTORIES>

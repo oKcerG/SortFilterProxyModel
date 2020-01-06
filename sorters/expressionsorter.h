@@ -4,7 +4,7 @@
 #include "sorter.h"
 #include <QQmlScriptString>
 
-class QT_PREPEND_NAMESPACE(QQmlExpression);
+class QQmlExpression;
 
 namespace qqsfpm {
 

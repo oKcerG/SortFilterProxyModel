@@ -36,9 +36,7 @@ private:
 
 }
 
-QT_BEGIN_NAMESPACE
 #define ProxyRoleContainer_iid "fr.grecko.SortFilterProxyModel.ProxyRoleContainer"
 Q_DECLARE_INTERFACE(qqsfpm::ProxyRoleContainer, ProxyRoleContainer_iid)
-QT_END_NAMESPACE
 
 #endif // PROXYROLECONTAINER_H

@@ -36,9 +36,7 @@ private:
 
 }
 
-QT_BEGIN_NAMESPACE
 #define SorterContainer_iid "fr.grecko.SortFilterProxyModel.SorterContainer"
 Q_DECLARE_INTERFACE(qqsfpm::SorterContainer, SorterContainer_iid)
-QT_END_NAMESPACE
 
 #endif // SORTERSSORTERCONTAINER_H
