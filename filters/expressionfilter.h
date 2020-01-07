@@ -4,7 +4,7 @@
 #include "filter.h"
 #include <QQmlScriptString>
 
-class QQmlExpression;
+QT_FORWARD_DECLARE_CLASS(QQmlExpression);
 
 namespace qqsfpm {
 
