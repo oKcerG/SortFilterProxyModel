@@ -117,10 +117,11 @@ Item {
             expressionFilter.w.count = 0;
             testFilterProxyModel.foo = 2;
             compare(testFilterProxyModel.count, 0);
-            compare(expressionFilter.w.count, 4);
+            verify(expressionFilter.w.count > 1);
+            var lastEvaluationCount = expressionFilter.w.count;
             wait(0);
             compare(testFilterProxyModel.count, 0);
-            compare(expressionFilter.w.count, 4);
+            compare(expressionFilter.w.count, lastEvaluationCount);
         }
 
         function test_delayedFilters() {
@@ -145,10 +146,11 @@ Item {
             expressionSorter.w.count = 0;
             testSorterProxyModel.foo = false;
             compare(testSorterProxyModel.get(0).role1, 2);
-            compare(expressionSorter.w.count, 6);
+            verify(expressionSorter.w.count > 1);
+            var lastEvaluationCount = expressionSorter.w.count
             wait(0);
             compare(testSorterProxyModel.get(0).role1, 2);
-            compare(expressionSorter.w.count, 6);
+            compare(expressionSorter.w.count, lastEvaluationCount);
         }
 
         function test_delayedSorters() {
