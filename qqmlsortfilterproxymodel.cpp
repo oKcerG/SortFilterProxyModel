@@ -61,13 +61,13 @@ int QQmlSortFilterProxyModel::count() const
 }
 
 /*!
-    \qmlproperty int SortFilterProxyModel::delayed
+    \qmlproperty bool SortFilterProxyModel::delayed
 
     Delay the execution of filters, sorters and proxyRoles until the next event loop.
     This can be used as an optimization when multiple filters, sorters or proxyRoles are changed in a single event loop.
     They will be executed once in a single batch at the next event loop instead of being executed in multiple sequential batches.
 
-    By default, the SortFilterProxyModel is not delayed, unless the SFPM_DELAYED is defined at compile time.
+    By default, the SortFilterProxyModel is not delayed, unless the SFPM_DELAYED environment variable is defined at compile time.
 */
 
 bool QQmlSortFilterProxyModel::delayed() const
