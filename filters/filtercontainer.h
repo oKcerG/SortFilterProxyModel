@@ -3,6 +3,8 @@
 
 #include <QList>
 #include <QQmlListProperty>
+#include <qqml.h>
+#include <QPointer>
 
 namespace qqsfpm {
 
@@ -34,9 +36,33 @@ private:
     static void clear_filters(QQmlListProperty<Filter>* list);
 };
 
+class FilterContainerAttached : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(QObject* container READ container WRITE setContainer NOTIFY containerChanged)
+
+public:
+    FilterContainerAttached(QObject* object);
+    ~FilterContainerAttached();
+
+    QObject* container() const;
+    void setContainer(QObject* object);
+
+    static FilterContainerAttached* qmlAttachedProperties(QObject* object);
+
+Q_SIGNALS:
+    void containerChanged();
+
+private:
+    QPointer<QObject> m_container = nullptr;
+    Filter* m_filter = nullptr;
+};
+
 }
 
 #define FilterContainer_iid "fr.grecko.SortFilterProxyModel.FilterContainer"
 Q_DECLARE_INTERFACE(qqsfpm::FilterContainer, FilterContainer_iid)
+
+QML_DECLARE_TYPEINFO(qqsfpm::FilterContainerAttached, QML_HAS_ATTACHED_PROPERTIES)
 
 #endif // FILTERCONTAINER_H

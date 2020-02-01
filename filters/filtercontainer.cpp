@@ -1,4 +1,6 @@
 #include "filtercontainer.h"
+#include "filter.h"
+#include <QtQml>
 
 namespace qqsfpm {
 
@@ -64,6 +66,55 @@ void FilterContainer::clear_filters(QQmlListProperty<Filter> *list)
 {
     FilterContainer* that = reinterpret_cast<FilterContainer*>(list->object);
     that->clearFilters();
+}
+
+FilterContainerAttached::FilterContainerAttached(QObject* object) : QObject(object),
+    m_filter(qobject_cast<Filter*>(object))
+{
+    if (!m_filter)
+        qmlWarning(object) << "FilterContainer must be attached to a Filter";
+}
+
+FilterContainerAttached::~FilterContainerAttached()
+{
+    if (m_filter && m_container) {
+        FilterContainer* container = qobject_cast<FilterContainer*>(m_container.data());
+        container->removeFilter(m_filter);
+    }
+}
+
+/*!
+    \qmlattachedproperty bool FilterContainer::container
+    This attached property allows you to include in a \l FilterContainer a \l Filter that
+    has been instantiated outside of the \l FilterContainer, for example in an Instantiator.
+*/
+QObject* FilterContainerAttached::container() const
+{
+    return m_container;
+}
+
+void FilterContainerAttached::setContainer(QObject* object)
+{
+    if (m_container == object)
+        return;
+
+    FilterContainer* container = qobject_cast<FilterContainer*>(object);
+    if (object && !container)
+        qmlWarning(parent()) << "container must inherits from FilterContainer, " << object->metaObject()->className() << " provided";
+
+    if (m_container && m_filter)
+        qobject_cast<FilterContainer*>(m_container.data())->removeFilter(m_filter);
+
+    m_container = container ? object : nullptr;
+    if (container && m_filter)
+        container->appendFilter(m_filter);
+
+    Q_EMIT containerChanged();
+}
+
+FilterContainerAttached* FilterContainerAttached::qmlAttachedProperties(QObject* object)
+{
+    return new FilterContainerAttached(object);
 }
 
 }
