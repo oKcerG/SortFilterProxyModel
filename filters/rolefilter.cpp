@@ -8,7 +8,8 @@ namespace qqsfpm {
     \qmlabstract
     \inherits Filter
     \inqmlmodule SortFilterProxyModel
-    \brief Base type for filters based on a source model role
+    \ingroup Filters
+    \brief Base type for filters based on a source model role.
 
     The RoleFilter type cannot be used directly in a QML file.
     It exists to provide a set of common properties and methods,

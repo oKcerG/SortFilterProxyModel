@@ -7,7 +7,8 @@ namespace qqsfpm {
     \qmltype RegExpFilter
     \inherits RoleFilter
     \inqmlmodule SortFilterProxyModel
-    \brief  Filters rows matching a regular expression
+    \ingroup Filters
+    \brief  Filters rows matching a regular expression.
 
     A RegExpFilter is a \l RoleFilter that accepts rows matching a regular rexpression.
 

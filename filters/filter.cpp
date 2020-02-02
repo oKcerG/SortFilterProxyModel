@@ -5,8 +5,10 @@ namespace qqsfpm {
 
 /*!
     \qmltype Filter
+    \qmlabstract
     \inqmlmodule SortFilterProxyModel
-    \brief Base type for the \l SortFilterProxyModel filters
+    \ingroup Filters
+    \brief Base type for the \l SortFilterProxyModel filters.
 
     The Filter type cannot be used directly in a QML file.
     It exists to provide a set of common properties and methods,

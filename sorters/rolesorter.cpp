@@ -7,7 +7,8 @@ namespace qqsfpm {
     \qmltype RoleSorter
     \inherits Sorter
     \inqmlmodule SortFilterProxyModel
-    \brief Sorts rows based on a source model role
+    \ingroup Sorters
+    \brief Sorts rows based on a source model role.
 
     A RoleSorter is a simple \l Sorter that sorts rows based on a source model role.
 

@@ -2,11 +2,6 @@
 
 namespace qqsfpm {
 
-ProxyRoleContainer::~ProxyRoleContainer()
-{
-
-}
-
 QList<ProxyRole*> ProxyRoleContainer::proxyRoles() const
 {
     return m_proxyRoles;

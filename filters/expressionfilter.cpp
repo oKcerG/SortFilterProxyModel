@@ -8,7 +8,8 @@ namespace qqsfpm {
     \qmltype ExpressionFilter
     \inherits Filter
     \inqmlmodule SortFilterProxyModel
-    \brief Filters row with a custom filtering
+    \ingroup Filters
+    \brief Filters row with a custom filtering.
 
     An ExpressionFilter is a \l Filter allowing to implement custom filtering based on a javascript expression.
 */

@@ -13,7 +13,7 @@ class QQmlSortFilterProxyModel;
 
 class SorterContainer {
 public:
-    virtual ~SorterContainer();
+    virtual ~SorterContainer() = default;
 
     QList<Sorter*> sorters() const;
     void appendSorter(Sorter* sorter);

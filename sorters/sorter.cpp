@@ -5,8 +5,10 @@ namespace qqsfpm {
 
 /*!
     \qmltype Sorter
+    \qmlabstract
     \inqmlmodule SortFilterProxyModel
-    \brief Base type for the \l SortFilterProxyModel sorters
+    \ingroup Sorters
+    \brief Base type for the \l SortFilterProxyModel sorters.
 
     The Sorter type cannot be used directly in a QML file.
     It exists to provide a set of common properties and methods,

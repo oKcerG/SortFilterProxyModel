@@ -8,7 +8,8 @@ namespace qqsfpm {
     \qmltype ExpressionRole
     \inherits SingleRole
     \inqmlmodule SortFilterProxyModel
-    \brief A custom role computed from a javascrip expression
+    \ingroup ProxyRoles
+    \brief A custom role computed from a javascript expression.
 
     An ExpressionRole is a \l ProxyRole allowing to implement a custom role based on a javascript expression.
 

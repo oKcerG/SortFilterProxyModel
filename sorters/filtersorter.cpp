@@ -7,7 +7,9 @@ namespace qqsfpm {
     \qmltype FilterSorter
     \inherits Sorter
     \inqmlmodule SortFilterProxyModel
-    \brief Sorts rows based on if they match filters
+    \ingroup Sorters
+    \ingroup FilterContainer
+    \brief Sorts rows based on if they match filters.
 
     A FilterSorter is a \l Sorter that orders row matching its filters before the rows not matching the filters.
 
@@ -20,15 +22,17 @@ namespace qqsfpm {
         }
     }
     \endcode
+    \sa FilterContainer
 */
 
 /*!
-    \qmlproperty string FilterSorter::filters
+    \qmlproperty list<Filter> FilterSorter::filters
+    \default
 
     This property holds the list of filters for this filter sorter.
     If a row match all this FilterSorter's filters, it will be ordered before rows not matching all the filters.
 
-    \sa Filter
+    \sa Filter, FilterContainer
 */
 
 int FilterSorter::compare(const QModelIndex& sourceLeft, const QModelIndex& sourceRight, const QQmlSortFilterProxyModel &proxyModel) const

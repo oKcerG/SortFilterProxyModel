@@ -6,7 +6,8 @@ namespace qqsfpm {
     \qmltype ValueFilter
     \inherits RoleFilter
     \inqmlmodule SortFilterProxyModel
-    \brief Filters rows matching exactly a value
+    \ingroup Filters
+    \brief Filters rows matching exactly a value.
 
     A ValueFilter is a simple \l RoleFilter that accepts rows matching exactly the filter's value
 

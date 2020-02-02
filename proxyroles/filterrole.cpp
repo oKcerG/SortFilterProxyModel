@@ -7,7 +7,9 @@ namespace qqsfpm {
     \qmltype FilterRole
     \inherits SingleRole
     \inqmlmodule SortFilterProxyModel
-    \brief A role resolving to \c true for rows matching all its filters
+    \ingroup ProxyRoles
+    \ingroup FilterContainer
+    \brief A role resolving to \c true for rows matching all its filters.
 
     A FilterRole is a \l ProxyRole that returns \c true for rows matching all its filters.
 
@@ -21,15 +23,17 @@ namespace qqsfpm {
         }
     }
     \endcode
+    \sa FilterContainer
 */
 
 /*!
-    \qmlproperty string FilterRole::filters
+    \qmlproperty list<Filter> FilterRole::filters
+    \default
 
     This property holds the list of filters for this filter role.
     The data of this role will be equal to the \c true if all its filters match the model row, \c false otherwise.
 
-    \sa Filter
+    \sa Filter, FilterContainer
 */
 
 void FilterRole::onFilterAppended(Filter* filter)

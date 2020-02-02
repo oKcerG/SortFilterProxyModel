@@ -8,7 +8,8 @@ namespace qqsfpm {
     \qmltype ExpressionSorter
     \inherits Sorter
     \inqmlmodule SortFilterProxyModel
-    \brief Sorts row with a custom sorting
+    \ingroup Sorters
+    \brief Sorts row with a custom javascript expression.
 
     An ExpressionSorter is a \l Sorter allowing to implement custom sorting based on a javascript expression.
 */

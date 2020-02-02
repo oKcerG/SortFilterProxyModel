@@ -7,7 +7,8 @@ namespace qqsfpm {
     \qmltype JoinRole
     \inherits SingleRole
     \inqmlmodule SortFilterProxyModel
-    \brief a role made from concatenating other roles
+    \ingroup ProxyRoles
+    \brief a role made from concatenating other roles.
 
     A JoinRole is a simple \l ProxyRole that concatenates other roles.
 

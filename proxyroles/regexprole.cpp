@@ -8,6 +8,7 @@ namespace qqsfpm {
     \qmltype RegExpRole
     \inherits ProxyRole
     \inqmlmodule SortFilterProxyModel
+    \ingroup ProxyRoles
     \brief A ProxyRole extracting data from a source role via a regular expression.
 
     A RegExpRole is a \l ProxyRole that provides a role for each named capture group of its regular expression \l pattern.

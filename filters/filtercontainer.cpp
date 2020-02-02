@@ -4,10 +4,16 @@
 
 namespace qqsfpm {
 
-FilterContainer::~FilterContainer()
-{
+/*!
+    \qmltype FilterContainer
+    \qmlabstract
+    \inqmlmodule SortFilterProxyModel
+    \ingroup FilterAttached
+    \brief Abstract interface for types containing \l {Filter}{Filters}.
 
-}
+    \section2 Types implementing this interface:
+    \annotatedlist FilterContainer
+*/
 
 QList<Filter*> FilterContainer::filters() const
 {

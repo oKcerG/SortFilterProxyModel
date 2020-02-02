@@ -6,7 +6,9 @@ namespace qqsfpm {
     \qmltype AnyOf
     \inherits Filter
     \inqmlmodule SortFilterProxyModel
-    \brief Filter container accepting rows accepted by at least one of its child filters
+    \ingroup Filters
+    \ingroup FilterContainer
+    \brief Filter container accepting rows accepted by at least one of its child filters.
 
     The AnyOf type is a \l Filter container that accepts rows if any of its contained (and enabled) filters accept them.
 
@@ -32,6 +34,7 @@ namespace qqsfpm {
       }
     }
     \endcode
+    \sa FilterContainer
 */
 bool AnyOfFilter::filterRow(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel) const
 {

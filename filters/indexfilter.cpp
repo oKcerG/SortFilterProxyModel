@@ -7,7 +7,8 @@ namespace qqsfpm {
     \qmltype IndexFilter
     \inherits Filter
     \inqmlmodule SortFilterProxyModel
-    \brief Filters rows based on their source index
+    \ingroup Filters
+    \brief Filters rows based on their source index.
 
     An IndexFilter is a filter allowing contents to be filtered based on their source model index.
 
@@ -29,9 +30,13 @@ namespace qqsfpm {
     Rows with a source index lower than \c minimumIndex will be rejected.
 
     If \c minimumIndex is negative, it is counted from the end of the source model, meaning that :
-    \code minimumIndex: -1\endcode
+    \code
+    minimumIndex: -1
+    \endcode
     is equivalent to :
-    \code minimumIndex: sourceModel.count - 1\endcode
+    \code
+    minimumIndex: sourceModel.count - 1
+    \endcode
     By default, no value is set.
 */
 const QVariant& IndexFilter::minimumIndex() const
@@ -56,9 +61,13 @@ void IndexFilter::setMinimumIndex(const QVariant& minimumIndex)
     Rows with a source index higher than \c maximumIndex will be rejected.
 
     If \c maximumIndex is negative, it is counted from the end of the source model, meaning that:
-    \code maximumIndex: -1\endcode
+    \code
+    maximumIndex: -1
+    \endcode
     is equivalent to :
-    \code maximumIndex: sourceModel.count - 1\endcode
+    \code
+    maximumIndex: sourceModel.count - 1
+    \endcode
     By default, no value is set.
 */
 const QVariant& IndexFilter::maximumIndex() const

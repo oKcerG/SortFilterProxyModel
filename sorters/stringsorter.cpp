@@ -6,7 +6,8 @@ namespace qqsfpm {
     \qmltype StringSorter
     \inherits RoleSorter
     \inqmlmodule SortFilterProxyModel
-    \brief Sorts rows based on a source model string role
+    \ingroup Sorters
+    \brief Sorts rows based on a source model string role.
 
     \l StringSorter is a specialized \l RoleSorter that sorts rows based on a source model string role.
     \l StringSorter compares strings according to a localized collation algorithm.

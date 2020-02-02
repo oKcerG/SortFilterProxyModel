@@ -11,7 +11,7 @@ class QQmlSortFilterProxyModel;
 
 class ProxyRoleContainer {
 public:
-    virtual ~ProxyRoleContainer();
+    virtual ~ProxyRoleContainer() = default;
 
     QList<ProxyRole*> proxyRoles() const;
     void appendProxyRole(ProxyRole* proxyRole);

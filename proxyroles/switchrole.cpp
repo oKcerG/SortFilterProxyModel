@@ -9,7 +9,9 @@ namespace qqsfpm {
     \qmltype SwitchRole
     \inherits SingleRole
     \inqmlmodule SortFilterProxyModel
-    \brief A role using \l Filter to conditionnaly compute its data
+    \ingroup ProxyRoles
+    \ingroup FilterContainer
+    \brief A role using \l Filter to conditionnaly compute its data.
 
     A SwitchRole is a \l ProxyRole that computes its data with the help of \l Filter.
     Each top level filters specified in the \l SwitchRole is evaluated on the rows of the model, if a \l Filter evaluates to true, the data of the \l SwitchRole for this row will be the one of the attached \l {value} {SwitchRole.value} property.
@@ -30,7 +32,7 @@ namespace qqsfpm {
         }
     }
     \endcode
-
+    \sa FilterContainer
 */
 SwitchRoleAttached::SwitchRoleAttached(QObject* parent) : QObject (parent)
 {
@@ -101,11 +103,12 @@ void SwitchRole::setDefaultValue(const QVariant& defaultValue)
 
 /*!
     \qmlproperty list<Filter> SwitchRole::filters
+    \default
 
     This property holds the list of filters for this proxy role.
     The data of this role will be equal to the attached \l {value} {SwitchRole.value} property of the first filter that matches the model row.
 
-    \sa Filter
+    \sa Filter, FilterContainer
 */
 
 void SwitchRole::proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel)

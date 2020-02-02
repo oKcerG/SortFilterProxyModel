@@ -13,7 +13,8 @@ namespace qqsfpm {
 /*!
     \qmltype ProxyRole
     \inqmlmodule SortFilterProxyModel
-    \brief Base type for the \l SortFilterProxyModel proxy roles
+    \ingroup ProxyRoles
+    \brief Base type for the \l SortFilterProxyModel proxy roles.
 
     The ProxyRole type cannot be used directly in a QML file.
     It exists to provide a set of common properties and methods,

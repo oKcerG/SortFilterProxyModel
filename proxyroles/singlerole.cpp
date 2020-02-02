@@ -5,9 +5,11 @@ namespace qqsfpm {
 
 /*!
     \qmltype SingleRole
+    \qmlabstract
     \inherits ProxyRole
     \inqmlmodule SortFilterProxyModel
-    \brief Base type for the \l SortFilterProxyModel proxy roles defining a single role
+    \ingroup ProxyRoles
+    \brief Base type for the \l SortFilterProxyModel proxy roles defining a single role.
 
     SingleRole is a convenience base class for proxy roles who define a single role.
     It cannot be used directly in a QML file.

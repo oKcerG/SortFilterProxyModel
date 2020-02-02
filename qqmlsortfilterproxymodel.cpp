@@ -8,23 +8,16 @@
 namespace qqsfpm {
 
 /*!
-    \page index.html overview
-
-    \title SortFilterProxyModel QML Module
-
-    SortFilterProxyModel is an implementation of QSortFilterProxyModel conveniently exposed for QML.
-
-    \generatelist qmltypesbymodule SortFilterProxyModel
-*/
-
-/*!
     \qmltype SortFilterProxyModel
     \inqmlmodule SortFilterProxyModel
-    \brief Filters and sorts data coming from a source \l {http://doc.qt.io/qt-5/qabstractitemmodel.html} {QAbstractItemModel}
+    \ingroup SortFilterProxyModel
+    \ingroup FilterContainer
+    \ingroup SorterContainer
+    \brief Filters and sorts data coming from a source \l {http://doc.qt.io/qt-5/qabstractitemmodel.html} {QAbstractItemModel}.
 
     The SortFilterProxyModel type provides support for filtering and sorting data coming from a source model.
+    \sa FilterContainer, SorterContainer
 */
-
 QQmlSortFilterProxyModel::QQmlSortFilterProxyModel(QObject *parent) :
     QSortFilterProxyModel(parent),
 #ifdef SFPM_DELAYED
@@ -54,7 +47,6 @@ QQmlSortFilterProxyModel::QQmlSortFilterProxyModel(QObject *parent) :
 
     The number of rows in the proxy model (not filtered out the source model)
 */
-
 int QQmlSortFilterProxyModel::count() const
 {
     return rowCount();
@@ -67,9 +59,8 @@ int QQmlSortFilterProxyModel::count() const
     This can be used as an optimization when multiple filters, sorters or proxyRoles are changed in a single event loop.
     They will be executed once in a single batch at the next event loop instead of being executed in multiple sequential batches.
 
-    By default, the SortFilterProxyModel is not delayed, unless the SFPM_DELAYED environment variable is defined at compile time.
+    By default, the SortFilterProxyModel is not delayed, unless the \c SFPM_DELAYED environment variable is defined at compile time.
 */
-
 bool QQmlSortFilterProxyModel::delayed() const
 {
     return m_delayed;
@@ -154,7 +145,6 @@ void QQmlSortFilterProxyModel::setFilterValue(const QVariant& filterValue)
 
     \sa {http://doc.qt.io/qt-5/qsortfilterproxymodel.html#sortRole-prop} {sortRole}, roleForName
 */
-
 const QString& QQmlSortFilterProxyModel::sortRoleName() const
 {
     return m_sortRoleName;
@@ -190,7 +180,7 @@ void QQmlSortFilterProxyModel::setAscendingSortOrder(bool ascendingSortOrder)
 
     This property holds the list of filters for this proxy model. To be included in the model, a row of the source model has to be accepted by all the top level filters of this list.
 
-    \sa Filter
+    \sa Filter, FilterContainer
 */
 
 /*!
@@ -198,7 +188,7 @@ void QQmlSortFilterProxyModel::setAscendingSortOrder(bool ascendingSortOrder)
 
     This property holds the list of sorters for this proxy model. The rows of the source model are sorted by the sorters of this list, in their order of insertion.
 
-    \sa Sorter
+    \sa Sorter, SorterContainer
 */
 
 /*!
@@ -284,7 +274,7 @@ QVariantMap QQmlSortFilterProxyModel::get(int row) const
 /*!
     \qmlmethod variant SortFilterProxyModel::get(int row, string roleName)
 
-    Return the data for the given \a roleNamte of the item at \a row in the proxy model. This allows the role data to be read (not modified) from JavaScript.
+    Return the data for the given \a roleName of the item at \a row in the proxy model. This allows the role data to be read (not modified) from JavaScript.
     This equivalent to calling \c {data(index(row, 0), roleForName(roleName))}.
 */
 QVariant QQmlSortFilterProxyModel::get(int row, const QString& roleName) const
@@ -318,7 +308,7 @@ int QQmlSortFilterProxyModel::mapToSource(int proxyRow) const
 /*!
     \qmlmethod QModelIndex SortFilterProxyModel::mapFromSource(QModelIndex sourceIndex)
 
-    Returns the model index in the SortFilterProxyModel given the sourceIndex from the source model.
+    Returns the model index in the SortFilterProxyModel given the \a sourceIndex from the source model.
 */
 QModelIndex QQmlSortFilterProxyModel::mapFromSource(const QModelIndex& sourceIndex) const
 {
