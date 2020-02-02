@@ -13,6 +13,7 @@ class Sorter : public QObject
     Q_PROPERTY(bool enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)
     Q_PROPERTY(bool ascendingOrder READ ascendingOrder WRITE setAscendingOrder NOTIFY sortOrderChanged)
     Q_PROPERTY(Qt::SortOrder sortOrder READ sortOrder WRITE setSortOrder NOTIFY sortOrderChanged)
+    Q_PROPERTY(int priority READ priority WRITE setPriority NOTIFY priorityChanged)
 
 public:
     Sorter(QObject* parent = nullptr);
@@ -27,6 +28,9 @@ public:
     Qt::SortOrder sortOrder() const;
     void setSortOrder(Qt::SortOrder sortOrder);
 
+    int priority() const;
+    void setPriority(int priority);
+
     int compareRows(const QModelIndex& source_left, const QModelIndex& source_right, const QQmlSortFilterProxyModel& proxyModel) const;
 
     virtual void proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel);
@@ -34,6 +38,7 @@ public:
 Q_SIGNALS:
     void enabledChanged();
     void sortOrderChanged();
+    void priorityChanged();
 
     void invalidated();
 
@@ -45,6 +50,7 @@ protected:
 private:
     bool m_enabled = true;
     Qt::SortOrder m_sortOrder = Qt::AscendingOrder;
+    int m_priority = 0;
 };
 
 }

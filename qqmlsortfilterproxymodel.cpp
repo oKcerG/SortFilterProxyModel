@@ -365,7 +365,13 @@ bool QQmlSortFilterProxyModel::lessThan(const QModelIndex& source_left, const QM
             if (QSortFilterProxyModel::lessThan(source_right, source_left))
                 return !m_ascendingSortOrder;
         }
-        for(auto sorter : m_sorters) {
+        auto sortedSorters = m_sorters;
+        std::stable_sort(sortedSorters.begin(),
+                         sortedSorters.end(),
+                         [] (Sorter* a, Sorter* b) {
+                             return a->priority() > b->priority();
+                         });
+        for(auto sorter : sortedSorters) {
             if (sorter->enabled()) {
                 int comparison = sorter->compareRows(source_left, source_right, *this);
                 if (comparison != 0)

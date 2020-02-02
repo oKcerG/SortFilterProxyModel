@@ -79,6 +79,30 @@ void Sorter::setSortOrder(Qt::SortOrder sortOrder)
     invalidate();
 }
 
+/*!
+    \qmlproperty int Sorter::priority
+
+    This property holds the sort priority of this sorter.
+    Sorters with a higher priority are applied first.
+    In case of equal priority, Sorters are ordered by their insertion order.
+
+    By default, the priority is 0.
+*/
+int Sorter::priority() const
+{
+    return m_priority;
+}
+
+void Sorter::setPriority(int priority)
+{
+    if (m_priority == priority)
+        return;
+
+    m_priority = priority;
+    Q_EMIT priorityChanged();
+    invalidate();
+}
+
 int Sorter::compareRows(const QModelIndex &source_left, const QModelIndex &source_right, const QQmlSortFilterProxyModel& proxyModel) const
 {
     int comparison = compare(source_left, source_right, proxyModel);

@@ -7,10 +7,10 @@ import SortFilterProxyModel.Test 0.2
 Item {
     ListModel {
         id: listModel
-        ListElement { test: "first"; test2: "c" }
-        ListElement { test: "second"; test2: "a" }
-        ListElement { test: "third"; test2: "b" }
-        ListElement { test: "fourth"; test2: "b" }
+        ListElement { test: "first"; test2: "c"; test3: 1 }
+        ListElement { test: "second"; test2: "a"; test3: 0 }
+        ListElement { test: "third"; test2: "b"; test3: 2}
+        ListElement { test: "fourth"; test2: "b"; test3: 3 }
     }
 
     ListModel {
@@ -74,6 +74,12 @@ Item {
         RoleSorter { roleName: "test" }
     ]
 
+    property list<RoleSorter> sortersWithPriority: [
+        RoleSorter { roleName: "test3" },
+        RoleSorter { roleName: "test" },
+        RoleSorter { roleName: "test2"; priority: 1 }
+    ]
+
     SortFilterProxyModel {
         id: testModel
         sourceModel: listModel
@@ -120,6 +126,15 @@ Item {
         function test_tieSorters() {
             testModel.sorters = tieSorters;
             var expectedValues = ["second", "fourth", "third", "first"];
+            verifyModelValues(testModel, expectedValues);
+        }
+
+        function test_sortersWithPriority() {
+            testModel.sorters = sortersWithPriority;
+            var expectedValues = ["second", "third", "fourth", "first"];
+            verifyModelValues(testModel, expectedValues);
+            testModel.sorters[0].priority = 2;
+            expectedValues = ["second", "first", "third", "fourth"];
             verifyModelValues(testModel, expectedValues);
         }
 
