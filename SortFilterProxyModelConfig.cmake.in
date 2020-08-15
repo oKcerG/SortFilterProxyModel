@@ -1,0 +1,8 @@
+include(CMakeFindDependencyMacro)
+
+# dependencies
+find_dependency(Qt5 COMPONENTS Core Qml REQUIRED)
+
+# targets file
+include("${CMAKE_CURRENT_LIST_DIR}/SortFilterProxyModelTargets.cmake")
+
