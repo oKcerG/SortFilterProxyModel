@@ -30,6 +30,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON) # This is to find generated *.moc and *.h files in build dir
 
 set(SFPM_SOURCES
+    sortfilterproxymodel.cpp
     qqmlsortfilterproxymodel.cpp
     filters/filter.cpp
     filters/filtercontainer.cpp
@@ -62,6 +63,7 @@ set(SFPM_SOURCES
     )
 
 set(SFPM_HEADERS
+    sortfilterproxymodel.h
     proxyroles/filterrole.h
     proxyroles/switchrole.h
     proxyroles/proxyrolecontainer.h
@@ -144,5 +146,15 @@ if(BUILD_SHARED_LIB)
         NAMESPACE SortFilterProxyModel::
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/SortFilterProxyModel
         )
+    # install the one and only header
+    install(FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/sortfilterproxymodel.h
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sortfilterproxymodel
+        )
+    # announce header to our consumers
+    target_include_directories(SortFilterProxyModel
+        PUBLIC
+            $<INSTALL_INTERFACE:include/sortfilterproxymodel>
+    )
 
 endif(BUILD_SHARED_LIB)
