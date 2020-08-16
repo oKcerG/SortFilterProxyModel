@@ -61,10 +61,39 @@ set(SFPM_SOURCES
     proxyroles/filterrole.cpp
     )
 
+set(SFPM_HEADERS
+    proxyroles/filterrole.h
+    proxyroles/switchrole.h
+    proxyroles/proxyrolecontainer.h
+    proxyroles/singlerole.h
+    proxyroles/joinrole.h
+    proxyroles/expressionrole.h
+    proxyroles/regexprole.h
+    proxyroles/proxyrole.h
+    sorters/sorter.h
+    sorters/stringsorter.h
+    sorters/filtersorter.h
+    sorters/expressionsorter.h
+    sorters/sortercontainer.h
+    sorters/rolesorter.h
+    filters/regexpfilter.h
+    filters/filtercontainerfilter.h
+    filters/anyoffilter.h
+    filters/alloffilter.h
+    filters/indexfilter.h
+    filters/filter.h
+    filters/expressionfilter.h
+    filters/valuefilter.h
+    filters/rangefilter.h
+    filters/rolefilter.h
+    filters/filtercontainer.h
+    qqmlsortfilterproxymodel.h
+    )
+
 if(BUILD_OBJECT_LIB)
     message("Build SortFilterProxyModel object library for in-tree usage")
 
-    add_library(SortFilterProxyModel OBJECT ${SFPM_SOURCES})
+    add_library(SortFilterProxyModel OBJECT ${SFPM_SOURCES} ${SFPM_HEADERS})
 
     target_include_directories(SortFilterProxyModel PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}
@@ -76,7 +105,7 @@ endif(BUILD_OBJECT_LIB)
 if(BUILD_SHARED_LIB)
     message("Build SortFilterProxyModel shared library for target installation")
 
-    add_library(SortFilterProxyModel SHARED ${SFPM_SOURCES} )
+    add_library(SortFilterProxyModel SHARED ${SFPM_SOURCES} ${SFPM_HEADERS})
     set_target_properties(SortFilterProxyModel PROPERTIES VERSION ${PROJECT_VERSION})
     set_target_properties(SortFilterProxyModel PROPERTIES SOVERSION ${SFPM_VERSION_MAJOR})
 
