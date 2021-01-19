@@ -75,3 +75,5 @@ build-SortFilterProxyModel-*
 *.dll
 *.exe
 
+# QtCreator cmake profile
+CMakeLists.txt.user

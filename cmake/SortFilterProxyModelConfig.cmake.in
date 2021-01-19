@@ -1,0 +1,7 @@
+@PACKAGE_INIT@
+
+set_and_check(${CMAKE_FIND_PACKAGE_NAME}_QML_MODULE_PATH "@PACKAGE_QML_MODULE_PATH@")
+
+set(${CMAKE_FIND_PACKAGE_NAME}_QML_MODULE_NAME QmlSortFilterProxyModel)
+
+check_required_components(SortFilterProxyModel)

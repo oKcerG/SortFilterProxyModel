@@ -1,0 +1,3 @@
+module QmlSortFilterProxyModel
+plugin sortfilterproxymodel
+classname QmlSortFilterProxyModelPlugin

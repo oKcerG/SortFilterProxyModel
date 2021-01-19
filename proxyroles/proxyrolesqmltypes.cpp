@@ -1,3 +1,4 @@
+#include "proxyrolesqmltypes.h"
 #include "proxyrole.h"
 #include "joinrole.h"
 #include "switchrole.h"
@@ -9,15 +10,20 @@
 
 namespace qqsfpm {
 
+void registerProxyRoleTypes(const char *uri, int major, int minor) {
+    qmlRegisterUncreatableType<ProxyRole>(uri, major, minor, "ProxyRole", "ProxyRole is an abstract class");
+    qmlRegisterType<JoinRole>(uri, major, minor, "JoinRole");
+    qmlRegisterType<SwitchRole>(uri, major, minor, "SwitchRole");
+    qmlRegisterType<ExpressionRole>(uri, major, minor, "ExpressionRole");
+    qmlRegisterType<RegExpRole>(uri, major, minor, "RegExpRole");
+    qmlRegisterType<FilterRole>(uri, major, minor, "FilterRole");
+}
+
+#ifndef QML_PLUGIN
 void registerProxyRoleTypes() {
-    qmlRegisterUncreatableType<ProxyRole>("SortFilterProxyModel", 0, 2, "ProxyRole", "ProxyRole is an abstract class");
-    qmlRegisterType<JoinRole>("SortFilterProxyModel", 0, 2, "JoinRole");
-    qmlRegisterType<SwitchRole>("SortFilterProxyModel", 0, 2, "SwitchRole");
-    qmlRegisterType<ExpressionRole>("SortFilterProxyModel", 0, 2, "ExpressionRole");
-    qmlRegisterType<RegExpRole>("SortFilterProxyModel", 0, 2, "RegExpRole");
-    qmlRegisterType<FilterRole>("SortFilterProxyModel", 0, 2, "FilterRole");
+    registerProxyRoleTypes("SortFilterProxyModel", 0, 2);
 }
-
 Q_COREAPP_STARTUP_FUNCTION(registerProxyRoleTypes)
+#endif
 
-}
+} // namespace qqsfpm

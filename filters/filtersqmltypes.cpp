@@ -1,3 +1,4 @@
+#include "filtersqmltypes.h"
 #include "filter.h"
 #include "valuefilter.h"
 #include "indexfilter.h"
@@ -11,18 +12,23 @@
 
 namespace qqsfpm {
 
+void registerFiltersTypes(const char *uri, int major, int minor) {
+    qmlRegisterUncreatableType<Filter>(uri, major, minor, "Filter", "Filter is an abstract class");
+    qmlRegisterType<ValueFilter>(uri, major, minor, "ValueFilter");
+    qmlRegisterType<IndexFilter>(uri, major, minor, "IndexFilter");
+    qmlRegisterType<RegExpFilter>(uri, major, minor, "RegExpFilter");
+    qmlRegisterType<RangeFilter>(uri, major, minor, "RangeFilter");
+    qmlRegisterType<ExpressionFilter>(uri, major, minor, "ExpressionFilter");
+    qmlRegisterType<AnyOfFilter>(uri, major, minor, "AnyOf");
+    qmlRegisterType<AllOfFilter>(uri, major, minor, "AllOf");
+    qmlRegisterUncreatableType<FilterContainerAttached>(uri, major, minor, "FilterContainer", "FilterContainer can only be used as an attaching type");
+}
+
+#ifndef QML_PLUGIN
 void registerFiltersTypes() {
-    qmlRegisterUncreatableType<Filter>("SortFilterProxyModel", 0, 2, "Filter", "Filter is an abstract class");
-    qmlRegisterType<ValueFilter>("SortFilterProxyModel", 0, 2, "ValueFilter");
-    qmlRegisterType<IndexFilter>("SortFilterProxyModel", 0, 2, "IndexFilter");
-    qmlRegisterType<RegExpFilter>("SortFilterProxyModel", 0, 2, "RegExpFilter");
-    qmlRegisterType<RangeFilter>("SortFilterProxyModel", 0, 2, "RangeFilter");
-    qmlRegisterType<ExpressionFilter>("SortFilterProxyModel", 0, 2, "ExpressionFilter");
-    qmlRegisterType<AnyOfFilter>("SortFilterProxyModel", 0, 2, "AnyOf");
-    qmlRegisterType<AllOfFilter>("SortFilterProxyModel", 0, 2, "AllOf");
-    qmlRegisterUncreatableType<FilterContainerAttached>("SortFilterProxyModel", 0, 2, "FilterContainer", "FilterContainer can only be used as an attaching type");
+    registerFiltersTypes("SortFilterProxyModel", 0, 2);
 }
-
 Q_COREAPP_STARTUP_FUNCTION(registerFiltersTypes)
+#endif
 
-}
+} // namespace qqsfpm
