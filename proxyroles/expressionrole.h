@@ -42,7 +42,7 @@ private:
     QQmlExpression* m_expression = nullptr;
     QQmlContext* m_context = nullptr;
 
-    QMap<QPersistentModelIndex, QVariant> m_cache;
+    QHash<QPersistentModelIndex, QVariant> m_cache;
     bool m_cached = false;
 };
 
