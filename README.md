@@ -10,11 +10,61 @@ Install
 2. add `include(vendor/vendor.pri)` in your .pro if it is not already done
 3. `import SortFilterProxyModel 0.2` to use this library in your QML files
 
-##### Without qpm :
+##### With qmake :
 1. clone or download this repository
-2. * `qmake` add `include  (<path/to/SortFilterProxyModel>/SortFilterProxyModel.pri)` in your `.pro`
-   * `CMake` add $<TARGET_OBJECTS:SortFilterProxyModel> to the sources of your executable target in your cmake project
+2. `qmake` add `include  (<path/to/SortFilterProxyModel>/SortFilterProxyModel.pri)` in your `.pro`
 3. `import SortFilterProxyModel 0.2` to use this library in your QML files
+
+##### With [CMake](https://cmake.org/) / SortFilterProxyModel sources included in your project (for compatibilty with existing projects / quick setup - not recommended for packagers):
+1. clone / download / add submodule this repository into your project
+2. In CMakeLists.txt of your project add
+    ```CMake
+    ...
+    add_subdirectory(<your-sub-path>/SortFilterProxyModel)
+    ...
+    target_link_libraries(<your-target>
+    ...
+        $<TARGET_OBJECTS:SortFilterProxyModel>
+    ...
+    )
+    ```
+3. `import SortFilterProxyModel 0.2` to use this library in your QML files
+
+##### With [CMake](https://cmake.org/) / SortFilterProxyModel build as shared library (recommended):
+1. clone / download this repository
+2. ensure SortFilterProxyModel is build with **BUILD_OBJECT_LIB=OFF** and **BUILD_SHARED_LIB=ON** either by
+    * adding ```-DBUILD_OBJECT_LIB=OFF -DBUILD_SHARED_LIB=ON``` to cmake's commandline - or
+    * setting options in your IDE (Qt-Creator: Project/Build Settings)
+3. developers only: make sure SortFilterProxyModel is installed to a location where cmake can find it e.g by
+    * In SortFilterProxyModel set CMAKE_INSTALL_PREFIX to <path-of-your-choice/usr> / add install to your build steps
+    * In your project: Change CMAKE_PREFIX_PATH to <path-of-your-choice/usr>;/usr
+4. In CMakeLists.txt of your project add
+    ```CMake
+    ...
+    find_package(SortFilterProxyModel REQUIRED)
+    ...
+    target_link_libraries(<your-target>
+    ...
+        SortFilterProxyModel::SortFilterProxyModel
+    ...
+    )
+    ```
+5. In your main.cpp
+    ```cpp
+    #include <sortfilterproxymodel.h>
+    ...
+    int main(int argc, char *argv[])
+    {
+        QQmlApplicationEngine engine;
+        ...
+        SortFilterProxyModel::registerQml();
+        ...
+        engine.load(url);
+        ...
+    }
+    ```
+6. `import SortFilterProxyModel 0.2` to use this library in your QML files
+
 
 Sample Usage
 ------------

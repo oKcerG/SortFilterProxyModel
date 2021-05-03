@@ -5,6 +5,8 @@
 #include "sorters/sorter.h"
 #include "proxyroles/proxyrole.h"
 
+static bool wasRegistered = false;
+
 namespace qqsfpm {
 
 /*!
@@ -571,7 +573,10 @@ void QQmlSortFilterProxyModel::onProxyRolesCleared()
 }
 
 void registerQQmlSortFilterProxyModelTypes() {
-    qmlRegisterType<QQmlSortFilterProxyModel>("SortFilterProxyModel", 0, 2, "SortFilterProxyModel");
+    if(!wasRegistered) {
+        qmlRegisterType<QQmlSortFilterProxyModel>("SortFilterProxyModel", 0, 2, "SortFilterProxyModel");
+        wasRegistered = true;
+    }
 }
 
 Q_COREAPP_STARTUP_FUNCTION(registerQQmlSortFilterProxyModelTypes)
