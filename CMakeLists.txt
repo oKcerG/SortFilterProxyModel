@@ -12,6 +12,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON) # This is to find generated *.moc and *.h file
 
 add_library(SortFilterProxyModel OBJECT
     qqmlsortfilterproxymodel.cpp
+    qvariantlessthan.cpp
     filters/filter.cpp
     filters/filtercontainer.cpp
     filters/rolefilter.cpp
