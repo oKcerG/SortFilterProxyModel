@@ -1,6 +1,8 @@
 #include "indexfilter.h"
 #include "qqmlsortfilterproxymodel.h"
 
+#include <QJSValue>
+
 namespace qqsfpm {
 
 /*!
@@ -85,6 +87,30 @@ void IndexFilter::setMaximumIndex(const QVariant& maximumIndex)
     invalidate();
 }
 
+/*!
+    \qmlproperty list<int> IndexFilter::indexes
+
+    This property holds the indexes for the filter.
+    Only rows with a source index contained in the \c indexes list will be proxied.
+
+    If \c indexes is an empty array, no rows will be visible; in order to unset the filter, set \c indexes to \c null.
+    By default, \c indexes is \c null.
+*/
+const QVariant& IndexFilter::indexes() const
+{
+    return m_indexes;
+}
+
+void IndexFilter::setIndexes(const QVariant& indexes)
+{
+    if (m_indexes == indexes)
+        return;
+
+    m_indexes = indexes;
+    Q_EMIT indexesChanged();
+    invalidate();
+}
+
 bool IndexFilter::filterRow(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel) const
 {
     int sourceRowCount = proxyModel.sourceModel()->rowCount();
@@ -106,6 +132,25 @@ bool IndexFilter::filterRow(const QModelIndex& sourceIndex, const QQmlSortFilter
             return false;
     }
 
+    if (m_indexes.isValid() && !m_indexes.isNull() &&
+        m_indexes.canConvert<QVariantList>()) {
+        // Workaround for QTBUG-42016
+        QVariant variantList;
+        if (m_indexes.userType() == qMetaTypeId<QJSValue>()) {
+            variantList = m_indexes.value<QJSValue>().toVariant();
+        } else {
+            variantList = m_indexes;
+        }
+
+        QSequentialIterable iterable = variantList.value<QSequentialIterable>();
+        for (const QVariant &v: iterable) {
+            bool isValid;
+            int index = v.toInt(&isValid);
+            if (isValid && sourceRow == index)
+                return true;
+        }
+        return false;
+    }
     return true;
 }
 
