@@ -1,3 +1,4 @@
+#include "sortersqmltypes.h"
 #include "sorter.h"
 #include "rolesorter.h"
 #include "stringsorter.h"
@@ -9,15 +10,21 @@
 
 namespace qqsfpm {
 
+void registerSorterTypes(const char *uri, int major, int minor) {
+    qmlRegisterUncreatableType<Sorter>(uri, major, minor, "Sorter", "Sorter is an abstract class");
+    qmlRegisterType<RoleSorter>(uri, major, minor, "RoleSorter");
+    qmlRegisterType<StringSorter>(uri, major, minor, "StringSorter");
+    qmlRegisterType<FilterSorter>(uri, major, minor, "FilterSorter");
+    qmlRegisterType<ExpressionSorter>(uri, major, minor, "ExpressionSorter");
+    qmlRegisterUncreatableType<SorterContainerAttached>(uri, major, minor, "SorterContainer", "SorterContainer can only be used as an attaching type");
+}
+
 void registerSorterTypes() {
-    qmlRegisterUncreatableType<Sorter>("SortFilterProxyModel", 0, 2, "Sorter", "Sorter is an abstract class");
-    qmlRegisterType<RoleSorter>("SortFilterProxyModel", 0, 2, "RoleSorter");
-    qmlRegisterType<StringSorter>("SortFilterProxyModel", 0, 2, "StringSorter");
-    qmlRegisterType<FilterSorter>("SortFilterProxyModel", 0, 2, "FilterSorter");
-    qmlRegisterType<ExpressionSorter>("SortFilterProxyModel", 0, 2, "ExpressionSorter");
-    qmlRegisterUncreatableType<SorterContainerAttached>("SortFilterProxyModel", 0, 2, "SorterContainer", "SorterContainer can only be used as an attaching type");
+    registerSorterTypes("SortFilterProxyModel", 0, 2);
 }
 
+#ifndef QML_PLUGIN
 Q_COREAPP_STARTUP_FUNCTION(registerSorterTypes)
+#endif
 
-}
+} // namespace qqsfpm
