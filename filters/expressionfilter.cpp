@@ -116,7 +116,7 @@ void ExpressionFilter::updateExpression()
         return;
 
     delete m_expression;
-    m_expression = new QQmlExpression(m_scriptString, m_context, 0, this);
+    m_expression = new QQmlExpression(m_scriptString, m_context, nullptr, this);
     connect(m_expression, &QQmlExpression::valueChanged, this, &ExpressionFilter::invalidate);
     m_expression->setNotifyOnValueChanged(true);
     m_expression->evaluate();

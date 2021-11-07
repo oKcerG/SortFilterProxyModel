@@ -14,7 +14,7 @@ class ProxyRole : public QObject
 
 public:
     using QObject::QObject;
-    virtual ~ProxyRole() = default;
+    ~ProxyRole() override = default;
 
     QVariant roleData(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel, const QString& name);
     virtual void proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel);

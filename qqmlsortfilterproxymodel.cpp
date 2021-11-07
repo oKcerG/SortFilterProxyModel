@@ -97,7 +97,7 @@ QString QQmlSortFilterProxyModel::filterPattern() const
 
 void QQmlSortFilterProxyModel::setFilterPattern(const QString& filterPattern)
 {
-    QRegExp regExp = filterRegExp();
+    QRegularExpression regExp = filterRegExp();
     if (regExp.pattern() == filterPattern)
         return;
 
@@ -113,8 +113,8 @@ QQmlSortFilterProxyModel::PatternSyntax QQmlSortFilterProxyModel::filterPatternS
 
 void QQmlSortFilterProxyModel::setFilterPatternSyntax(QQmlSortFilterProxyModel::PatternSyntax patternSyntax)
 {
-    QRegExp regExp = filterRegExp();
-    QRegExp::PatternSyntax patternSyntaxTmp = static_cast<QRegExp::PatternSyntax>(patternSyntax);
+    QRegularExpression regExp = filterRegExp();
+    QRegularExpression::PatternSyntax patternSyntaxTmp = static_cast<QRegularExpression::PatternSyntax>(patternSyntax);
     if (regExp.patternSyntax() == patternSyntaxTmp)
         return;
 

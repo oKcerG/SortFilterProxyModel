@@ -39,25 +39,25 @@ void ProxyRoleContainer::append_proxyRole(QQmlListProperty<ProxyRole>* list, Pro
     if (!proxyRole)
         return;
 
-    ProxyRoleContainer* that = reinterpret_cast<ProxyRoleContainer*>(list->object);
+    auto* that = reinterpret_cast<ProxyRoleContainer*>(list->object);
     that->appendProxyRole(proxyRole);
 }
 
-int ProxyRoleContainer::count_proxyRole(QQmlListProperty<ProxyRole>* list)
+qsizetype ProxyRoleContainer::count_proxyRole(QQmlListProperty<ProxyRole>* list)
 {
-    QList<ProxyRole*>* ProxyRoles = static_cast<QList<ProxyRole*>*>(list->data);
+    auto* ProxyRoles = static_cast<QList<ProxyRole*>*>(list->data);
     return ProxyRoles->count();
 }
 
-ProxyRole* ProxyRoleContainer::at_proxyRole(QQmlListProperty<ProxyRole>* list, int index)
+ProxyRole* ProxyRoleContainer::at_proxyRole(QQmlListProperty<ProxyRole>* list, qsizetype index)
 {
-    QList<ProxyRole*>* ProxyRoles = static_cast<QList<ProxyRole*>*>(list->data);
+    auto* ProxyRoles = static_cast<QList<ProxyRole*>*>(list->data);
     return ProxyRoles->at(index);
 }
 
 void ProxyRoleContainer::clear_proxyRoles(QQmlListProperty<ProxyRole> *list)
 {
-    ProxyRoleContainer* that = reinterpret_cast<ProxyRoleContainer*>(list->object);
+    auto* that = reinterpret_cast<ProxyRoleContainer*>(list->object);
     that->clearProxyRoles();
 }
 

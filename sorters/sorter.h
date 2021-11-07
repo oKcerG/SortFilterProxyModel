@@ -16,8 +16,7 @@ class Sorter : public QObject
     Q_PROPERTY(int priority READ priority WRITE setPriority NOTIFY priorityChanged)
 
 public:
-    Sorter(QObject* parent = nullptr);
-    virtual ~Sorter() = 0;
+    explicit Sorter(QObject* parent = nullptr);
 
     bool enabled() const;
     void setEnabled(bool enabled);

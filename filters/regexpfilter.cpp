@@ -78,7 +78,7 @@ void RegExpFilter::setSyntax(RegExpFilter::PatternSyntax syntax)
         return;
 
     m_syntax = syntax;
-    m_regExp.setPatternSyntax(static_cast<QRegExp::PatternSyntax>(syntax));
+    m_regExp.setPatternSyntax(static_cast<QRegularExpression::PatternSyntax>(syntax));
     Q_EMIT syntaxChanged();
     invalidate();
 }
