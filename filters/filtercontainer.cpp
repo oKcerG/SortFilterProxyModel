@@ -2,6 +2,10 @@
 #include "filter.h"
 #include <QtQml>
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 9, 0))
+#define qmlWarning(me) qmlInfo(me)
+#endif
+
 namespace qqsfpm {
 
 /*!
