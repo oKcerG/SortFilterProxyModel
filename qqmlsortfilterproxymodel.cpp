@@ -457,10 +457,8 @@ void QQmlSortFilterProxyModel::onDataChanged(const QModelIndex &topLeft,
                                              const QModelIndex &bottomRight,
                                              const QVector<int> &roles) {
   Q_UNUSED(roles);
-  bool proxyRoleChanged =
-      !m_proxyRoleNumbers.empty() &&
-      std::any_of(m_proxyRoleNumbers.begin(), m_proxyRoleNumbers.end(),
-                  [&roles](const auto &it) { return roles.contains(it); });
+  bool proxyRoleChanged = !roles.empty() && !m_proxyRoleNumbers.empty() &&
+                          roles != m_proxyRoleNumbers;
   if (proxyRoleChanged)
     Q_EMIT dataChanged(topLeft, bottomRight, m_proxyRoleNumbers);
 }

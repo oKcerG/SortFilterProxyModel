@@ -138,7 +138,7 @@ private:
   void onProxyRoleRemoved(ProxyRole *proxyRole) override;
   void onProxyRolesCleared() override;
 
-  bool m_delayed;
+  bool m_delayed{false};
   QString m_filterRoleName;
   QVariant m_filterValue;
   QString m_sortRoleName;
