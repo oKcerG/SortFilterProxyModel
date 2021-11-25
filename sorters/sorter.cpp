@@ -16,11 +16,7 @@ namespace qqsfpm {
     Attempting to use the Sorter type directly will result in an error.
 */
 
-Sorter::Sorter(QObject *parent) : QObject(parent)
-{
-}
-
-Sorter::~Sorter() = default;
+Sorter::Sorter(QObject *parent) : QObject(parent) {}
 
 /*!
     \qmlproperty bool Sorter::enabled
@@ -30,55 +26,46 @@ Sorter::~Sorter() = default;
 
     By default, sorters are enabled.
 */
-bool Sorter::enabled() const
-{
-    return m_enabled;
+bool Sorter::enabled() const { return m_enabled; }
+
+void Sorter::setEnabled(bool enabled) {
+  if (m_enabled == enabled)
+    return;
+
+  m_enabled = enabled;
+  Q_EMIT enabledChanged();
+  Q_EMIT invalidated();
 }
 
-void Sorter::setEnabled(bool enabled)
-{
-    if (m_enabled == enabled)
-        return;
-
-    m_enabled = enabled;
-    Q_EMIT enabledChanged();
-    Q_EMIT invalidated();
+bool Sorter::ascendingOrder() const {
+  return sortOrder() == Qt::AscendingOrder;
 }
 
-bool Sorter::ascendingOrder() const
-{
-    return sortOrder() == Qt::AscendingOrder;
+void Sorter::setAscendingOrder(bool ascendingOrder) {
+  setSortOrder(ascendingOrder ? Qt::AscendingOrder : Qt::DescendingOrder);
 }
-
-void Sorter::setAscendingOrder(bool ascendingOrder)
-{
-    setSortOrder(ascendingOrder ? Qt::AscendingOrder : Qt::DescendingOrder);
-}
-
 
 /*!
     \qmlproperty Qt::SortOrder Sorter::sortOrder
 
     This property holds the sort order of this sorter.
 
-    \value Qt.AscendingOrder The items are sorted ascending e.g. starts with 'AAA' ends with 'ZZZ' in Latin-1 locales
-    \value Qt.DescendingOrder The items are sorted descending e.g. starts with 'ZZZ' ends with 'AAA' in Latin-1 locales
+    \value Qt.AscendingOrder The items are sorted ascending e.g. starts with
+   'AAA' ends with 'ZZZ' in Latin-1 locales \value Qt.DescendingOrder The items
+   are sorted descending e.g. starts with 'ZZZ' ends with 'AAA' in Latin-1
+   locales
 
     By default, sorting is in ascending order.
 */
-Qt::SortOrder Sorter::sortOrder() const
-{
-    return m_sortOrder;
-}
+Qt::SortOrder Sorter::sortOrder() const { return m_sortOrder; }
 
-void Sorter::setSortOrder(Qt::SortOrder sortOrder)
-{
-    if (m_sortOrder == sortOrder)
-        return;
+void Sorter::setSortOrder(Qt::SortOrder sortOrder) {
+  if (m_sortOrder == sortOrder)
+    return;
 
-    m_sortOrder = sortOrder;
-    Q_EMIT sortOrderChanged();
-    invalidate();
+  m_sortOrder = sortOrder;
+  Q_EMIT sortOrderChanged();
+  invalidate();
 }
 
 /*!
@@ -90,53 +77,50 @@ void Sorter::setSortOrder(Qt::SortOrder sortOrder)
 
     By default, the priority is 0.
 */
-int Sorter::priority() const
-{
-    return m_priority;
+int Sorter::priority() const { return m_priority; }
+
+void Sorter::setPriority(int priority) {
+  if (m_priority == priority)
+    return;
+
+  m_priority = priority;
+  Q_EMIT priorityChanged();
+  invalidate();
 }
 
-void Sorter::setPriority(int priority)
-{
-    if (m_priority == priority)
-        return;
-
-    m_priority = priority;
-    Q_EMIT priorityChanged();
-    invalidate();
+int Sorter::compareRows(const QModelIndex &source_left,
+                        const QModelIndex &source_right,
+                        const QQmlSortFilterProxyModel &proxyModel) const {
+  int comparison = compare(source_left, source_right, proxyModel);
+  return (m_sortOrder == Qt::AscendingOrder) ? comparison : -comparison;
 }
 
-int Sorter::compareRows(const QModelIndex &source_left, const QModelIndex &source_right, const QQmlSortFilterProxyModel& proxyModel) const
-{
-    int comparison = compare(source_left, source_right, proxyModel);
-    return (m_sortOrder == Qt::AscendingOrder) ? comparison : -comparison;
+int Sorter::compare(const QModelIndex &sourceLeft,
+                    const QModelIndex &sourceRight,
+                    const QQmlSortFilterProxyModel &proxyModel) const {
+  if (lessThan(sourceLeft, sourceRight, proxyModel))
+    return -1;
+  if (lessThan(sourceRight, sourceLeft, proxyModel))
+    return 1;
+  return 0;
 }
 
-int Sorter::compare(const QModelIndex &sourceLeft, const QModelIndex &sourceRight, const QQmlSortFilterProxyModel& proxyModel) const
-{
-    if (lessThan(sourceLeft, sourceRight, proxyModel))
-        return -1;
-    if (lessThan(sourceRight, sourceLeft, proxyModel))
-        return 1;
-    return 0;
+void Sorter::proxyModelCompleted(const QQmlSortFilterProxyModel &proxyModel) {
+  Q_UNUSED(proxyModel)
 }
 
-void Sorter::proxyModelCompleted(const QQmlSortFilterProxyModel& proxyModel)
-{
-    Q_UNUSED(proxyModel)
+bool Sorter::lessThan(const QModelIndex &sourceLeft,
+                      const QModelIndex &sourceRight,
+                      const QQmlSortFilterProxyModel &proxyModel) const {
+  Q_UNUSED(sourceLeft)
+  Q_UNUSED(sourceRight)
+  Q_UNUSED(proxyModel)
+  return false;
 }
 
-bool Sorter::lessThan(const QModelIndex &sourceLeft, const QModelIndex &sourceRight, const QQmlSortFilterProxyModel& proxyModel) const
-{
-    Q_UNUSED(sourceLeft)
-    Q_UNUSED(sourceRight)
-    Q_UNUSED(proxyModel)
-    return false;
+void Sorter::invalidate() {
+  if (m_enabled)
+    Q_EMIT invalidated();
 }
 
-void Sorter::invalidate()
-{
-    if (m_enabled)
-        Q_EMIT invalidated();
-}
-
-}
+} // namespace qqsfpm

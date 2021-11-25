@@ -2,6 +2,10 @@
 #include "sorter.h"
 #include <QtQml>
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 9, 0))
+#define qmlWarning(me) qmlInfo(me)
+#endif
+
 namespace qqsfpm {
 
 /*!
@@ -52,25 +56,25 @@ void SorterContainer::append_sorter(QQmlListProperty<Sorter>* list, Sorter* sort
     if (!sorter)
         return;
 
-    SorterContainer* that = reinterpret_cast<SorterContainer*>(list->object);
+    auto* that = reinterpret_cast<SorterContainer*>(list->object);
     that->appendSorter(sorter);
 }
 
-int SorterContainer::count_sorter(QQmlListProperty<Sorter>* list)
+qsizetype SorterContainer::count_sorter(QQmlListProperty<Sorter>* list)
 {
-    QList<Sorter*>* sorters = static_cast<QList<Sorter*>*>(list->data);
+    auto* sorters = static_cast<QList<Sorter*>*>(list->data);
     return sorters->count();
 }
 
-Sorter* SorterContainer::at_sorter(QQmlListProperty<Sorter>* list, int index)
+Sorter* SorterContainer::at_sorter(QQmlListProperty<Sorter>* list, qsizetype index)
 {
-    QList<Sorter*>* sorters = static_cast<QList<Sorter*>*>(list->data);
+    auto* sorters = static_cast<QList<Sorter*>*>(list->data);
     return sorters->at(index);
 }
 
 void SorterContainer::clear_sorters(QQmlListProperty<Sorter> *list)
 {
-    SorterContainer* that = reinterpret_cast<SorterContainer*>(list->object);
+    auto* that = reinterpret_cast<SorterContainer*>(list->object);
     that->clearSorters();
 }
 

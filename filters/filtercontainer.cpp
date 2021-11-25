@@ -2,6 +2,10 @@
 #include "filter.h"
 #include <QtQml>
 
+#if (QT_VERSION < QT_VERSION_CHECK(5, 9, 0))
+#define qmlWarning(me) qmlInfo(me)
+#endif
+
 namespace qqsfpm {
 
 /*!
@@ -52,25 +56,25 @@ void FilterContainer::append_filter(QQmlListProperty<Filter>* list, Filter* filt
     if (!filter)
         return;
 
-    FilterContainer* that = reinterpret_cast<FilterContainer*>(list->object);
+    auto* that = reinterpret_cast<FilterContainer*>(list->object);
     that->appendFilter(filter);
 }
 
-int FilterContainer::count_filter(QQmlListProperty<Filter>* list)
+qsizetype FilterContainer::count_filter(QQmlListProperty<Filter>* list)
 {
-    QList<Filter*>* filters = static_cast<QList<Filter*>*>(list->data);
+    auto* filters = static_cast<QList<Filter*>*>(list->data);
     return filters->count();
 }
 
-Filter* FilterContainer::at_filter(QQmlListProperty<Filter>* list, int index)
+Filter* FilterContainer::at_filter(QQmlListProperty<Filter>* list, qsizetype index)
 {
-    QList<Filter*>* filters = static_cast<QList<Filter*>*>(list->data);
+    auto* filters = static_cast<QList<Filter*>*>(list->data);
     return filters->at(index);
 }
 
 void FilterContainer::clear_filters(QQmlListProperty<Filter> *list)
 {
-    FilterContainer* that = reinterpret_cast<FilterContainer*>(list->object);
+    auto* that = reinterpret_cast<FilterContainer*>(list->object);
     that->clearFilters();
 }
 

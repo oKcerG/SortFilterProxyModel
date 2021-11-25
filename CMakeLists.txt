@@ -1,8 +1,9 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.14)
+project(qqmlsortfilterproxymodel)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
-find_package(Qt5 REQUIRED
+find_package(Qt6 REQUIRED
     Core
     Qml
     )
@@ -12,6 +13,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON) # This is to find generated *.moc and *.h file
 
 add_library(SortFilterProxyModel OBJECT
     qqmlsortfilterproxymodel.cpp
+    qvariantlessthan.cpp
     filters/filter.cpp
     filters/filtercontainer.cpp
     filters/rolefilter.cpp
@@ -44,6 +46,8 @@ add_library(SortFilterProxyModel OBJECT
 
 target_include_directories(SortFilterProxyModel PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}
-    $<TARGET_PROPERTY:Qt5::Core,INTERFACE_INCLUDE_DIRECTORIES>
-    $<TARGET_PROPERTY:Qt5::Qml,INTERFACE_INCLUDE_DIRECTORIES>
+    $<TARGET_PROPERTY:Qt6::Core,INTERFACE_INCLUDE_DIRECTORIES>
+    $<TARGET_PROPERTY:Qt6::Qml,INTERFACE_INCLUDE_DIRECTORIES>
     )
+
+target_compile_options(SortFilterProxyModel PRIVATE -fPIC)
