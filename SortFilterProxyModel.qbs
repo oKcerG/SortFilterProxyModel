@@ -57,6 +57,8 @@ Group {
         "sorters/sortersqmltypes.cpp",
         "sorters/stringsorter.cpp",
         "sorters/stringsorter.h",
+        "utils/utils.cpp",
+        "utils/utils.h",
         "qqmlsortfilterproxymodel.cpp",
         "qqmlsortfilterproxymodel.h"
     ]
