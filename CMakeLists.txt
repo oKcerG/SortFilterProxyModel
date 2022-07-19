@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 
-set(CMAKE_CXX_STANDARD 11)
+project(SortFilterProxyModel)
 
 find_package(Qt5 REQUIRED
     Core
@@ -42,8 +42,6 @@ add_library(SortFilterProxyModel OBJECT
     proxyroles/filterrole.cpp
     )
 
-target_include_directories(SortFilterProxyModel PUBLIC
-    ${CMAKE_CURRENT_LIST_DIR}
-    $<TARGET_PROPERTY:Qt5::Core,INTERFACE_INCLUDE_DIRECTORIES>
-    $<TARGET_PROPERTY:Qt5::Qml,INTERFACE_INCLUDE_DIRECTORIES>
-    )
+target_compile_features(SortFilterProxyModel PUBLIC cxx_std_11)
+target_link_libraries(SortFilterProxyModel PRIVATE Qt5::Core Qt5::Qml)
+target_include_directories(SortFilterProxyModel PUBLIC .)
