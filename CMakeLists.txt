@@ -44,6 +44,10 @@ add_library(SortFilterProxyModel OBJECT
     utils/utils.h
 )
 
+if ((MSVC) AND (MSVC_VERSION GREATER_EQUAL 1914))
+    target_compile_options(SortFilterProxyModel PUBLIC "/Zc:__cplusplus")
+endif()
+
 target_include_directories(SortFilterProxyModel PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}
     $<TARGET_PROPERTY:Qt6::Core,INTERFACE_INCLUDE_DIRECTORIES>
