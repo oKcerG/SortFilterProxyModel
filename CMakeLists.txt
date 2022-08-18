@@ -44,6 +44,12 @@ add_library(SortFilterProxyModel OBJECT
     utils/utils.h
 )
 
+target_link_libraries(SortFilterProxyModel
+    PRIVATE
+        Qt6::Core
+        Qt6::Qml
+)
+
 if ((MSVC) AND (MSVC_VERSION GREATER_EQUAL 1914))
     target_compile_options(SortFilterProxyModel PUBLIC "/Zc:__cplusplus")
 endif()
