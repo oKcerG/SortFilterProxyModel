@@ -37,8 +37,8 @@ bool lessThan(const QVariant &lhs, const QVariant &rhs)
         QMetaType::QDateTime,
     };
 
-    const auto lt = static_cast<QMetaType::Type>(lhs.type());
-    const auto rt = static_cast<QMetaType::Type>(rhs.type());
+    const auto lt = static_cast<QMetaType::Type>(lhs.userType());
+    const auto rt = static_cast<QMetaType::Type>(rhs.userType());
     if (numericTypes.contains(lt) && numericTypes.contains(rt)) {
         if (lt == QMetaType::Double || lt == QMetaType::Float
                 || rt == QMetaType::Double || rt == QMetaType::Float) {
