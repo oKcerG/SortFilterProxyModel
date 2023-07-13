@@ -23,6 +23,7 @@ class QQmlSortFilterProxyModel : public QSortFilterProxyModel,
 
     Q_PROPERTY(int count READ count NOTIFY countChanged)
     Q_PROPERTY(bool delayed READ delayed WRITE setDelayed NOTIFY delayedChanged)
+    Q_PROPERTY(int limit READ limit WRITE setLimit NOTIFY limitChanged FINAL)
 
     Q_PROPERTY(QString filterRoleName READ filterRoleName WRITE setFilterRoleName NOTIFY filterRoleNameChanged)
     Q_PROPERTY(QString filterPattern READ filterPattern WRITE setFilterPattern NOTIFY filterPatternChanged)
@@ -93,6 +94,7 @@ public:
     void setSourceModel(QAbstractItemModel *sourceModel) override;
 
 Q_SIGNALS:
+    void limitChanged();
     void countChanged();
     void delayedChanged();
 
@@ -105,6 +107,7 @@ Q_SIGNALS:
     void ascendingSortOrderChanged();
 
 protected:
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override;
     bool lessThan(const QModelIndex& source_left, const QModelIndex& source_right) const override;
 
@@ -126,6 +129,9 @@ private Q_SLOTS:
     void invalidateProxyRoles();
 
 private:
+    int limit() const;
+    void setLimit(int newLimit);
+
     QVariantMap modelDataMap(const QModelIndex& modelIndex) const;
 
     void onFilterAppended(Filter* filter) override;
@@ -153,6 +159,7 @@ private:
     bool m_invalidateFilterQueued = false;
     bool m_invalidateQueued = false;
     bool m_invalidateProxyRolesQueued = false;
+    int m_limit{-1};
 };
 
 }
