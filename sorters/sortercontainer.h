@@ -30,9 +30,15 @@ private:
     virtual void onSorterRemoved(Sorter* sorter) = 0;
     virtual void onSortersCleared() = 0;
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    using sizetype = int;
+#else
+    using sizetype = qsizetype;
+#endif
+
     static void append_sorter(QQmlListProperty<Sorter>* list, Sorter* sorter);
-    static int count_sorter(QQmlListProperty<Sorter>* list);
-    static Sorter* at_sorter(QQmlListProperty<Sorter>* list, int index);
+    static sizetype count_sorter(QQmlListProperty<Sorter>* list);
+    static Sorter* at_sorter(QQmlListProperty<Sorter>* list, sizetype index);
     static void clear_sorters(QQmlListProperty<Sorter>* list);
 };
 
