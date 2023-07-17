@@ -30,9 +30,15 @@ private:
     virtual void onFilterRemoved(Filter* filter) = 0;
     virtual void onFiltersCleared() = 0;
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    using sizetype = int;
+#else
+    using sizetype = qsizetype;
+#endif
+
     static void append_filter(QQmlListProperty<Filter>* list, Filter* filter);
-    static int count_filter(QQmlListProperty<Filter>* list);
-    static Filter* at_filter(QQmlListProperty<Filter>* list, int index);
+    static sizetype count_filter(QQmlListProperty<Filter>* list);
+    static Filter* at_filter(QQmlListProperty<Filter>* list, sizetype index);
     static void clear_filters(QQmlListProperty<Filter>* list);
 };
 
