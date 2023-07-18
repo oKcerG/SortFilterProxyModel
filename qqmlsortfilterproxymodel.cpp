@@ -92,35 +92,18 @@ void QQmlSortFilterProxyModel::setFilterRoleName(const QString& filterRoleName)
 
 QString QQmlSortFilterProxyModel::filterPattern() const
 {
-    return filterRegExp().pattern();
+    return filterRegularExpression().pattern();
 }
 
 void QQmlSortFilterProxyModel::setFilterPattern(const QString& filterPattern)
 {
-    QRegExp regExp = filterRegExp();
+    QRegularExpression regExp = filterRegularExpression();
     if (regExp.pattern() == filterPattern)
         return;
 
     regExp.setPattern(filterPattern);
-    QSortFilterProxyModel::setFilterRegExp(regExp);
+    QSortFilterProxyModel::setFilterRegularExpression(regExp);
     Q_EMIT filterPatternChanged();
-}
-
-QQmlSortFilterProxyModel::PatternSyntax QQmlSortFilterProxyModel::filterPatternSyntax() const
-{
-    return static_cast<PatternSyntax>(filterRegExp().patternSyntax());
-}
-
-void QQmlSortFilterProxyModel::setFilterPatternSyntax(QQmlSortFilterProxyModel::PatternSyntax patternSyntax)
-{
-    QRegExp regExp = filterRegExp();
-    QRegExp::PatternSyntax patternSyntaxTmp = static_cast<QRegExp::PatternSyntax>(patternSyntax);
-    if (regExp.patternSyntax() == patternSyntaxTmp)
-        return;
-
-    regExp.setPatternSyntax(patternSyntaxTmp);
-    QSortFilterProxyModel::setFilterRegExp(regExp);
-    Q_EMIT filterPatternSyntaxChanged();
 }
 
 const QVariant& QQmlSortFilterProxyModel::filterValue() const
@@ -208,11 +191,11 @@ void QQmlSortFilterProxyModel::componentComplete()
 {
     m_completed = true;
 
-    for (const auto& filter : m_filters)
+    for (const auto& filter : qAsConst(m_filters))
         filter->proxyModelCompleted(*this);
-    for (const auto& sorter : m_sorters)
+    for (const auto& sorter : qAsConst(m_sorters))
         sorter->proxyModelCompleted(*this);
-    for (const auto& proxyRole : m_proxyRoles)
+    for (const auto& proxyRole : qAsConst(m_proxyRoles))
         proxyRole->proxyModelCompleted(*this);
 
     invalidate();
@@ -266,7 +249,7 @@ QVariantMap QQmlSortFilterProxyModel::get(int row) const
     QVariantMap map;
     QModelIndex modelIndex = index(row, 0);
     QHash<int, QByteArray> roles = roleNames();
-    for (QHash<int, QByteArray>::const_iterator it = roles.begin(); it != roles.end(); ++it)
+    for (QHash<int, QByteArray>::const_iterator it = roles.cbegin(); it != roles.cend(); ++it)
         map.insert(it.value(), data(modelIndex, it.key()));
     return map;
 }
@@ -339,7 +322,7 @@ bool QQmlSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelInde
     bool valueAccepted = !m_filterValue.isValid() || ( m_filterValue == sourceModel()->data(sourceIndex, filterRole()) );
     bool baseAcceptsRow = valueAccepted && QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
     baseAcceptsRow = baseAcceptsRow && std::all_of(m_filters.begin(), m_filters.end(),
-        [=, &source_parent] (Filter* filter) {
+        [=] (Filter* filter) {
             return filter->filterAcceptsRow(sourceIndex, *this);
         }
     );
@@ -436,8 +419,9 @@ void QQmlSortFilterProxyModel::updateRoleNames()
     auto roles = m_roleNames.keys();
     auto maxIt = std::max_element(roles.cbegin(), roles.cend());
     int maxRole = maxIt != roles.cend() ? *maxIt : -1;
-    for (auto proxyRole : m_proxyRoles) {
-        for (auto roleName : proxyRole->names()) {
+    for (auto proxyRole : qAsConst(m_proxyRoles)) {
+        const auto proxyRoleNames = proxyRole->names();
+        for (const auto &roleName : proxyRoleNames) {
             ++maxRole;
             m_roleNames[maxRole] = roleName.toUtf8();
             m_proxyRoleMap[maxRole] = {proxyRole, roleName};
@@ -509,7 +493,7 @@ QVariantMap QQmlSortFilterProxyModel::modelDataMap(const QModelIndex& modelIndex
 {
     QVariantMap map;
     QHash<int, QByteArray> roles = roleNames();
-    for (QHash<int, QByteArray>::const_iterator it = roles.begin(); it != roles.end(); ++it)
+    for (QHash<int, QByteArray>::const_iterator it = roles.cbegin(); it != roles.cend(); ++it)
         map.insert(it.value(), sourceModel()->data(modelIndex, it.key()));
     return map;
 }

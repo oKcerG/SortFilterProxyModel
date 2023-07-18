@@ -60,12 +60,11 @@ Item {
 
             verify(testModel.count === sorter.expectedValues.length,
                    "Expected count " + sorter.expectedValues.length + ", actual count: " + testModel.count);
-            for (var i = 0; i < testModel.count; i++)
-            {
-                var modelValue = testModel.get(i, sorter.roleName);
-                verify(modelValue === sorter.expectedValues[i],
-                       "Expected testModel value " + sorter.expectedValues[i] + ", actual: " + modelValue);
+            let actualValues = [];
+            for (var i = 0; i < testModel.count; i++) {
+                actualValues.push(testModel.get(i, sorter.roleName));
             }
+            compare(actualValues, sorter.expectedValues);
         }
     }
 }
