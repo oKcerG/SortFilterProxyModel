@@ -74,3 +74,4 @@ int RoleSorter::compare(const QModelIndex &sourceLeft, const QModelIndex& source
 }
 
 
+}
