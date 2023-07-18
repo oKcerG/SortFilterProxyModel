@@ -62,40 +62,22 @@ void ExpressionRole::proxyModelCompleted(const QQmlSortFilterProxyModel& proxyMo
     updateContext(proxyModel);
 }
 
-bool ExpressionRole::isCached() const
-{
-    return m_cached;
-}
-
-void ExpressionRole::setCached(bool cached)
-{
-    if (m_cached == cached) {
-        return;
-    }
-
-    m_cached = cached;
-    emit cachedChanged(m_cached);
-}
-
-void ExpressionRole::invalidateCache()
-{
-    m_cache.clear();
-}
-
 QVariant ExpressionRole::data(const QModelIndex& sourceIndex, const QQmlSortFilterProxyModel& proxyModel)
 {
-    if (isCached()) {
-        const auto it = m_cache.constFind(sourceIndex);
-        if (it != m_cache.constEnd()) {
-            return *it;
-        }
-    }
-
     if (!m_scriptString.isEmpty()) {
-        const QVariant modelMap = proxyModel.sourceData(sourceIndex);
+        QVariantMap modelMap;
+        QHash<int, QByteArray> roles = proxyModel.roleNames();
+
         QQmlContext context(qmlContext(this));
-        context.setContextProperty("index", sourceIndex.row());
-        context.setContextProperty("modelIndex", sourceIndex);
+        auto addToContext = [&] (const QString &name, const QVariant& value) {
+            context.setContextProperty(name, value);
+            modelMap.insert(name, value);
+        };
+
+        for (auto it = roles.cbegin(); it != roles.cend(); ++it)
+            addToContext(it.value(), proxyModel.sourceData(sourceIndex, it.key()));
+        addToContext("index", sourceIndex.row());
+
         context.setContextProperty("model", modelMap);
 
         QQmlExpression expression(m_scriptString, &context);
@@ -105,11 +87,6 @@ QVariant ExpressionRole::data(const QModelIndex& sourceIndex, const QQmlSortFilt
             qWarning() << expression.error();
             return true;
         }
-
-        if (isCached()) {
-            m_cache[sourceIndex] = result;
-        }
-
         return result;
     }
     return QVariant();
@@ -122,13 +99,16 @@ void ExpressionRole::updateContext(const QQmlSortFilterProxyModel& proxyModel)
     // what about roles changes ?
     QVariantMap modelMap;
 
-    const auto roleNames = proxyModel.roleNames().values();
-    for (const QByteArray& roleName : roleNames) {
-        modelMap[roleName] = QVariant();
-    }
+    auto addToContext = [&] (const QString &name, const QVariant& value) {
+        m_context->setContextProperty(name, value);
+        modelMap.insert(name, value);
+    };
 
-    m_context->setContextProperty("index", -1);
-    m_context->setContextProperty("modelIndex", QModelIndex());
+    for (const QByteArray& roleName : proxyModel.roleNames().values())
+        addToContext(roleName, QVariant());
+
+    addToContext("index", -1);
+
     m_context->setContextProperty("model", modelMap);
     updateExpression();
 }
@@ -140,10 +120,7 @@ void ExpressionRole::updateExpression()
 
     delete m_expression;
     m_expression = new QQmlExpression(m_scriptString, m_context, 0, this);
-    connect(m_expression, &QQmlExpression::valueChanged, this, [=] {
-        invalidateCache();
-        invalidate();
-    });
+    connect(m_expression, &QQmlExpression::valueChanged, this, &ExpressionRole::invalidate);
     m_expression->setNotifyOnValueChanged(true);
     m_expression->evaluate();
 }
